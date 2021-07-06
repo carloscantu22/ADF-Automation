@@ -54,28 +54,28 @@
 			"teamsWebhookUrl": {
 				"type": "string",
 				"defaultValue": "https://carhartt.webhook.office.com/webhookb2/821a9519-9995-4e07-8f41-359204fb1c05@b4e848aa-20ef-4814-a34a-93fe53f3970f/IncomingWebhook/53212b4e54754a3097bd0b26030417bc/dfb007ca-9396-4a1c-9d58-b1b1499518b9"
+			},
+			"Process Name": {
+				"type": "string"
+			},
+			"PipelineID": {
+				"type": "string"
+			},
+			"StartTime": {
+				"type": "string"
+			},
+			"EndTime": {
+				"type": "string"
+			},
+			"RefreshId": {
+				"type": "string"
+			},
+			"Status": {
+				"type": "string"
 			}
 		},
 		"variables": {
 			"messageCardString": {
-				"type": "String"
-			},
-			"Process Name": {
-				"type": "String"
-			},
-			"PipelineID": {
-				"type": "String"
-			},
-			"StartTime": {
-				"type": "String"
-			},
-			"EndTime": {
-				"type": "String"
-			},
-			"RefreshId": {
-				"type": "String"
-			},
-			"Status": {
 				"type": "String"
 			}
 		},
