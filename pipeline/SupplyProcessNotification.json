@@ -67,10 +67,6 @@
 					"waitOnCompletion": false,
 					"parameters": {
 						"teamsWebhookUrl": "",
-						"Process Name": {
-							"value": "@pipeline().Pipeline",
-							"type": "Expression"
-						},
 						"PipelineID": {
 							"value": "@pipeline().RunId",
 							"type": "Expression"

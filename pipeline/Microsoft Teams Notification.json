@@ -12,7 +12,7 @@
 				"typeProperties": {
 					"variableName": "messageCardString",
 					"value": {
-						"value": "{\n    \"@type\": \"MessageCard\",\n    \"@context\": \"http://schema.org/extensions\",\n    \"themeColor\": \"0076D7\",\n    \"summary\": \"Pipeline status alert message​​​​\",\n    \"sections\": [\n        {\n            \"activityTitle\": \"Pipeline alert​​​​\",\n            \"facts\": [\n                {\n                    \"name\": \"Activity name:\",\n                    \"value\": \"@{pipeline().parameters.Process Name}\"\n                },\n                {\n                    \"name\": \"Activity status:\",\n                    \"value\": \"@{pipeline().parameters.Status}\"\n                },\n                {\n                    \"name\": \"Refresh ID:\",\n                    \"value\": \"@{pipeline().parameters.RefreshId}\"\n                },\n                {\n                    \"name\": \"Process ID:\",\n                    \"value\": \"@{pipeline().parameters.PipelineID}\"\n                },\n                {\n                    \"name\": \"Start Time:\",\n                    \"value\": \"@{pipeline().parameters.StartTime}\"\n                },\n                {\n                    \"name\": \"End Time:\",\n                    \"value\": \"@{pipeline().parameters.EndTime}\"\n                },\n                {\n                    \"name\": \"Notification time (EST):\",\n                    \"value\": \"@{convertFromUtc(utcnow(),'Eastern Standard Time')}\"\n                }\n            ],\n            \"markdown\": true\n        }\n    ]\n}",
+						"value": "{\n    \"@type\": \"MessageCard\",\n    \"@context\": \"http://schema.org/extensions\",\n    \"themeColor\": \"0076D7\",\n    \"summary\": \"Pipeline status alert message​​​​\",\n    \"sections\": [\n        {\n            \"activityTitle\": \"Pipeline alert​​​​\",\n            \"facts\": [\n                {\n                    \"name\": \"Activity name:\",\n                    \"value\": \"@{pipeline().parameters.ProcessName}\"\n                },\n                {\n                    \"name\": \"Activity status:\",\n                    \"value\": \"@{pipeline().parameters.Status}\"\n                },\n                {\n                    \"name\": \"Refresh ID:\",\n                    \"value\": \"@{pipeline().parameters.RefreshId}\"\n                },\n                {\n                    \"name\": \"Process ID:\",\n                    \"value\": \"@{pipeline().parameters.PipelineID}\"\n                },\n                {\n                    \"name\": \"Start Time:\",\n                    \"value\": \"@{pipeline().parameters.StartTime}\"\n                },\n                {\n                    \"name\": \"End Time:\",\n                    \"value\": \"@{pipeline().parameters.EndTime}\"\n                },\n                {\n                    \"name\": \"Notification time (EST):\",\n                    \"value\": \"@{convertFromUtc(utcnow(),'Eastern Standard Time')}\"\n                }\n            ],\n            \"markdown\": true\n        }\n    ]\n}",
 						"type": "Expression"
 					}
 				}
@@ -55,7 +55,7 @@
 				"type": "string",
 				"defaultValue": "https://carhartt.webhook.office.com/webhookb2/821a9519-9995-4e07-8f41-359204fb1c05@b4e848aa-20ef-4814-a34a-93fe53f3970f/IncomingWebhook/53212b4e54754a3097bd0b26030417bc/dfb007ca-9396-4a1c-9d58-b1b1499518b9"
 			},
-			"Process Name": {
+			"ProcessName": {
 				"type": "string"
 			},
 			"PipelineID": {
