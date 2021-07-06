@@ -48,8 +48,8 @@
 				}
 			},
 			{
-				"name": "RefreshID",
-				"type": "SetVariable",
+				"name": "Execute Pipeline1",
+				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
 						"activity": "FormatResponse",
@@ -60,10 +60,37 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "LastRefreshId",
-					"value": {
-						"value": "@string(variables('Response')[0].refreshid)",
-						"type": "Expression"
+					"pipeline": {
+						"referenceName": "Microsoft Teams Notification",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": false,
+					"parameters": {
+						"teamsWebhookUrl": "",
+						"Process Name": {
+							"value": "@pipeline().Pipeline",
+							"type": "Expression"
+						},
+						"PipelineID": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						},
+						"StartTime": {
+							"value": "@string(formatDateTime(variables('Response')[0].startTime))",
+							"type": "Expression"
+						},
+						"EndTime": {
+							"value": "@string(formatDateTime(variables('Response')[0].endTime))",
+							"type": "Expression"
+						},
+						"RefreshId": {
+							"value": "@string(variables('Response')[0].refreshid)",
+							"type": "Expression"
+						},
+						"Status": {
+							"value": "@string(variables('Response')[0].status)",
+							"type": "Expression"
+						}
 					}
 				}
 			}
@@ -74,9 +101,6 @@
 			},
 			"LastRefreshId": {
 				"type": "String"
-			},
-			"ResponseValue": {
-				"type": "Array"
 			}
 		},
 		"annotations": []
