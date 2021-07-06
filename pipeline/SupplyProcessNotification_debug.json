@@ -1,0 +1,130 @@
+{
+	"name": "SupplyProcessNotification_debug",
+	"properties": {
+		"activities": [
+			{
+				"name": "GetRefresh",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasq01/models/Supply/refreshes",
+					"method": "GET",
+					"body": {
+						"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://*.asazure.windows.net  "
+					}
+				}
+			},
+			{
+				"name": "FormatResponse",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "GetRefresh",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Response",
+					"value": {
+						"value": "@array(first(json(activity('GetRefresh').output.Response)))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "RefreshDetails",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "FormatResponse",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@concat('https://northcentralus.asazure.windows.net/servers/carharttbiasq01/models/Supply/refreshes/',string(variables('Response')[0].refreshid))",
+						"type": "Expression"
+					},
+					"method": "GET",
+					"body": {
+						"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://*.asazure.windows.net  "
+					}
+				}
+			},
+			{
+				"name": "If Condition1",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "RefreshDetails",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@bool(startsWith(string(variables('Response')[0].status),'In'))",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "Execute Pipeline1",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "SupplyProcessNotification",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true
+							}
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"Response": {
+				"type": "Array"
+			},
+			"LastRefreshId": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}
