@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Web1",
+				"name": "Stopp Server Request",
 				"type": "WebActivity",
 				"dependsOn": [],
 				"policy": {
