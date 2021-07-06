@@ -65,6 +65,18 @@
 			},
 			"PipelineID": {
 				"type": "String"
+			},
+			"StartTime": {
+				"type": "String"
+			},
+			"EndTime": {
+				"type": "String"
+			},
+			"RefreshId": {
+				"type": "String"
+			},
+			"Status": {
+				"type": "String"
 			}
 		},
 		"annotations": [],
