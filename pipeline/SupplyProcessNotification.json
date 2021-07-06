@@ -42,33 +42,13 @@
 				"typeProperties": {
 					"variableName": "Response",
 					"value": {
-						"value": "@json(activity('SyncRefresh').output.Response)",
+						"value": "@array(last(json(activity('SyncRefresh').output.Response)))",
 						"type": "Expression"
 					}
 				}
 			},
 			{
 				"name": "RefreshID",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "FormatArray",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "LastRefreshId",
-					"value": {
-						"value": "@last(variables('Response').refreshId)",
-						"type": "Expression"
-					}
-				}
-			},
-			{
-				"name": "FormatArray",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
@@ -80,9 +60,9 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "ResponseValue",
+					"variableName": "LastRefreshId",
 					"value": {
-						"value": "@array(variables('Response').1)",
+						"value": "@string(variables('Response')[0].refreshid)",
 						"type": "Expression"
 					}
 				}
