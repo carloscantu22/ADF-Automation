@@ -12,7 +12,7 @@
 				"typeProperties": {
 					"variableName": "messageCardString",
 					"value": {
-						"value": "{\n    \"@type\": \"MessageCard\",\n    \"@context\": \"http://schema.org/extensions\",\n    \"themeColor\": \"0076D7\",\n    \"summary\": \"Process notification​​​​\",\n    \"sections\": [\n        {\n            \"activityTitle\": \"Process alert​​​​\",\n            \"facts\": [\n                \n                {\n                    \"name\": \"Activity name:\",\n                    \"value\": \"Supply Nightly Facts InventoryDemand\"\n                },\n                {\n                    \"name\": \"Activity status:\",\n                    \"value\": \"Failed\"\n                },\n                {\n                    \"name\": \"Execution duration (s):\",\n                    \"value\": \"621\"\n                },\n                {\n                    \"name\": \"Message\",\n                    \"value\": \"Nightly Runn lockout position\"\n                },\n                {\n                    \"name\": \"Notification time (UTC):\",\n                    \"value\": \"@{utcnow()}\"\n                }\n            ],\n            \"markdown\": true\n        }\n    ]\n}",
+						"value": "@concat('{\n    \"@type\": \"MessageCard\",\n    \"@context\": \"http://schema.org/extensions\",\n    \"themeColor\": \"0076D7\",\n    \"summary\": \"Process notification​​​​\",\n    \"sections\": [\n        {\n            \"activityTitle\": \"Process alert​​​​\",\n            \"facts\": [\n                \n                {\n                    \"name\": \"Activity name:\",\n                    \"value\": \"Supply Nightly Facts InventoryDemand\"\n                },\n                {\n                    \"name\": \"Activity status:\",\n                    \"value\": \"',,'\"\n                },\n                {\n                    \"name\": \"Execution duration (s):\",\n                    \"value\": \"621\"\n                },\n                {\n                    \"name\": \"Message\",\n                    \"value\": \"Nightly Runn lockout position\"\n                },\n                {\n                    \"name\": \"Notification time (UTC):\",\n                    \"value\": \"@{utcnow()}\"\n                }\n            ],\n            \"markdown\": true\n        }\n    ]\n}')",
 						"type": "Expression"
 					}
 				}
@@ -58,6 +58,12 @@
 		},
 		"variables": {
 			"messageCardString": {
+				"type": "String"
+			},
+			"Process Name": {
+				"type": "String"
+			},
+			"PipelineID": {
 				"type": "String"
 			}
 		},
