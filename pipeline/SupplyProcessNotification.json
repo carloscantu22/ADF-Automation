@@ -26,8 +26,79 @@
 						"resource": "https://*.asazure.windows.net  "
 					}
 				}
+			},
+			{
+				"name": "FormatResponse",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "SyncRefresh",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Response",
+					"value": {
+						"value": "@json(activity('SyncRefresh').output.Response)",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "RefreshID",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "FormatArray",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "LastRefreshId",
+					"value": {
+						"value": "@last(variables('Response').refreshId)",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "FormatArray",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "FormatResponse",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "ResponseValue",
+					"value": {
+						"value": "@array(variables('Response').1)",
+						"type": "Expression"
+					}
+				}
 			}
 		],
+		"variables": {
+			"Response": {
+				"type": "Array"
+			},
+			"LastRefreshId": {
+				"type": "String"
+			},
+			"ResponseValue": {
+				"type": "Array"
+			}
+		},
 		"annotations": []
 	}
 }
