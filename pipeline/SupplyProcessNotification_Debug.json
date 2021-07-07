@@ -93,12 +93,12 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@greater(item().startTime,variables('RefreshDate'))",
+									"value": "@greater(formatDateTime(item().startTime),formatDateTime(variables('RefreshDate')))",
 									"type": "Expression"
 								},
 								"ifFalseActivities": [
 									{
-										"name": "Set variable1",
+										"name": "SetCurrentTime",
 										"type": "SetVariable",
 										"dependsOn": [],
 										"userProperties": [],
@@ -113,7 +113,7 @@
 								],
 								"ifTrueActivities": [
 									{
-										"name": "Set variable2",
+										"name": "SetRefresh",
 										"type": "SetVariable",
 										"dependsOn": [],
 										"userProperties": [],
