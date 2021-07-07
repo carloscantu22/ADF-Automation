@@ -67,33 +67,13 @@
 					"isSequential": true,
 					"activities": [
 						{
-							"name": "LoopDate",
-							"type": "SetVariable",
+							"name": "Newest Refresh",
+							"type": "IfCondition",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
-								"variableName": "CurrentDate",
-								"value": {
-									"value": "@item().startTime",
-									"type": "Expression"
-								}
-							}
-						},
-						{
-							"name": "Newest Refresh",
-							"type": "IfCondition",
-							"dependsOn": [
-								{
-									"activity": "LoopDate",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
-							"userProperties": [],
-							"typeProperties": {
 								"expression": {
-									"value": "@greater(formatDateTime(item().startTime),formatDateTime(variables('RefreshDate')))",
+									"value": "@bool(greater(formatDateTime(item().startTime),formatDateTime(variables('RefreshDate'))))",
 									"type": "Expression"
 								},
 								"ifFalseActivities": [
