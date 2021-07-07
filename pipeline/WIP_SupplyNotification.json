@@ -157,7 +157,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"url": {
-						"value": "@concat('https://northcentralus.asazure.windows.net/servers/carharttbiasq01/models/Supply/refreshes/',variables('LastRefreshId'))",
+						"value": "@concat('https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes/',variables('LastRefreshId'))",
 						"type": "Expression"
 					},
 					"method": "GET",
