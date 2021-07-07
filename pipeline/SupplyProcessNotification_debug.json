@@ -98,22 +98,7 @@
 					"expression": {
 						"value": "@bool(startsWith(string(variables('Response')[0].status),'In'))",
 						"type": "Expression"
-					},
-					"ifFalseActivities": [
-						{
-							"name": "Execute Pipeline1",
-							"type": "ExecutePipeline",
-							"dependsOn": [],
-							"userProperties": [],
-							"typeProperties": {
-								"pipeline": {
-									"referenceName": "SupplyProcessNotification",
-									"type": "PipelineReference"
-								},
-								"waitOnCompletion": true
-							}
-						}
-					]
+					}
 				}
 			}
 		],
