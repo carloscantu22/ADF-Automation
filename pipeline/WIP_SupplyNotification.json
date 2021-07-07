@@ -73,7 +73,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@bool(greater(formatDateTime(item().startTime),formatDateTime(variables('RefreshDate'))))",
+									"value": "@greater(formatDateTime(item().startTime),formatDateTime(variables('RefreshDate')))",
 									"type": "Expression"
 								},
 								"ifFalseActivities": [
@@ -101,6 +101,26 @@
 											"variableName": "LastRefreshId",
 											"value": {
 												"value": "@item().refreshId",
+												"type": "Expression"
+											}
+										}
+									},
+									{
+										"name": "GreaterDate",
+										"type": "SetVariable",
+										"dependsOn": [
+											{
+												"activity": "SetRefresh",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "RefreshDate",
+											"value": {
+												"value": "@item().startTime",
 												"type": "Expression"
 											}
 										}
