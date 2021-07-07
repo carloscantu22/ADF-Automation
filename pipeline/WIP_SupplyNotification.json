@@ -137,7 +137,7 @@
 				}
 			},
 			{
-				"name": "SyncRefresh_copy1",
+				"name": "RefreshDetails",
 				"type": "WebActivity",
 				"dependsOn": [
 					{
@@ -168,6 +168,53 @@
 					"authentication": {
 						"type": "MSI",
 						"resource": "https://*.asazure.windows.net  "
+					}
+				}
+			},
+			{
+				"name": "Send Teams Notification",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "RefreshDetails",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Microsoft Teams Notification",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"teamsWebhookUrl": "https://carhartt.webhook.office.com/webhookb2/821a9519-9995-4e07-8f41-359204fb1c05@b4e848aa-20ef-4814-a34a-93fe53f3970f/IncomingWebhook/53212b4e54754a3097bd0b26030417bc/dfb007ca-9396-4a1c-9d58-b1b1499518b9",
+						"ProcessName": {
+							"value": "@pipeline().Pipeline",
+							"type": "Expression"
+						},
+						"PipelineID": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						},
+						"StartTime": {
+							"value": "@string(convertFromUtc(formatDateTime(activity('RefreshDetails').output.startTime),'Eastern Standard Time'))",
+							"type": "Expression"
+						},
+						"EndTime": {
+							"value": "@string(convertFromUtc(formatDateTime(activity('RefreshDetails').output.endTime),'Eastern Standard Time'))",
+							"type": "Expression"
+						},
+						"RefreshId": {
+							"value": "@string(variables('LastRefreshId'))",
+							"type": "Expression"
+						},
+						"Status": {
+							"value": "@string(activity('RefreshDetails').output.status)",
+							"type": "Expression"
+						}
 					}
 				}
 			}
