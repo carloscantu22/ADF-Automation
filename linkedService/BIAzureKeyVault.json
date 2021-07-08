@@ -1,0 +1,10 @@
+{
+	"name": "BIAzureKeyVault",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://BIEKeyVault.vault.azure.net/"
+		}
+	}
+}

@@ -1,0 +1,258 @@
+{
+	"name": "WIP_SupplyNotification",
+	"properties": {
+		"activities": [
+			{
+				"name": "SyncRefresh",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
+					"method": "GET",
+					"body": {
+						"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://*.asazure.windows.net  "
+					}
+				}
+			},
+			{
+				"name": "FormatResponse",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "SyncRefresh",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Response",
+					"value": {
+						"value": "@array(json(activity('SyncRefresh').output.Response))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "SetStartRefresh",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@variables('Response')",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Newest Refresh",
+							"type": "IfCondition",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@greater(formatDateTime(item().startTime),formatDateTime(variables('RefreshDate')))",
+									"type": "Expression"
+								},
+								"ifTrueActivities": [
+									{
+										"name": "SetRefresh",
+										"type": "SetVariable",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "LastRefreshId",
+											"value": {
+												"value": "@item().refreshId",
+												"type": "Expression"
+											}
+										}
+									},
+									{
+										"name": "GreaterDate",
+										"type": "SetVariable",
+										"dependsOn": [
+											{
+												"activity": "SetRefresh",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "RefreshDate",
+											"value": {
+												"value": "@item().startTime",
+												"type": "Expression"
+											}
+										}
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "SetStartDate",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "FormatResponse",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "RefreshDate",
+					"value": {
+						"value": "@formatDateTime(string(array(last(json(activity('SyncRefresh').output.Response)))[0].startTime))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "RefreshDetails",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "ForEach1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@concat('https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes/',variables('LastRefreshId'))",
+						"type": "Expression"
+					},
+					"method": "GET",
+					"body": {
+						"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://*.asazure.windows.net  "
+					}
+				}
+			},
+			{
+				"name": "Send Teams Notification",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "RefreshDetails",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Microsoft Teams Notification",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"teamsWebhookUrl": "https://carhartt.webhook.office.com/webhookb2/821a9519-9995-4e07-8f41-359204fb1c05@b4e848aa-20ef-4814-a34a-93fe53f3970f/IncomingWebhook/53212b4e54754a3097bd0b26030417bc/dfb007ca-9396-4a1c-9d58-b1b1499518b9",
+						"ProcessName": {
+							"value": "@pipeline().Pipeline",
+							"type": "Expression"
+						},
+						"PipelineID": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						},
+						"StartTime": {
+							"value": "@string(convertFromUtc(formatDateTime(activity('RefreshDetails').output.startTime),'Eastern Standard Time'))",
+							"type": "Expression"
+						},
+						"EndTime": {
+							"value": "@string(convertFromUtc(formatDateTime(activity('RefreshDetails').output.endTime),'Eastern Standard Time'))",
+							"type": "Expression"
+						},
+						"RefreshId": {
+							"value": "@string(variables('LastRefreshId'))",
+							"type": "Expression"
+						},
+						"Status": {
+							"value": "@string(activity('RefreshDetails').output.status)",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "SetStartRefresh",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "SetStartDate",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "LastRefreshId",
+					"value": {
+						"value": "@string(array(last(json(activity('SyncRefresh').output.Response)))[0].refreshId)",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"Response": {
+				"type": "Array"
+			},
+			"LastRefreshId": {
+				"type": "String"
+			},
+			"RefreshDate": {
+				"type": "String"
+			},
+			"CurrentDate": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}
