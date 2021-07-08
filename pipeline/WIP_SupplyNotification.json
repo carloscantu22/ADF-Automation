@@ -15,7 +15,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasq01/models/Supply/refreshes",
+					"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
 					"method": "GET",
 					"body": {
 						"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
@@ -52,7 +52,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "SetDate",
+						"activity": "SetStartRefresh",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -117,7 +117,7 @@
 				}
 			},
 			{
-				"name": "SetDate",
+				"name": "SetStartDate",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
@@ -215,6 +215,26 @@
 							"value": "@string(activity('RefreshDetails').output.status)",
 							"type": "Expression"
 						}
+					}
+				}
+			},
+			{
+				"name": "SetStartRefresh",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "SetStartDate",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "LastRefreshId",
+					"value": {
+						"value": "@string(array(last(json(activity('SyncRefresh').output.Response)))[0].refreshId)",
+						"type": "Expression"
 					}
 				}
 			}
