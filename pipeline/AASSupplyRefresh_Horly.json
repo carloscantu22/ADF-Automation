@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "RefreshNightlyFacts",
+				"name": "RefreshSupplyHourly",
 				"type": "WebActivity",
 				"dependsOn": [],
 				"policy": {
