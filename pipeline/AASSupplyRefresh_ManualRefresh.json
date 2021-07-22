@@ -18,7 +18,7 @@
 					"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
 					"method": "POST",
 					"body": {
-						"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 1,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"Production Plans - Nightly\"\n        },\n        {\n            \"table\": \"Inventory Plans\",\n            \"partition\": \"NightlyPartition\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
+						"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Contracts\"\n        },\n       {\n            \"table\": \"Current Inventory\"\n        },\n       {\n            \"table\": \"Available to Promise\"\n        },\n       {\n            \"table\": \"Purchase Orders\"\n        }\n    ]\n}')",
 						"type": "Expression"
 					},
 					"authentication": {
@@ -50,7 +50,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "@concat('SELECT ''Supply'' AS ''EventType''\n\t  ,''ADF_ManualReresh'' AS ''EventName''\n\t  ,''R'' AS ''EventStatus''\n\t  ,GETDATE() AS ''CreateDateTime''\n\t  ,''',pipeline().parameters.Refresh,''' AS ''EventParameters''\n\t  ,''',string(variables('Response')[0].refreshid),''' AS ''RefreshId''')",
+							"value": "@concat('SELECT ''Supply'' AS ''EventType''\n\t  ,''ADF_ManualRefresh'' AS ''EventName''\n\t  ,''R'' AS ''EventStatus''\n\t  ,GETDATE() AS ''CreateDateTime''\n\t  ,''',pipeline().parameters.Refresh,''' AS ''EventParameters''\n\t  ,''',string(variables('Response')[0].refreshid),''' AS ''RefreshId''')",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00",
