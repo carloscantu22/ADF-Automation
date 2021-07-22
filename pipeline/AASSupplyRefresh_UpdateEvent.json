@@ -90,7 +90,7 @@
 					"storedProcedureParameters": {
 						"endTime": {
 							"value": {
-								"value": "@formatDateTime(activity('GetRefresh').output.startTime)",
+								"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.endTime),'Eastern Standard Time')",
 								"type": "Expression"
 							},
 							"type": "DateTime"
@@ -111,7 +111,7 @@
 						},
 						"startTime": {
 							"value": {
-								"value": "@formatDateTime(activity('GetRefresh').output.endTime)",
+								"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.startTime),'Eastern Standard Time')",
 								"type": "Expression"
 							},
 							"type": "DateTime"
