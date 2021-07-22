@@ -30,7 +30,14 @@
 			{
 				"name": "Copy data1",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "FormatResponse",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -69,7 +76,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"Schema": "Controls",
-							"Table": "AzureSharedEventQueueExceptions"
+							"Table": "AzureSharedEventQueue"
 						}
 					}
 				],
@@ -78,7 +85,7 @@
 						"referenceName": "AzureSqlTable1",
 						"type": "DatasetReference",
 						"parameters": {
-							"Schema": "Lorem",
+							"Schema": "Controls",
 							"Table": "Ipsum"
 						}
 					}
@@ -133,41 +140,6 @@
 					"value": {
 						"value": "@array(first(json(activity('GetRefresh').output.Response)))",
 						"type": "Expression"
-					}
-				}
-			},
-			{
-				"name": "RefreshDetails",
-				"type": "WebActivity",
-				"dependsOn": [
-					{
-						"activity": "FormatResponse",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"url": {
-						"value": "@concat('https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes/',string(variables('Response')[0].refreshid))",
-						"type": "Expression"
-					},
-					"method": "GET",
-					"body": {
-						"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
-						"type": "Expression"
-					},
-					"authentication": {
-						"type": "MSI",
-						"resource": "https://*.asazure.windows.net  "
 					}
 				}
 			}
