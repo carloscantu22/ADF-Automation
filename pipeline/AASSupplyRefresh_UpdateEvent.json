@@ -57,7 +57,7 @@
 						"partitionOption": "None"
 					},
 					"dataset": {
-						"referenceName": "AzureSqlTable1",
+						"referenceName": "AzureSQLQueue",
 						"type": "DatasetReference",
 						"parameters": {
 							"Schema": "Lorem",
@@ -138,6 +138,9 @@
 			"EventId": {
 				"type": "String"
 			}
+		},
+		"folder": {
+			"name": "WIP"
 		},
 		"annotations": []
 	}
