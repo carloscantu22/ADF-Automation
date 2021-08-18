@@ -55,6 +55,60 @@
 									}
 								}
 							]
+						},
+						{
+							"value": "Supply_NightlyDimensions"
+						}
+					],
+					"defaultActivities": [
+						{
+							"name": "UpdateQueue_Succeed",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[Controls].[ADFQueueUpdate]",
+								"storedProcedureParameters": {
+									"endTime": {
+										"value": null,
+										"type": "DateTime"
+									},
+									"eventId": {
+										"value": {
+											"value": "@activity('ReadRefresh').output.firstRow.EventId",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"refreshId": {
+										"value": null,
+										"type": "String"
+									},
+									"startTime": {
+										"value": null,
+										"type": "DateTime"
+									},
+									"status": {
+										"value": "F",
+										"type": "String"
+									},
+									"statusMessage": {
+										"value": "Invalid or Unknow EventName",
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "BIP01",
+								"type": "LinkedServiceReference"
+							}
 						}
 					]
 				}
