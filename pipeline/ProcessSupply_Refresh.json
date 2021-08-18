@@ -1,0 +1,9 @@
+{
+	"name": "ProcessSupply_Refresh",
+	"properties": {
+		"folder": {
+			"name": "Process Supply"
+		},
+		"annotations": []
+	}
+}
