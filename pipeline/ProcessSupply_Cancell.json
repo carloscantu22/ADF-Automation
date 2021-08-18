@@ -102,6 +102,9 @@
 				"type": "Array"
 			}
 		},
+		"folder": {
+			"name": "Process Supply"
+		},
 		"annotations": []
 	}
 }
