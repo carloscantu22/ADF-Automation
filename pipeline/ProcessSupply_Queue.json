@@ -27,7 +27,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "ProcessSupply_Errors",
+									"referenceName": "ProcessSupply_Error",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true
