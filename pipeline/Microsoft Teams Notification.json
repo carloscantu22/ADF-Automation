@@ -79,6 +79,9 @@
 				"type": "String"
 			}
 		},
+		"folder": {
+			"name": "WIP"
+		},
 		"annotations": [],
 		"lastPublishTime": "2021-06-01T09:19:35Z"
 	}
