@@ -37,6 +37,9 @@
 									}
 								}
 							]
+						},
+						{
+							"value": "Supply_Hourly"
 						}
 					]
 				}
