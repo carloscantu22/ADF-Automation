@@ -261,7 +261,7 @@
 							"value": "inprogress",
 							"activities": [
 								{
-									"name": "UpdateQueue_copy4",
+									"name": "UpdateQueue_Running",
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [],
 									"policy": {
@@ -276,10 +276,7 @@
 										"storedProcedureName": "[Controls].[ADFQueueUpdate]",
 										"storedProcedureParameters": {
 											"endTime": {
-												"value": {
-													"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.endTime),'Eastern Standard Time')",
-													"type": "Expression"
-												},
+												"value": null,
 												"type": "DateTime"
 											},
 											"eventId": {
@@ -304,11 +301,15 @@
 												"type": "DateTime"
 											},
 											"status": {
-												"value": "C",
+												"value": "R",
 												"type": "String"
 											},
 											"statusMessage": {
-												"value": ""
+												"value": {
+													"value": "@concat('Running :',convertFromUtc(utcnow(),'Eastern Standard Time'))",
+													"type": "Expression"
+												},
+												"type": "String"
 											}
 										}
 									},
