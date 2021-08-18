@@ -194,7 +194,8 @@
 												"type": "String"
 											},
 											"statusMessage": {
-												"value": "Cancelled due to request by user."
+												"value": "Cancelled due to request by user.",
+												"type": "String"
 											}
 										}
 									},
@@ -247,7 +248,8 @@
 												"type": "String"
 											},
 											"statusMessage": {
-												"value": "Exception Alerted."
+												"value": "Exception Alerted.",
+												"type": "String"
 											}
 										}
 									},
