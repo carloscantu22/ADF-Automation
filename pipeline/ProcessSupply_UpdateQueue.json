@@ -129,6 +129,9 @@
 											"status": {
 												"value": "C",
 												"type": "String"
+											},
+											"statusMessage": {
+												"value": null
 											}
 										}
 									},
@@ -143,7 +146,7 @@
 							"value": "cancelled",
 							"activities": [
 								{
-									"name": "UpdateQueue_copy2",
+									"name": "UpdateQueue_Cancelled",
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [],
 									"policy": {
@@ -188,6 +191,9 @@
 											"status": {
 												"value": "F",
 												"type": "String"
+											},
+											"statusMessage": {
+												"value": "Cancelled due to request by user."
 											}
 										}
 									},
