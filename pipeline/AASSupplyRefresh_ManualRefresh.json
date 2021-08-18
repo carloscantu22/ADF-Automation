@@ -72,7 +72,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "AzureSqlTable1",
+						"referenceName": "AzureSQLQueue",
 						"type": "DatasetReference",
 						"parameters": {
 							"Schema": "Controls",
@@ -82,7 +82,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "AzureSqlTable1",
+						"referenceName": "AzureSQLQueue",
 						"type": "DatasetReference",
 						"parameters": {
 							"Schema": "Controls",
@@ -157,6 +157,9 @@
 			" LastRefreshId": {
 				"type": "String"
 			}
+		},
+		"folder": {
+			"name": "WIP"
 		},
 		"annotations": []
 	}
