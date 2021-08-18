@@ -1,0 +1,77 @@
+{
+	"name": "ProcessSupply_Errors",
+	"properties": {
+		"activities": [
+			{
+				"name": "StatusCheck",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[AzureSharedEventQueue]\n\tWHERE [EventType] = 'Supply' AND [EventStatus] NOT IN ('R','F','C') \n)\nTHEN 1\nELSE 0 END AS 'InvalidStatus'",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "AzureSQLQueue",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Lorem",
+							"Table": "Ipsum"
+						}
+					}
+				}
+			},
+			{
+				"name": "If Condition1",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "StatusCheck",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(activity('StatusCheck').output.firstRow.InvalidStatus,1)",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "ErrorNotification",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "Teams Notification",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"messageCard": "{\n    \"@type\": \"MessageCard\",\n    \"@context\": \"http://schema.org/extensions\",\n    \"themeColor\": \"FF0000\",\n    \"summary\": \"Supply Queue Error\",\n    \"sections\": [\n        {\n            \"activityTitle\": \"Supply Queue Error\",\n            \"facts\": [\n                {\n                    \"name\": \"Error:\",\n                    \"value\": \"Invalid Event Status\"\n                },\n                {\n                    \"name\": \"Queue:\",\n                    \"value\": \"Supply\"\n                },\n                {\n                    \"name\": \"Notification time (EST):\",\n                    \"value\": \"@{convertFromUtc(utcnow(),'Eastern Standard Time')}\"\n                }\n            ],\n            \"markdown\": true\n        }\n    ]\n}"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"folder": {
+			"name": "Process Supply"
+		},
+		"annotations": []
+	}
+}
