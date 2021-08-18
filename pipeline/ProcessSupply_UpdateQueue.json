@@ -345,7 +345,7 @@
 				"typeProperties": {
 					"variableName": "EventId",
 					"value": {
-						"value": "@activity('GetRefreshId').output.firstRow.EventId",
+						"value": "@string(activity('GetRefreshId').output.firstRow.EventId)",
 						"type": "Expression"
 					}
 				}
