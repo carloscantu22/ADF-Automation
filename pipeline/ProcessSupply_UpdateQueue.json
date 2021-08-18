@@ -7,7 +7,7 @@
 				"type": "WebActivity",
 				"dependsOn": [
 					{
-						"activity": "GetRefreshId",
+						"activity": "Set Event",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -111,7 +111,7 @@
 											},
 											"eventId": {
 												"value": {
-													"value": "@int(activity('GetRefreshId').output.firstRow.EventId)",
+													"value": "@int(variables('EventId'))",
 													"type": "Expression"
 												},
 												"type": "Int32"
@@ -174,7 +174,7 @@
 											},
 											"eventId": {
 												"value": {
-													"value": "@int(activity('GetRefreshId').output.firstRow.EventId)",
+													"value": "@int(variables('EventId'))",
 													"type": "Expression"
 												},
 												"type": "Int32"
@@ -234,7 +234,7 @@
 											},
 											"eventId": {
 												"value": {
-													"value": "@int(activity('GetRefreshId').output.firstRow.EventId)",
+													"value": "@int(variables('EventId'))",
 													"type": "Expression"
 												},
 												"type": "Int32"
@@ -288,7 +288,7 @@
 											},
 											"eventId": {
 												"value": {
-													"value": "@int(activity('GetRefreshId').output.firstRow.EventId)",
+													"value": "@int(variables('EventId'))",
 													"type": "Expression"
 												},
 												"type": "Int32"
@@ -328,6 +328,26 @@
 							]
 						}
 					]
+				}
+			},
+			{
+				"name": "Set Event",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "GetRefreshId",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "EventId",
+					"value": {
+						"value": "@activity('GetRefreshId').output.firstRow.EventId",
+						"type": "Expression"
+					}
 				}
 			}
 		],
