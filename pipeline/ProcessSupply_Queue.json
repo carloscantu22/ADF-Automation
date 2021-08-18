@@ -33,6 +33,21 @@
 								"waitOnCompletion": true
 							}
 						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "ProcessSupply_Running",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "ProcessSupply_Running",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true
+							}
+						}
 					]
 				}
 			},
