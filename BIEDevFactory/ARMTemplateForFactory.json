@@ -803,22 +803,6 @@
 								"value": "@equals(activity('ReadQueue').output.firstRow.Idle,0)",
 								"type": "Expression"
 							},
-							"ifFalseActivities": [
-								{
-									"name": "ProcessSupply_Errors",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "ProcessSupply_Error",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {}
-									}
-								}
-							],
 							"ifTrueActivities": [
 								{
 									"name": "ProcessSupply_Running",
@@ -874,7 +858,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/AzureSQLQueue')]",
-				"[concat(variables('factoryId'), '/pipelines/ProcessSupply_Error')]",
 				"[concat(variables('factoryId'), '/pipelines/ProcessSupply_Running')]"
 			]
 		},
@@ -1765,7 +1748,7 @@
 													},
 													"statusMessage": {
 														"value": {
-															"value": "@concat('Running :',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'HH:mm:ss'))",
+															"value": "@concat('Running: ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'HH:mm:ss'))",
 															"type": "Expression"
 														},
 														"type": "String"
@@ -1811,7 +1794,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Stopp Server Request",
+						"name": "Stop Server Request",
 						"type": "WebActivity",
 						"dependsOn": [],
 						"policy": {
@@ -2581,6 +2564,44 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/AASSupplyRefresh')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/EndOfDay')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Stop BiDev",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2021-08-01T13:30:00",
+						"timeZone": "Eastern Standard Time",
+						"schedule": {
+							"minutes": [
+								0
+							],
+							"hours": [
+								20
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/Stop BiDev')]"
 			]
 		},
 		{
