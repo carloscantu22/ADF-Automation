@@ -313,7 +313,7 @@
 											},
 											"statusMessage": {
 												"value": {
-													"value": "@concat('Running :',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'HH:mm:ss'))",
+													"value": "@concat('Running: ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'HH:mm:ss'))",
 													"type": "Expression"
 												},
 												"type": "String"
