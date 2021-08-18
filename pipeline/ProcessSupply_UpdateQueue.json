@@ -79,6 +79,10 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
+					"on": {
+						"value": "@activity('GetRefresh').output.status",
+						"type": "Expression"
+					},
 					"cases": [
 						{
 							"value": "succeeded",
