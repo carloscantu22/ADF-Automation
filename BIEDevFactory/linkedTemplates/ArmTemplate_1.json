@@ -1,0 +1,1008 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "BIEDevFactory"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/ProcessSupply_Error')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "StatusCheck",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[AzureSharedEventQueue]\n\tWHERE [EventType] = 'Supply' AND [EventStatus] NOT IN ('R','F','C') \n)\nTHEN 1\nELSE 0 END AS 'InvalidStatus'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						}
+					},
+					{
+						"name": "If Condition1",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "StatusCheck",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@equals(activity('StatusCheck').output.firstRow.InvalidStatus,1)",
+								"type": "Expression"
+							},
+							"ifTrueActivities": [
+								{
+									"name": "ErrorNotification",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "Teams Notification",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {
+											"messageCard": {
+												"value": "{\n    \"@type\": \"MessageCard\",\n    \"@context\": \"http://schema.org/extensions\",\n    \"themeColor\": \"FF0000\",\n    \"summary\": \"Supply Queue Error\",\n    \"sections\": [\n        {\n            \"activityTitle\": \"Supply Queue Error\",\n            \"facts\": [\n                {\n                    \"name\": \"Error:\",\n                    \"value\": \"Invalid Event Status\"\n                },\n                {\n                    \"name\": \"Queue:\",\n                    \"value\": \"Supply\"\n                },\n                {\n                    \"name\": \"Notification time (EST):\",\n                    \"value\": \"@{convertFromUtc(utcnow(),'Eastern Standard Time')}\"\n                }\n            ],\n            \"markdown\": true\n        }\n    ]\n}",
+												"type": "Expression"
+											}
+										}
+									}
+								}
+							]
+						}
+					}
+				],
+				"folder": {
+					"name": "Process Supply"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ProcessSupply_Refresh')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Switch1",
+						"type": "Switch",
+						"dependsOn": [
+							{
+								"activity": "ReadRefresh",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"on": {
+								"value": "@activity('ReadRefresh').output.firstRow.EventName",
+								"type": "Expression"
+							},
+							"cases": [
+								{
+									"value": "Supply_Inventory",
+									"activities": [
+										{
+											"name": "Set_Inventory",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Available to Promise\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "Supply_Hourly",
+									"activities": [
+										{
+											"name": "Set_Hourly",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Contracts\"\n        },\n       {\n            \"table\": \"Current Inventory\"\n        },\n       {\n            \"table\": \"Purchase Orders\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "Supply_NightlyDimensions",
+									"activities": [
+										{
+											"name": "Set_NightlyDimensions",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Country Codes\"\n        },\n       {\n            \"table\": \"Customers\"\n        },\n       {\n            \"table\": \"Item Plans Customers\"\n        },\n       {\n            \"table\": \"Date Periods\"\n        },\n       {\n            \"table\": \"Factory\"\n        },\n       {\n            \"table\": \"Dates\"\n        },\n       {\n            \"table\": \"Materials\"\n        },\n       {\n            \"table\": \"Inventory Quadrant Plan Names\"\n        },\n       {\n            \"table\": \"Production Plans Plan Source\"\n        },\n       {\n            \"table\": \"Products\"\n        },\n       {\n            \"table\": \"Raw Products\"\n        },\n       {\n            \"table\": \"Refresh Date Time\"\n        },\n       {\n            \"table\": \"Inventory Plans End Month\"\n        },\n       {\n            \"table\": \"Inventory Plans Start Month\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							],
+							"defaultActivities": [
+								{
+									"name": "UpdateQueue_Succeed",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[Controls].[ADFQueueUpdate]",
+										"storedProcedureParameters": {
+											"endTime": {
+												"value": null,
+												"type": "DateTime"
+											},
+											"eventId": {
+												"value": {
+													"value": "@activity('ReadRefresh').output.firstRow.EventId",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"refreshId": {
+												"value": null,
+												"type": "String"
+											},
+											"startTime": {
+												"value": null,
+												"type": "DateTime"
+											},
+											"status": {
+												"value": "F",
+												"type": "String"
+											},
+											"statusMessage": {
+												"value": "Invalid or Unknow EventName",
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "BIP01",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "ReadRefresh",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT [EventId],[EventName] FROM [Controls].[AzureSharedEventQueue]\nWHERE EventType = 'Supply' AND [EventStatus] IS NULL\nORDER BY EventId",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						}
+					},
+					{
+						"name": "RefreshNightlyFacts",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Switch1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"value": "@variables('RefreshParameters')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://*.asazure.windows.net  "
+							}
+						}
+					},
+					{
+						"name": "GetRefresh",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "RefreshNightlyFacts",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
+							"method": "GET",
+							"headers": {},
+							"body": {
+								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://*.asazure.windows.net  "
+							}
+						}
+					},
+					{
+						"name": "FormatResponse",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "GetRefresh",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Response",
+							"value": {
+								"value": "@array(first(json(activity('GetRefresh').output.Response)))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "UpdateQueue",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "FormatResponse",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[Controls].[ADFQueueUpdate]",
+							"storedProcedureParameters": {
+								"endTime": {
+									"value": null,
+									"type": "DateTime"
+								},
+								"eventId": {
+									"value": {
+										"value": "@int(activity('ReadRefresh').output.firstRow.EventId)",
+										"type": "Expression"
+									},
+									"type": "Int32"
+								},
+								"refreshId": {
+									"value": {
+										"value": "@string(variables('Response')[0].RefreshId)",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"startTime": {
+									"value": {
+										"value": "@convertFromUtc(utcnow(),'Eastern Standard Time')",
+										"type": "Expression"
+									},
+									"type": "DateTime"
+								},
+								"status": {
+									"value": "R",
+									"type": "String"
+								},
+								"statusMessage": {
+									"value": null,
+									"type": "String"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "BIP01",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"variables": {
+					"RefreshParameters": {
+						"type": "String"
+					},
+					"Response": {
+						"type": "Array"
+					},
+					"RefreshId": {
+						"type": "String"
+					},
+					"EventId": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Process Supply"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ProcessSupply_UpdateQueue')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetRefresh",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "GetRefreshId",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": {
+								"value": "@concat('https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes/',string(activity('GetRefreshId').output.firstRow.RefreshId))",
+								"type": "Expression"
+							},
+							"method": "GET",
+							"headers": {},
+							"body": {
+								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://*.asazure.windows.net  "
+							}
+						}
+					},
+					{
+						"name": "GetRefreshId",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT [EventId],[RefreshId] FROM [Controls].[AzureSharedEventQueue]\nWHERE [EventType] = 'Supply' AND [EventStatus] = 'R'\nORDER BY [EventId]",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						}
+					},
+					{
+						"name": "Switch1",
+						"type": "Switch",
+						"dependsOn": [
+							{
+								"activity": "GetRefresh",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"on": {
+								"value": "@activity('GetRefresh').output.status",
+								"type": "Expression"
+							},
+							"cases": [
+								{
+									"value": "succeeded",
+									"activities": [
+										{
+											"name": "UpdateQueue_Succeed",
+											"type": "SqlServerStoredProcedure",
+											"dependsOn": [],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"storedProcedureName": "[[Controls].[ADFQueueUpdate]",
+												"storedProcedureParameters": {
+													"endTime": {
+														"value": {
+															"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.endTime),'Eastern Standard Time')",
+															"type": "Expression"
+														},
+														"type": "DateTime"
+													},
+													"eventId": {
+														"value": {
+															"value": "@int(activity('GetRefreshId').output.firstRow.EventId)",
+															"type": "Expression"
+														},
+														"type": "Int32"
+													},
+													"refreshId": {
+														"value": {
+															"value": "@string(activity('GetRefreshId').output.firstRow.RefreshId)",
+															"type": "Expression"
+														},
+														"type": "String"
+													},
+													"startTime": {
+														"value": {
+															"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.startTime),'Eastern Standard Time')",
+															"type": "Expression"
+														},
+														"type": "DateTime"
+													},
+													"status": {
+														"value": "C",
+														"type": "String"
+													},
+													"statusMessage": {
+														"value": null,
+														"type": "String"
+													}
+												}
+											},
+											"linkedServiceName": {
+												"referenceName": "BIP01",
+												"type": "LinkedServiceReference"
+											}
+										}
+									]
+								},
+								{
+									"value": "cancelled",
+									"activities": [
+										{
+											"name": "UpdateQueue_Cancelled",
+											"type": "SqlServerStoredProcedure",
+											"dependsOn": [],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"storedProcedureName": "[[Controls].[ADFQueueUpdate]",
+												"storedProcedureParameters": {
+													"endTime": {
+														"value": {
+															"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.endTime),'Eastern Standard Time')",
+															"type": "Expression"
+														},
+														"type": "DateTime"
+													},
+													"eventId": {
+														"value": {
+															"value": "@int(activity('GetRefreshId').output.firstRow.EventId)",
+															"type": "Expression"
+														},
+														"type": "Int32"
+													},
+													"refreshId": {
+														"value": {
+															"value": "@string(activity('GetRefreshId').output.firstRow.RefreshId)",
+															"type": "Expression"
+														},
+														"type": "String"
+													},
+													"startTime": {
+														"value": {
+															"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.startTime),'Eastern Standard Time')",
+															"type": "Expression"
+														},
+														"type": "DateTime"
+													},
+													"status": {
+														"value": "F",
+														"type": "String"
+													},
+													"statusMessage": {
+														"value": "Cancelled due to request by user.",
+														"type": "String"
+													}
+												}
+											},
+											"linkedServiceName": {
+												"referenceName": "BIP01",
+												"type": "LinkedServiceReference"
+											}
+										}
+									]
+								},
+								{
+									"value": "failed",
+									"activities": [
+										{
+											"name": "UpdateQueue_Fail",
+											"type": "SqlServerStoredProcedure",
+											"dependsOn": [],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"storedProcedureName": "[[Controls].[ADFQueueUpdate]",
+												"storedProcedureParameters": {
+													"endTime": {
+														"value": null,
+														"type": "DateTime"
+													},
+													"eventId": {
+														"value": {
+															"value": "@int(activity('GetRefreshId').output.firstRow.EventId)",
+															"type": "Expression"
+														},
+														"type": "Int32"
+													},
+													"refreshId": {
+														"value": null,
+														"type": "String"
+													},
+													"startTime": {
+														"value": null,
+														"type": "DateTime"
+													},
+													"status": {
+														"value": null,
+														"type": "String"
+													},
+													"statusMessage": {
+														"value": "Exception Alerted.",
+														"type": "String"
+													}
+												}
+											},
+											"linkedServiceName": {
+												"referenceName": "BIP01",
+												"type": "LinkedServiceReference"
+											}
+										}
+									]
+								},
+								{
+									"value": "inProgress",
+									"activities": [
+										{
+											"name": "UpdateQueue_Running",
+											"type": "SqlServerStoredProcedure",
+											"dependsOn": [],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"storedProcedureName": "[[Controls].[ADFQueueUpdate]",
+												"storedProcedureParameters": {
+													"endTime": {
+														"value": null,
+														"type": "DateTime"
+													},
+													"eventId": {
+														"value": {
+															"value": "@int(activity('GetRefreshId').output.firstRow.EventId)",
+															"type": "Expression"
+														},
+														"type": "Int32"
+													},
+													"refreshId": {
+														"value": {
+															"value": "@string(activity('GetRefreshId').output.firstRow.RefreshId)",
+															"type": "Expression"
+														},
+														"type": "String"
+													},
+													"startTime": {
+														"value": {
+															"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.startTime),'Eastern Standard Time')",
+															"type": "Expression"
+														},
+														"type": "DateTime"
+													},
+													"status": {
+														"value": "R",
+														"type": "String"
+													},
+													"statusMessage": {
+														"value": {
+															"value": "@concat('Running :',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'HH:mm:ss'))",
+															"type": "Expression"
+														},
+														"type": "String"
+													}
+												}
+											},
+											"linkedServiceName": {
+												"referenceName": "BIP01",
+												"type": "LinkedServiceReference"
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"variables": {
+					"Response": {
+						"type": "Array"
+					},
+					"RefreshId": {
+						"type": "String"
+					},
+					"EventId": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Process Supply"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ProcessSupply_Running')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "RunningValidation",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[AzureSharedEventQueue]\n\tWHERE [EventType] = 'Supply' AND [EventStatus] = 'R'\n)\nTHEN 1\nELSE 0 END AS 'Running'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						}
+					},
+					{
+						"name": "If Condition1",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "RunningValidation",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@equals(activity('RunningValidation').output.firstRow.Running,1)",
+								"type": "Expression"
+							},
+							"ifFalseActivities": [
+								{
+									"name": "ProcessSupply_Refresh",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "ProcessSupply_Refresh",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {}
+									}
+								}
+							],
+							"ifTrueActivities": [
+								{
+									"name": "ProcessSupply_UpdateQueue",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "ProcessSupply_UpdateQueue",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {}
+									}
+								}
+							]
+						}
+					}
+				],
+				"folder": {
+					"name": "Process Supply"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/ProcessSupply_Refresh')]",
+				"[concat(variables('factoryId'), '/pipelines/ProcessSupply_UpdateQueue')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ProcessSupply_Queue')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "If Condition1",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "ReadQueue",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@equals(activity('ReadQueue').output.firstRow.Idle,0)",
+								"type": "Expression"
+							},
+							"ifFalseActivities": [
+								{
+									"name": "ProcessSupply_Errors",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "ProcessSupply_Error",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {}
+									}
+								}
+							],
+							"ifTrueActivities": [
+								{
+									"name": "ProcessSupply_Running",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "ProcessSupply_Running",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {}
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "ReadQueue",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[AzureSharedEventQueue]\n\tWHERE [EventType] = 'Supply' AND ([EventStatus] = 'R' OR [EventStatus] IS NULL)\n)\nTHEN 0\nELSE 1 END AS 'Idle'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						}
+					}
+				],
+				"folder": {
+					"name": "Process Supply"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/ProcessSupply_Error')]",
+				"[concat(variables('factoryId'), '/pipelines/ProcessSupply_Running')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ProcessAASEvents')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "ProcessSupply_Queue",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 2,
+						"startTime": "2021-08-17T13:00:00Z",
+						"timeZone": "UTC"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/ProcessSupply_Queue')]"
+			]
+		}
+	]
+}

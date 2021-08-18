@@ -1,0 +1,111 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "BIEDevFactory"
+		},
+		"AzureBIDevelopment_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'AzureBIDevelopment'"
+		},
+		"BIP01_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'BIP01'"
+		},
+		"Db21_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Db21'"
+		},
+		"biedev storage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'biedev storage'"
+		},
+		"AzureBIDevelopment_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://management.azure.com/"
+		},
+		"AzureBIDevelopment_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "bobjservice@carhartt.com"
+		},
+		"BIAzureKeyVault_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://BIEKeyVault.vault.azure.net/"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "BIEDevFactory_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzureBIDevelopment_password": {
+						"value": "[parameters('AzureBIDevelopment_password')]"
+					},
+					"BIP01_connectionString": {
+						"value": "[parameters('BIP01_connectionString')]"
+					},
+					"Db21_connectionString": {
+						"value": "[parameters('Db21_connectionString')]"
+					},
+					"biedev storage_connectionString": {
+						"value": "[parameters('biedev storage_connectionString')]"
+					},
+					"AzureBIDevelopment_properties_typeProperties_url": {
+						"value": "[parameters('AzureBIDevelopment_properties_typeProperties_url')]"
+					},
+					"AzureBIDevelopment_properties_typeProperties_userName": {
+						"value": "[parameters('AzureBIDevelopment_properties_typeProperties_userName')]"
+					},
+					"BIAzureKeyVault_properties_typeProperties_baseUrl": {
+						"value": "[parameters('BIAzureKeyVault_properties_typeProperties_baseUrl')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "BIEDevFactory_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'BIEDevFactory_ArmTemplate_0')]"
+			]
+		}
+	]
+}
