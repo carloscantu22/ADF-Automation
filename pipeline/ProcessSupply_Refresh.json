@@ -204,6 +204,9 @@
 						"status": {
 							"value": "R",
 							"type": "String"
+						},
+						"statusMessage": {
+							"value": null
 						}
 					}
 				},
