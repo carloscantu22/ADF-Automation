@@ -131,7 +131,8 @@
 												"type": "String"
 											},
 											"statusMessage": {
-												"value": null
+												"value": null,
+												"type": "String"
 											}
 										}
 									},
