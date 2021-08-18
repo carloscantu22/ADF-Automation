@@ -177,58 +177,16 @@
 									"value": "Supply_Begin",
 									"activities": [
 										{
-											"name": "UpdateQueue_Begin",
-											"type": "SqlServerStoredProcedure",
+											"name": "Set_Generic1",
+											"type": "SetVariable",
 											"dependsOn": [],
-											"policy": {
-												"timeout": "7.00:00:00",
-												"retry": 0,
-												"retryIntervalInSeconds": 30,
-												"secureOutput": false,
-												"secureInput": false
-											},
 											"userProperties": [],
 											"typeProperties": {
-												"storedProcedureName": "[[Controls].[ADFQueueUpdate]",
-												"storedProcedureParameters": {
-													"endTime": {
-														"value": {
-															"value": "@convertFromUtc(utcnow(),'Eastern Standard Time')",
-															"type": "Expression"
-														},
-														"type": "DateTime"
-													},
-													"eventId": {
-														"value": {
-															"value": "@activity('ReadRefresh').output.firstRow.EventId",
-															"type": "Expression"
-														},
-														"type": "Int32"
-													},
-													"refreshId": {
-														"value": null,
-														"type": "String"
-													},
-													"startTime": {
-														"value": {
-															"value": "@convertFromUtc(utcnow(),'Eastern Standard Time')",
-															"type": "Expression"
-														},
-														"type": "DateTime"
-													},
-													"status": {
-														"value": "C",
-														"type": "String"
-													},
-													"statusMessage": {
-														"value": "ADF Running OK",
-														"type": "String"
-													}
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Factory\"\n        }\n    ]\n}')",
+													"type": "Expression"
 												}
-											},
-											"linkedServiceName": {
-												"referenceName": "BIP01",
-												"type": "LinkedServiceReference"
 											}
 										}
 									]
@@ -237,66 +195,11 @@
 									"value": "Supply_End",
 									"activities": [
 										{
-											"name": "UpdateQueue_End",
-											"type": "SqlServerStoredProcedure",
-											"dependsOn": [],
-											"policy": {
-												"timeout": "7.00:00:00",
-												"retry": 0,
-												"retryIntervalInSeconds": 30,
-												"secureOutput": false,
-												"secureInput": false
-											},
-											"userProperties": [],
-											"typeProperties": {
-												"storedProcedureName": "[[Controls].[ADFQueueUpdate]",
-												"storedProcedureParameters": {
-													"endTime": {
-														"value": {
-															"value": "@convertFromUtc(utcnow(),'Eastern Standard Time')",
-															"type": "Expression"
-														},
-														"type": "DateTime"
-													},
-													"eventId": {
-														"value": {
-															"value": "@activity('ReadRefresh').output.firstRow.EventId",
-															"type": "Expression"
-														},
-														"type": "Int32"
-													},
-													"refreshId": {
-														"value": null,
-														"type": "String"
-													},
-													"startTime": {
-														"value": {
-															"value": "@convertFromUtc(utcnow(),'Eastern Standard Time')",
-															"type": "Expression"
-														},
-														"type": "DateTime"
-													},
-													"status": {
-														"value": "C",
-														"type": "String"
-													},
-													"statusMessage": {
-														"value": "ADF Complete",
-														"type": "String"
-													}
-												}
-											},
-											"linkedServiceName": {
-												"referenceName": "BIP01",
-												"type": "LinkedServiceReference"
-											}
-										},
-										{
 											"name": "SendCompletionEmail",
 											"type": "WebActivity",
 											"dependsOn": [
 												{
-													"activity": "UpdateQueue_End",
+													"activity": "Set_Generic2",
 													"dependencyConditions": [
 														"Succeeded"
 													]
@@ -316,6 +219,19 @@
 												"headers": {},
 												"body": {
 													"value": "@concat('{','}')",
+													"type": "Expression"
+												}
+											}
+										},
+										{
+											"name": "Set_Generic2",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Factory\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
