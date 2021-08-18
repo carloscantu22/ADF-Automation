@@ -1,0 +1,24 @@
+{
+	"name": "ProcessAASEvents",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "ProcessSupply_Queue",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 2,
+				"startTime": "2021-08-17T13:00:00Z",
+				"timeZone": "UTC"
+			}
+		}
+	}
+}
