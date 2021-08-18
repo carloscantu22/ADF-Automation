@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@equals(activity('ReadQueue').output.firstRow.Idle,1)",
+						"value": "@equals(activity('ReadQueue').output.firstRow.Idle,0)",
 						"type": "Expression"
 					},
 					"ifFalseActivities": [
