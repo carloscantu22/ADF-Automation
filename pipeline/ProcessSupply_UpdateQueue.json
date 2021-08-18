@@ -244,6 +244,9 @@
 											"status": {
 												"value": null,
 												"type": "String"
+											},
+											"statusMessage": {
+												"value": "Exception Alerted."
 											}
 										}
 									},
@@ -303,6 +306,9 @@
 											"status": {
 												"value": "C",
 												"type": "String"
+											},
+											"statusMessage": {
+												"value": ""
 											}
 										}
 									},
