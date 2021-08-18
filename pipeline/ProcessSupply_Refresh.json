@@ -196,7 +196,7 @@
 						},
 						"startTime": {
 							"value": {
-								"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.startTime),'Eastern Standard Time')",
+								"value": "@convertFromUtc(formatDateTime(variables('Response')[0].startTime),'Eastern Standard Time')",
 								"type": "Expression"
 							},
 							"type": "DateTime"
