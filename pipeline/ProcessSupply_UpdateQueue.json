@@ -265,7 +265,7 @@
 							]
 						},
 						{
-							"value": "inprogress",
+							"value": "inProgress",
 							"activities": [
 								{
 									"name": "UpdateQueue_Running",
