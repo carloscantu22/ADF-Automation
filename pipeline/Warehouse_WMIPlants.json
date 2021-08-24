@@ -1,9 +1,9 @@
 {
-	"name": "pipeline3",
+	"name": "Warehouse_WMIPlants",
 	"properties": {
 		"activities": [
 			{
-				"name": "Stored procedure1",
+				"name": "UpdateWMI PlantsPartitions",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [],
 				"policy": {
@@ -29,6 +29,9 @@
 				}
 			}
 		],
+		"folder": {
+			"name": "Warehouse"
+		},
 		"annotations": []
 	}
 }
