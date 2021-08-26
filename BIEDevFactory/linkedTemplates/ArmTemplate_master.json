@@ -15,6 +15,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'BIP01'"
 		},
+		"DBNSQLP01_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'DBNSQLP01'"
+		},
+		"DBNSQLP01_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'DBNSQLP01'"
+		},
 		"Db21_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Db21'"
@@ -34,6 +42,10 @@
 		"BIAzureKeyVault_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://BIEKeyVault.vault.azure.net/"
+		},
+		"DBNSQLP01_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "carhartt-nt\\bobjservice"
 		},
 		"containerUri": {
 			"type": "string",
@@ -68,11 +80,17 @@
 					"BIP01_connectionString": {
 						"value": "[parameters('BIP01_connectionString')]"
 					},
-					"Db21_connectionString": {
-						"value": "[parameters('Db21_connectionString')]"
-					},
 					"biedev storage_connectionString": {
 						"value": "[parameters('biedev storage_connectionString')]"
+					},
+					"DBNSQLP01_connectionString": {
+						"value": "[parameters('DBNSQLP01_connectionString')]"
+					},
+					"DBNSQLP01_password": {
+						"value": "[parameters('DBNSQLP01_password')]"
+					},
+					"Db21_connectionString": {
+						"value": "[parameters('Db21_connectionString')]"
 					},
 					"AzureBIDevelopment_properties_typeProperties_url": {
 						"value": "[parameters('AzureBIDevelopment_properties_typeProperties_url')]"
@@ -82,6 +100,9 @@
 					},
 					"BIAzureKeyVault_properties_typeProperties_baseUrl": {
 						"value": "[parameters('BIAzureKeyVault_properties_typeProperties_baseUrl')]"
+					},
+					"DBNSQLP01_properties_typeProperties_userName": {
+						"value": "[parameters('DBNSQLP01_properties_typeProperties_userName')]"
 					}
 				}
 			},
