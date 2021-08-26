@@ -799,7 +799,7 @@
 						}
 					},
 					{
-						"name": "RefreshNightlyFacts",
+						"name": "RefreshSupply",
 						"type": "WebActivity",
 						"dependsOn": [
 							{
@@ -836,7 +836,7 @@
 						"type": "WebActivity",
 						"dependsOn": [
 							{
-								"activity": "RefreshNightlyFacts",
+								"activity": "WaitProcess",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -944,6 +944,22 @@
 						"linkedServiceName": {
 							"referenceName": "BIP01",
 							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "WaitProcess",
+						"type": "Wait",
+						"dependsOn": [
+							{
+								"activity": "RefreshSupply",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 5
 						}
 					}
 				],
