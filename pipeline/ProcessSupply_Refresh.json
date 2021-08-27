@@ -376,7 +376,7 @@
 				"type": "WebActivity",
 				"dependsOn": [
 					{
-						"activity": "WaitProcess",
+						"activity": "RefreshSupply",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -483,22 +483,6 @@
 				"linkedServiceName": {
 					"referenceName": "BIP01",
 					"type": "LinkedServiceReference"
-				}
-			},
-			{
-				"name": "WaitProcess",
-				"type": "Wait",
-				"dependsOn": [
-					{
-						"activity": "RefreshSupply",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"waitTimeInSeconds": 5
 				}
 			}
 		],
