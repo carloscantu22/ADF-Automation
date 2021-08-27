@@ -1256,7 +1256,7 @@
 						"type": "WebActivity",
 						"dependsOn": [
 							{
-								"activity": "WaitProcess",
+								"activity": "RefreshSupply",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -1364,22 +1364,6 @@
 						"linkedServiceName": {
 							"referenceName": "BIP01",
 							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "WaitProcess",
-						"type": "Wait",
-						"dependsOn": [
-							{
-								"activity": "RefreshSupply",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"waitTimeInSeconds": 5
 						}
 					}
 				],
@@ -2602,7 +2586,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes/65e2b457-dd3d-4de5-820f-21cea69ae3d7",
+							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes/44de7b07-75ff-4f42-8aa9-be76ea36391f",
 							"method": "GET",
 							"headers": {},
 							"body": {
