@@ -255,6 +255,52 @@
 									}
 								}
 							]
+						},
+						{
+							"value": "Supply_MSODraftApprovalNotification",
+							"activities": [
+								{
+									"name": "SendApprovalEmail",
+									"type": "WebActivity",
+									"dependsOn": [
+										{
+											"activity": "Set_Generic3",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"url": "https://prod-29.northcentralus.logic.azure.com:443/workflows/7c6e0b550366480181ceebc02c0ce319/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=QOEpbIKJ72zB2U9vZYdc0T-yasXVGGECgEpCp-ebKSg",
+										"method": "POST",
+										"body": {
+											"value": "@concat('{','}')",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "Set_Generic3",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Factory\"\n        }\n    ]\n}')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
 						}
 					],
 					"defaultActivities": [
