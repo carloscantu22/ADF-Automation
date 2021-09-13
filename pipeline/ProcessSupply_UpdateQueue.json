@@ -52,7 +52,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT [EventId],[RefreshId] FROM [Controls].[AzureSharedEventQueue]\nWHERE [EventType] = 'Supply' AND [EventStatus] = 'R'\nORDER BY [EventId]",
+						"sqlReaderQuery": "SELECT [EventId],[RefreshId],[EventName] FROM [Controls].[AzureSharedEventQueue]\nWHERE [EventType] = 'Supply' AND [EventStatus] = 'R'\nORDER BY [EventId]",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -344,6 +344,37 @@
 											}
 										}
 									]
+								},
+								{
+									"name": "SendMail",
+									"type": "WebActivity",
+									"dependsOn": [
+										{
+											"activity": "Insert to Log",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"url": "https://prod-05.northcentralus.logic.azure.com:443/workflows/a7ec1a338e8541f092c44178a0d0c201/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=co5WA5F6jucJvp2ui_nfHwjQ6ICRtwQ8NDiUCWi1998",
+										"method": "POST",
+										"headers": {
+											"Content-Type": "application/json"
+										},
+										"body": {
+											"value": "@concat('{\"RefreshId\" : \"',activity('GetRefreshId').output.firstRow.RefreshId,'\" , \"EventName\" : \"',activity('GetRefreshId').output.firstRow.EventName,'\"}')",
+											"type": "Expression"
+										}
+									}
 								}
 							]
 						},
