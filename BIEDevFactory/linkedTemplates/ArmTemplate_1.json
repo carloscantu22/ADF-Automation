@@ -1428,7 +1428,7 @@
 											"typeProperties": {
 												"variableName": "Message",
 												"value": {
-													"value": "@replace(replace(replace(join(activity('GetRefresh').output.messages, ','), '{\"message\":', ''), '}', ''), '-','')",
+													"value": "@replace(replace(replace(replace(join(activity('GetRefresh').output.messages, ','), '{\"message\":', ''), '}', ''), '-',''),'''','')",
 													"type": "Expression"
 												}
 											}
@@ -1491,7 +1491,7 @@
 													"type": "DatasetReference",
 													"parameters": {
 														"Schema": "Controls",
-														"Table": "AzureSharedEventQueue"
+														"Table": "AzureSharedEventQueueExceptions"
 													}
 												}
 											]
