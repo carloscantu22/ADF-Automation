@@ -1428,7 +1428,7 @@
 											"typeProperties": {
 												"variableName": "Message",
 												"value": {
-													"value": "@replace(replace(join(activity('GetRefresh').output.messages, ','), '{\"message\":', ''), '}', '')",
+													"value": "@replace(replace(replace(join(activity('GetRefresh').output.messages, ','), '{\"message\":', ''), '}', ''), '-','')",
 													"type": "Expression"
 												}
 											}
@@ -1524,6 +1524,32 @@
 												"body": {
 													"value": "@concat('{\"RefreshId\" : \"',activity('GetRefreshId').output.firstRow.RefreshId,'\" , \"EventName\" : \"',activity('GetRefreshId').output.firstRow.EventName,'\"}')",
 													"type": "Expression"
+												}
+											}
+										},
+										{
+											"name": "TeamsNotification",
+											"type": "ExecutePipeline",
+											"dependsOn": [
+												{
+													"activity": "Insert to Log",
+													"dependencyConditions": [
+														"Succeeded"
+													]
+												}
+											],
+											"userProperties": [],
+											"typeProperties": {
+												"pipeline": {
+													"referenceName": "Teams Notification",
+													"type": "PipelineReference"
+												},
+												"waitOnCompletion": true,
+												"parameters": {
+													"messageCard": {
+														"value": "{\n    \"@type\": \"MessageCard\",\n    \"@context\": \"http://schema.org/extensions\",\n    \"themeColor\": \"FF0000\",\n    \"summary\": \"Supply Event Failed\",\n    \"sections\": [\n        {\n            \"activityTitle\": \"Supply Event Failed\",\n            \"facts\": [\n                {\n                    \"name\": \"Event ID:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.EventId}\"\n                },\n                {\n                    \"name\": \"Event Name:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.EventName}\"\n                },\n                {\n                    \"name\": \"Refresh ID:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.RefreshId}\"\n                },\n                {\n                    \"name\": \"Notification time (EST):\",\n                    \"value\": \"@{convertFromUtc(utcnow(),'Eastern Standard Time')}\"\n                }\n            ],\n            \"markdown\": true\n        }\n    ]\n}",
+														"type": "Expression"
+													}
 												}
 											}
 										}
