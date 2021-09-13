@@ -371,6 +371,137 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ErrorLog')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetRefreshInfo",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes/01b78707-59dd-4fae-ac65-98bf99c8b1bf",
+							"method": "GET",
+							"headers": {},
+							"body": {
+								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://*.asazure.windows.net  "
+							}
+						}
+					},
+					{
+						"name": "SetMessage",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "GetRefreshInfo",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Messages",
+							"value": {
+								"value": "@replace(replace(join(activity('GetRefreshInfo').output.messages, ','), '{\"message\":', ''), '}', '')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Insert to Log",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "SetMessage",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "@concat('SELECT ',variables('RefreshId'),' AS ''EventId''\n\t  ,''',variables('Messages'),''' AS ''EventStatusMessage''')",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Controls",
+									"Table": "AzureSharedEventQueue"
+								}
+							}
+						]
+					}
+				],
+				"variables": {
+					"RefreshId": {
+						"type": "String"
+					},
+					"Messages": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "WIP"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ProcessSupply_Error')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1072,7 +1203,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT [EventId],[RefreshId] FROM [Controls].[AzureSharedEventQueue]\nWHERE [EventType] = 'Supply' AND [EventStatus] = 'R'\nORDER BY [EventId]",
+								"sqlReaderQuery": "SELECT [EventId],[RefreshId],[EventName] FROM [Controls].[AzureSharedEventQueue]\nWHERE [EventType] = 'Supply' AND [EventStatus] = 'R'\nORDER BY [EventId]",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -1236,7 +1367,14 @@
 										{
 											"name": "UpdateQueue_Fail",
 											"type": "SqlServerStoredProcedure",
-											"dependsOn": [],
+											"dependsOn": [
+												{
+													"activity": "Insert to Log",
+													"dependencyConditions": [
+														"Succeeded"
+													]
+												}
+											],
 											"policy": {
 												"timeout": "7.00:00:00",
 												"retry": 0,
@@ -1280,6 +1418,113 @@
 											"linkedServiceName": {
 												"referenceName": "BIP01",
 												"type": "LinkedServiceReference"
+											}
+										},
+										{
+											"name": "SetMessage",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "Message",
+												"value": {
+													"value": "@replace(replace(join(activity('GetRefresh').output.messages, ','), '{\"message\":', ''), '}', '')",
+													"type": "Expression"
+												}
+											}
+										},
+										{
+											"name": "Insert to Log",
+											"type": "Copy",
+											"dependsOn": [
+												{
+													"activity": "SetMessage",
+													"dependencyConditions": [
+														"Succeeded"
+													]
+												}
+											],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"source": {
+													"type": "AzureSqlSource",
+													"sqlReaderQuery": {
+														"value": "@concat('SELECT ',string(activity('GetRefreshId').output.firstRow.RefreshId),' AS ''EventId''\n\t  ,''',variables('Message'),''' AS ''EventStatusMessage''')",
+														"type": "Expression"
+													},
+													"queryTimeout": "02:00:00",
+													"partitionOption": "None"
+												},
+												"sink": {
+													"type": "AzureSqlSink"
+												},
+												"enableStaging": false,
+												"translator": {
+													"type": "TabularTranslator",
+													"typeConversion": true,
+													"typeConversionSettings": {
+														"allowDataTruncation": true,
+														"treatBooleanAsNumber": false
+													}
+												}
+											},
+											"inputs": [
+												{
+													"referenceName": "AzureSQLQueue",
+													"type": "DatasetReference",
+													"parameters": {
+														"Schema": "Lorem",
+														"Table": "Ipsum"
+													}
+												}
+											],
+											"outputs": [
+												{
+													"referenceName": "AzureSQLQueue",
+													"type": "DatasetReference",
+													"parameters": {
+														"Schema": "Controls",
+														"Table": "AzureSharedEventQueue"
+													}
+												}
+											]
+										},
+										{
+											"name": "SendMail",
+											"type": "WebActivity",
+											"dependsOn": [
+												{
+													"activity": "Insert to Log",
+													"dependencyConditions": [
+														"Succeeded"
+													]
+												}
+											],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"url": "https://prod-05.northcentralus.logic.azure.com:443/workflows/a7ec1a338e8541f092c44178a0d0c201/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=co5WA5F6jucJvp2ui_nfHwjQ6ICRtwQ8NDiUCWi1998",
+												"method": "POST",
+												"headers": {
+													"Content-Type": "application/json"
+												},
+												"body": {
+													"value": "@concat('{\"RefreshId\" : \"',activity('GetRefreshId').output.firstRow.RefreshId,'\" , \"EventName\" : \"',activity('GetRefreshId').output.firstRow.EventName,'\"}')",
+													"type": "Expression"
+												}
 											}
 										}
 									]
@@ -1359,6 +1604,9 @@
 						"type": "String"
 					},
 					"EventId": {
+						"type": "String"
+					},
+					"Message": {
 						"type": "String"
 					}
 				},
