@@ -1456,7 +1456,7 @@
 												"source": {
 													"type": "AzureSqlSource",
 													"sqlReaderQuery": {
-														"value": "@concat('SELECT ',string(activity('GetRefreshId').output.firstRow.RefreshId),' AS ''EventId''\n\t  ,''',variables('Message'),''' AS ''EventStatusMessage''')",
+														"value": "@concat('SELECT ',activity('GetRefreshId').output.firstRow.EventId,' AS ''EventId''\n\t  ,''',variables('Message'),''' AS ''EventStatusMessage''')",
 														"type": "Expression"
 													},
 													"queryTimeout": "02:00:00",
