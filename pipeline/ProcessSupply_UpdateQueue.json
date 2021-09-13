@@ -216,7 +216,14 @@
 								{
 									"name": "UpdateQueue_Fail",
 									"type": "SqlServerStoredProcedure",
-									"dependsOn": [],
+									"dependsOn": [
+										{
+											"activity": "Insert to Log",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
 									"policy": {
 										"timeout": "7.00:00:00",
 										"retry": 0,
@@ -261,6 +268,82 @@
 										"referenceName": "BIP01",
 										"type": "LinkedServiceReference"
 									}
+								},
+								{
+									"name": "SetMessage",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "Message",
+										"value": {
+											"value": "@replace(replace(join(activity('GetRefresh').output.messages, ','), '{\"message\":', ''), '}', '')",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "Insert to Log",
+									"type": "Copy",
+									"dependsOn": [
+										{
+											"activity": "SetMessage",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "@concat('SELECT ',string(activity('GetRefreshId').output.firstRow.RefreshId),' AS ''EventId''\n\t  ,''',variables('Message'),''' AS ''EventStatusMessage''')",
+												"type": "Expression"
+											},
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "AzureSqlSink"
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "AzureSQLQueue",
+											"type": "DatasetReference",
+											"parameters": {
+												"Schema": "Lorem",
+												"Table": "Ipsum"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "AzureSQLQueue",
+											"type": "DatasetReference",
+											"parameters": {
+												"Schema": "Controls",
+												"Table": "AzureSharedEventQueue"
+											}
+										}
+									]
 								}
 							]
 						},
@@ -339,6 +422,9 @@
 				"type": "String"
 			},
 			"EventId": {
+				"type": "String"
+			},
+			"Message": {
 				"type": "String"
 			}
 		},
