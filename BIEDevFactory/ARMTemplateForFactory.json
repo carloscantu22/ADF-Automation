@@ -3167,8 +3167,8 @@
 					"recurrence": {
 						"frequency": "Day",
 						"interval": 1,
-						"startTime": "2021-08-24T23:05:00Z",
-						"timeZone": "UTC",
+						"startTime": "2021-08-24T23:05:00",
+						"timeZone": "Eastern Standard Time",
 						"schedule": {
 							"minutes": [
 								15
@@ -3297,7 +3297,6 @@
 								40
 							],
 							"hours": [
-								4,
 								5,
 								6,
 								7,
