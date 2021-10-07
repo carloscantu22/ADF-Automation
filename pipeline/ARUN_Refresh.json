@@ -1,0 +1,36 @@
+{
+	"name": "ARUN_Refresh",
+	"properties": {
+		"activities": [
+			{
+				"name": "Send Request",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://api.powerbi.com/v1.0/myorg/datasets/162ac05f-0cb6-4620-9a7c-1c0355c72b15/refreshes",
+					"method": "POST",
+					"body": {
+						"value": "@concat('{\n\tnotifyOption: \"MailOnFailure\"\n','}')",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://analysis.windows.net/powerbi/api"
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "ARUN"
+		},
+		"annotations": []
+	}
+}
