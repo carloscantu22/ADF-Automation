@@ -371,7 +371,7 @@
 											"Content-Type": "application/json"
 										},
 										"body": {
-											"value": "@concat('{\"RefreshId\" : \"',activity('GetRefreshId').output.firstRow.RefreshId,'\" , \"EventName\" : \"',activity('GetRefreshId').output.firstRow.EventName,'\"}')",
+											"value": "@concat('{\"RefreshId\" : \"',trim(activity('GetRefreshId').output.firstRow.RefreshId),'\" , \"EventName\" : \"',activity('GetRefreshId').output.firstRow.EventName,'\"}')",
 											"type": "Expression"
 										}
 									}
