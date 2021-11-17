@@ -39,10 +39,6 @@
 			"type": "string",
 			"defaultValue": "bobjservice@carhartt.com"
 		},
-		"BIAzureKeyVault_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "https://BIEKeyVault.vault.azure.net/"
-		},
 		"DBNSQLP01_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "carhartt-nt\\bobjservice"
@@ -520,6 +516,50 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ARUN_Refresh')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Send Request",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://api.powerbi.com/v1.0/myorg/datasets/162ac05f-0cb6-4620-9a7c-1c0355c72b15/refreshes",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"value": "@concat('{\n\tnotifyOption: \"MailOnFailure\"\n','}')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://analysis.windows.net/powerbi/api"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "ARUN"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ErrorLog')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -751,6 +791,114 @@
 				"lastPublishTime": "2021-06-01T09:19:35Z"
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OrderExclusion')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Pupulate Table",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "SqlServerSink",
+								"preCopyScript": "TRUNCATE TABLE [Tabular_eCommAging].[OrderExclusion]"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "ActualDate",
+											"type": "DateTime",
+											"physicalType": "date"
+										},
+										"sink": {
+											"name": "ActualDate",
+											"type": "DateTime",
+											"physicalType": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"name": "OrderNumber",
+											"type": "String",
+											"physicalType": "char"
+										},
+										"sink": {
+											"name": "OrderNumber",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "OrderLineNumber",
+											"type": "String",
+											"physicalType": "char"
+										},
+										"sink": {
+											"name": "OrderLineNumber",
+											"type": "String",
+											"physicalType": "String"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "CarharttDW",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Tabular_eCommAging",
+									"Table": "OrderExclusionQuery"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CarharttDW",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Tabular_eCommAging",
+									"Table": "OrderExclusion"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/CarharttDW')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ProcessSupply_Cancell')]",
@@ -2093,7 +2241,7 @@
 													"Content-Type": "application/json"
 												},
 												"body": {
-													"value": "@concat('{\"RefreshId\" : \"',activity('GetRefreshId').output.firstRow.RefreshId,'\" , \"EventName\" : \"',activity('GetRefreshId').output.firstRow.EventName,'\"}')",
+													"value": "@concat('{\"RefreshId\" : \"',trim(activity('GetRefreshId').output.firstRow.RefreshId),'\" , \"EventName\" : \"',activity('GetRefreshId').output.firstRow.EventName,'\"}')",
 													"type": "Expression"
 												}
 											}
@@ -2221,6 +2369,352 @@
 				"[concat(variables('factoryId'), '/linkedServices/BIP01')]",
 				"[concat(variables('factoryId'), '/pipelines/Teams Notification')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Refresh PBI Dataset')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Call Dataset Refresh",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Get AAD Token",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": true,
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": {
+								"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/',pipeline().parameters.PBIAppWorkspaceId,'/datasets/',pipeline().parameters.PBIDatasetId,'/refreshes')",
+								"type": "Expression"
+							},
+							"method": "POST",
+							"headers": {
+								"Authorization": {
+									"value": "@concat(string(activity('Get AAD Token').output.token_type),' ',string(activity('Get AAD Token').output.access_token))",
+									"type": "Expression"
+								}
+							},
+							"body": {
+								"helloww": "worldddd"
+							}
+						}
+					},
+					{
+						"name": "Get AAD Token",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Get TenantId from AKV",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Get ClientId from AKV",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Get Secret from AKV",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": true,
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": {
+								"value": "@concat('https://login.microsoftonline.com/',activity('Get TenantId from AKV').output.value,'/oauth2/token')",
+								"type": "Expression"
+							},
+							"method": "POST",
+							"headers": {
+								"Content-Type": "application/x-www-form-urlencoded"
+							},
+							"body": {
+								"value": "@concat('grant_type=client_credentials&resource=https://analysis.windows.net/powerbi/api&client_id=',activity('Get ClientId from AKV').output.value,'&client_secret=',encodeUriComponent(activity('Get Secret from AKV').output.value))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Get TenantId from AKV",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": true,
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": {
+								"value": "@concat(pipeline().parameters.KeyVaultDNSName,'secrets/',pipeline().parameters.SecretName_TenantId,'/',pipeline().parameters.SecretVersion_TenantId,'?api-version=7.0')",
+								"type": "Expression"
+							},
+							"method": "GET",
+							"headers": {},
+							"body": {
+								"simple": "body"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					},
+					{
+						"name": "Get ClientId from AKV",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": true,
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": {
+								"value": "@concat(pipeline().parameters.KeyVaultDNSName,'secrets/',pipeline().parameters.SecretName_SPClientId,'/',pipeline().parameters.SecretVersion_SPClientId,'?api-version=7.0')",
+								"type": "Expression"
+							},
+							"method": "GET",
+							"headers": {},
+							"body": {
+								"simple": "body"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					},
+					{
+						"name": "Get Secret from AKV",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": true,
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": {
+								"value": "@concat(pipeline().parameters.KeyVaultDNSName,'secrets/',pipeline().parameters.SecretName_SPSecret,'/',pipeline().parameters.SecretVersion_SPSecret,'?api-version=7.0')",
+								"type": "Expression"
+							},
+							"method": "GET",
+							"headers": {},
+							"body": {
+								"simple": "body"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					},
+					{
+						"name": "Until Refresh Complete",
+						"type": "Until",
+						"dependsOn": [
+							{
+								"activity": "Call Dataset Refresh",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@not(equals('Unknown',variables('RefreshStatus')))",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Get Dataset Refresh Status",
+									"type": "WebActivity",
+									"dependsOn": [
+										{
+											"activity": "Wait1",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": true,
+										"secureInput": true
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"url": {
+											"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/',pipeline().parameters.PBIAppWorkspaceId,'/datasets/',pipeline().parameters.PBIDatasetId,'/refreshes?$top=1')",
+											"type": "Expression"
+										},
+										"method": "GET",
+										"headers": {
+											"Authorization": {
+												"value": "@concat(string(activity('Get AAD Token').output.token_type),' ',string(activity('Get AAD Token').output.access_token))",
+												"type": "Expression"
+											}
+										},
+										"body": {
+											"helloww": "worldddd"
+										}
+									}
+								},
+								{
+									"name": "Set RefreshStatus",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "Get Dataset Refresh Status",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshStatus",
+										"value": {
+											"value": "@activity('Get Dataset Refresh Status').output.value[0].status",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "Wait1",
+									"type": "Wait",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"waitTimeInSeconds": 30
+									}
+								}
+							],
+							"timeout": "7.00:00:00"
+						}
+					},
+					{
+						"name": "Refresh Succeeded",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "Until Refresh Complete",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@equals(variables('RefreshStatus'),'Completed')",
+								"type": "Expression"
+							},
+							"ifFalseActivities": [
+								{
+									"name": "Fail Pipeline",
+									"type": "WebActivity",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"url": "https://ThrowAnError ",
+										"method": "POST",
+										"headers": {},
+										"body": "Fail"
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"SecretName_TenantId": {
+						"type": "String",
+						"defaultValue": "TenantId"
+					},
+					"SecretName_SPClientId": {
+						"type": "String",
+						"defaultValue": "ClientId"
+					},
+					"SecretName_SPSecret": {
+						"type": "String",
+						"defaultValue": "ClientSecret"
+					},
+					"KeyVaultDNSName": {
+						"type": "string"
+					},
+					"SecretVersion_TenantId": {
+						"type": "string"
+					},
+					"SecretVersion_SPClientId": {
+						"type": "string"
+					},
+					"SecretVersion_SPSecret": {
+						"type": "string"
+					},
+					"PBIAppWorkspaceId": {
+						"type": "string"
+					},
+					"PBIDatasetId": {
+						"type": "string"
+					}
+				},
+				"variables": {
+					"RefreshStatus": {
+						"type": "String",
+						"defaultValue": "Unknown"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/RefreshInfo')]",
@@ -3057,6 +3551,41 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/CarharttDW')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DBNSQLP01",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Schema": {
+						"type": "string"
+					},
+					"Table": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().Schema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().Table",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DBNSQLP01')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureBIDevelopment')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -3072,19 +3601,6 @@
 						"type": "SecureString",
 						"value": "[parameters('AzureBIDevelopment_password')]"
 					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/BIAzureKeyVault')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureKeyVault",
-				"typeProperties": {
-					"baseUrl": "[parameters('BIAzureKeyVault_properties_typeProperties_baseUrl')]"
 				}
 			},
 			"dependsOn": []
@@ -3419,6 +3935,51 @@
 				"typeProperties": {}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/HourlyWindow')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "OrderExclusion",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2021-11-01T12:00:00",
+						"timeZone": "Eastern Standard Time",
+						"schedule": {
+							"minutes": [
+								10
+							],
+							"hours": [
+								8,
+								9,
+								10,
+								11,
+								14,
+								15,
+								16,
+								17
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/OrderExclusion')]"
+			]
 		}
 	]
 }

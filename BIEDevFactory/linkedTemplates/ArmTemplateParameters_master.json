@@ -29,9 +29,6 @@
 		"AzureBIDevelopment_properties_typeProperties_userName": {
 			"value": "bobjservice@carhartt.com"
 		},
-		"BIAzureKeyVault_properties_typeProperties_baseUrl": {
-			"value": "https://BIEKeyVault.vault.azure.net/"
-		},
 		"DBNSQLP01_properties_typeProperties_userName": {
 			"value": "carhartt-nt\\bobjservice"
 		},
