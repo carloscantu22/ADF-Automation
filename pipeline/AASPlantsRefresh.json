@@ -15,7 +15,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"url": "https://asazure://eastus.asazure.windows.net/carharttbiasp02/models/WMI_Plants/refreshes",
+					"url": "https://eastus.asazure.windows.net/carharttbiasp02/models/WMI_Plants/refreshes",
 					"method": "POST",
 					"body": {
 						"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"WMI Case Inventory\"\n        }\n    ]\n}')",
