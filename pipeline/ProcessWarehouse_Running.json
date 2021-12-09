@@ -50,13 +50,13 @@
 					},
 					"ifFalseActivities": [
 						{
-							"name": "ProcessSupply_Refresh",
+							"name": "ProcessWarehouse_Refresh",
 							"type": "ExecutePipeline",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "ProcessSupply_Refresh",
+									"referenceName": "ProcessWarehouse_Refresh",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true
@@ -65,13 +65,13 @@
 					],
 					"ifTrueActivities": [
 						{
-							"name": "ProcessSupply_UpdateQueue",
+							"name": "ProcessWarehouse_UpdateQueue",
 							"type": "ExecutePipeline",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "ProcessSupply_UpdateQueue",
+									"referenceName": "ProcessWarehouse_UpdateQueue",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true

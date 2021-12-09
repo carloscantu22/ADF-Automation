@@ -405,7 +405,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
+					"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Warehouse/refreshes",
 					"method": "POST",
 					"body": {
 						"value": "@variables('RefreshParameters')",
@@ -437,7 +437,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
+					"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Warehouse/refreshes",
 					"method": "GET",
 					"body": {
 						"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
