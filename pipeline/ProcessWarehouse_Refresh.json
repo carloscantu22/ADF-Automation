@@ -49,7 +49,7 @@
 									"typeProperties": {
 										"variableName": "RefreshParameters",
 										"value": {
-											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Factory\"\n        }\n    ]\n}')",
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"PickTicket\"\n        }\n    ]\n}')",
 											"type": "Expression"
 										}
 									}
@@ -95,7 +95,7 @@
 									"typeProperties": {
 										"variableName": "RefreshParameters",
 										"value": {
-											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Factory\"\n        }\n    ]\n}')",
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"PickTicket\"\n        }\n    ]\n}')",
 											"type": "Expression"
 										}
 									}
