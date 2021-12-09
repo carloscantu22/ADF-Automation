@@ -79,23 +79,11 @@
 					"biedev storage_connectionString": {
 						"value": "[parameters('biedev storage_connectionString')]"
 					},
-					"DBNSQLP01_connectionString": {
-						"value": "[parameters('DBNSQLP01_connectionString')]"
-					},
-					"DBNSQLP01_password": {
-						"value": "[parameters('DBNSQLP01_password')]"
-					},
-					"Db21_connectionString": {
-						"value": "[parameters('Db21_connectionString')]"
-					},
 					"AzureBIDevelopment_properties_typeProperties_url": {
 						"value": "[parameters('AzureBIDevelopment_properties_typeProperties_url')]"
 					},
 					"AzureBIDevelopment_properties_typeProperties_userName": {
 						"value": "[parameters('AzureBIDevelopment_properties_typeProperties_userName')]"
-					},
-					"DBNSQLP01_properties_typeProperties_userName": {
-						"value": "[parameters('DBNSQLP01_properties_typeProperties_userName')]"
 					}
 				}
 			},
@@ -114,11 +102,43 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"DBNSQLP01_connectionString": {
+						"value": "[parameters('DBNSQLP01_connectionString')]"
+					},
+					"DBNSQLP01_password": {
+						"value": "[parameters('DBNSQLP01_password')]"
+					},
+					"Db21_connectionString": {
+						"value": "[parameters('Db21_connectionString')]"
+					},
+					"DBNSQLP01_properties_typeProperties_userName": {
+						"value": "[parameters('DBNSQLP01_properties_typeProperties_userName')]"
 					}
 				}
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Resources/deployments', 'BIEDevFactory_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "BIEDevFactory_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'BIEDevFactory_ArmTemplate_1')]"
 			]
 		}
 	]
