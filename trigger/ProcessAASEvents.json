@@ -9,6 +9,12 @@
 					"referenceName": "ProcessSupply_Queue",
 					"type": "PipelineReference"
 				}
+			},
+			{
+				"pipelineReference": {
+					"referenceName": "ProcessWarehouse_Queue",
+					"type": "PipelineReference"
+				}
 			}
 		],
 		"type": "ScheduleTrigger",
