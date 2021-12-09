@@ -27,7 +27,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "ProcessSupply_Running",
+									"referenceName": "ProcessWarehouse_Running",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true
