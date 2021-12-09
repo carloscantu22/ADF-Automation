@@ -4232,7 +4232,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Factory\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"PickTicket\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
@@ -4279,7 +4279,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Factory\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"PickTicket\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
@@ -4287,10 +4287,40 @@
 									]
 								},
 								{
-									"value": "Warehouse_Dimensions"
+									"value": "Warehouse_Dimensions",
+									"activities": [
+										{
+											"name": "Set_Dimensions",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Customers\"\n        },\n        {\n            \"table\": \"Products\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
 								},
 								{
-									"value": "Warehouse_Facts"
+									"value": "Warehouse_Facts",
+									"activities": [
+										{
+											"name": "Set_Facts",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"PickTicket\"\n        },\n        {\n            \"table\": \"PickTicketProcessing\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
 								}
 							],
 							"defaultActivities": [
