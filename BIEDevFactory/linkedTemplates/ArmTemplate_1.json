@@ -812,9 +812,11 @@
 											"typeProperties": {
 												"url": "https://prod-13.northcentralus.logic.azure.com:443/workflows/edec3768a21d4a618a89c7ccf8c4ad0b/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Om-PN4tQZfPmI_KeEBQTkW7qGjSwrgbMrvF8RSqCfQ8",
 												"method": "POST",
-												"headers": {},
+												"headers": {
+													"Content-Type": "application/json"
+												},
 												"body": {
-													"value": "@concat('{','}')",
+													"value": "@concat('{\"ModelName\" : \"','Supply','\" , \"StartDateTime\" : \"',utcnow(),'\"}')",
 													"type": "Expression"
 												}
 											}
@@ -827,7 +829,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Factory\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"calculate\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 1\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
@@ -1759,179 +1761,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Warehouse_WMIPlants')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "UpdateWMI PlantsPartitions",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[Tabular_Warehouse].[UpdateWMI_PlantsPartitions]",
-							"storedProcedureParameters": {
-								"Param": {
-									"value": "1",
-									"type": "Byte"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "DBNSQLP01",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Warehouse"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/DBNSQLP01')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Warehouse_WMIPlantsFull')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "UpdateWMI PlantsPartitions",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[Tabular_Warehouse].[UpdateWMI_PlantsPartitions]",
-							"storedProcedureParameters": {
-								"Param": {
-									"value": "3",
-									"type": "Byte"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "DBNSQLP01",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Warehouse"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/DBNSQLP01')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Warehouse_WMIPlantsHourly')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "UpdateWMI PlantsPartitions",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[Tabular_Warehouse].[UpdateWMI_PlantsPartitions]",
-							"storedProcedureParameters": {
-								"Param": {
-									"value": "2",
-									"type": "Byte"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "DBNSQLP01",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Warehouse"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/DBNSQLP01')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CarharttDW')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "DBNSQLP01",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Schema": {
-						"type": "string"
-					},
-					"Table": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": {
-						"value": "@dataset().Schema",
-						"type": "Expression"
-					},
-					"table": {
-						"value": "@dataset().Table",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/DBNSQLP01')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/ProcessWarehouse_Refresh')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -2016,9 +1845,11 @@
 											"typeProperties": {
 												"url": "https://prod-13.northcentralus.logic.azure.com:443/workflows/edec3768a21d4a618a89c7ccf8c4ad0b/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Om-PN4tQZfPmI_KeEBQTkW7qGjSwrgbMrvF8RSqCfQ8",
 												"method": "POST",
-												"headers": {},
+												"headers": {
+													"Content-Type": "application/json"
+												},
 												"body": {
-													"value": "@concat('{','}')",
+													"value": "@concat('{\"ModelName\" : \"','Warehouse 2.0','\" , \"StartDateTime\" : \"',utcnow(),'\"}')",
 													"type": "Expression"
 												}
 											}
@@ -2031,7 +1862,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"PickTicket\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"calculate\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"PickTicket\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
@@ -2732,7 +2563,7 @@
 												"waitOnCompletion": true,
 												"parameters": {
 													"messageCard": {
-														"value": "{\n    \"@type\": \"MessageCard\",\n    \"@context\": \"http://schema.org/extensions\",\n    \"themeColor\": \"FF0000\",\n    \"summary\": \"Supply Event Failed\",\n    \"sections\": [\n        {\n            \"activityTitle\": \"Supply Event Failed\",\n            \"facts\": [\n                {\n                    \"name\": \"Event ID:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.EventId}\"\n                },\n                {\n                    \"name\": \"Event Name:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.EventName}\"\n                },\n                {\n                    \"name\": \"Refresh ID:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.RefreshId}\"\n                },\n                {\n                    \"name\": \"Notification time (EST):\",\n                    \"value\": \"@{convertFromUtc(utcnow(),'Eastern Standard Time')}\"\n                }\n            ],\n            \"markdown\": true\n        }\n    ]\n}",
+														"value": "{\n    \"@type\": \"MessageCard\",\n    \"@context\": \"http://schema.org/extensions\",\n    \"themeColor\": \"FF0000\",\n    \"summary\": \"Warehouse Event Failed\",\n    \"sections\": [\n        {\n            \"activityTitle\": \"Warehouse Event Failed\",\n            \"facts\": [\n                {\n                    \"name\": \"Event ID:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.EventId}\"\n                },\n                {\n                    \"name\": \"Event Name:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.EventName}\"\n                },\n                {\n                    \"name\": \"Refresh ID:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.RefreshId}\"\n                },\n                {\n                    \"name\": \"Notification time (EST):\",\n                    \"value\": \"@{convertFromUtc(utcnow(),'Eastern Standard Time')}\"\n                }\n            ],\n            \"markdown\": true\n        }\n    ]\n}",
 														"type": "Expression"
 													}
 												}
@@ -2831,6 +2662,179 @@
 				"annotations": []
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Warehouse_WMIPlants')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "UpdateWMI PlantsPartitions",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[Tabular_Warehouse].[UpdateWMI_PlantsPartitions]",
+							"storedProcedureParameters": {
+								"Param": {
+									"value": "1",
+									"type": "Byte"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "DBNSQLP01",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Warehouse"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DBNSQLP01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Warehouse_WMIPlantsFull')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "UpdateWMI PlantsPartitions",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[Tabular_Warehouse].[UpdateWMI_PlantsPartitions]",
+							"storedProcedureParameters": {
+								"Param": {
+									"value": "3",
+									"type": "Byte"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "DBNSQLP01",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Warehouse"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DBNSQLP01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Warehouse_WMIPlantsHourly')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "UpdateWMI PlantsPartitions",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[Tabular_Warehouse].[UpdateWMI_PlantsPartitions]",
+							"storedProcedureParameters": {
+								"Param": {
+									"value": "2",
+									"type": "Byte"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "DBNSQLP01",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Warehouse"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DBNSQLP01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CarharttDW')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DBNSQLP01",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Schema": {
+						"type": "string"
+					},
+					"Table": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().Schema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().Table",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DBNSQLP01')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/OrderExclusion')]",
@@ -3042,6 +3046,107 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ProcessWarehouse_Running')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "RunningValidation",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[AzureSharedEventQueue]\n\tWHERE [EventType] = 'Warehouse2.0' AND [EventStatus] = 'R'\n)\nTHEN 1\nELSE 0 END AS 'Running'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						}
+					},
+					{
+						"name": "If Condition1",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "RunningValidation",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@equals(activity('RunningValidation').output.firstRow.Running,1)",
+								"type": "Expression"
+							},
+							"ifFalseActivities": [
+								{
+									"name": "ProcessWarehouse_Refresh",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "ProcessWarehouse_Refresh",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {}
+									}
+								}
+							],
+							"ifTrueActivities": [
+								{
+									"name": "ProcessWarehouse_UpdateQueue",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "ProcessWarehouse_UpdateQueue",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {}
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Warehouse"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/ProcessWarehouse_Refresh')]",
+				"[concat(variables('factoryId'), '/pipelines/ProcessWarehouse_UpdateQueue')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/HourlyRun')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -3092,44 +3197,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/Warehouse_WMIPlantsHourly')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/MidnightRun')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "Warehouse_WMIPlantsFull",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2021-08-24T23:01:00",
-						"timeZone": "Eastern Standard Time",
-						"schedule": {
-							"minutes": [
-								10
-							],
-							"hours": [
-								0
-							]
-						}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/Warehouse_WMIPlantsFull')]"
 			]
 		}
 	]
