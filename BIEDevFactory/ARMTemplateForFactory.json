@@ -1376,7 +1376,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"calculate\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 1\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Calculate\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Products\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
@@ -2603,7 +2603,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"calculate\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"PickTicket\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Calculate\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"PickTicket\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
