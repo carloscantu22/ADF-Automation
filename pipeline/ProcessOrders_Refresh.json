@@ -38,7 +38,7 @@
 									"typeProperties": {
 										"variableName": "RefreshParameters",
 										"value": {
-											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 8,\n    \"RetryCount\": 2,\n    \"Objects\": ',activity('PartitionRefreshQueue').output.firstRow.JSON_F52E2B61-18A1-11d1-B105-00805F49916B,'\n}')",
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 8,\n    \"RetryCount\": 2,\n    \"Objects\": ',activity('PartitionRefreshQueue').output.firstRow.Refresh,'\n}')",
 											"type": "Expression"
 										}
 									}
@@ -58,7 +58,10 @@
 									"typeProperties": {
 										"source": {
 											"type": "AzureSqlSource",
-											"sqlReaderQuery": "SELECT TRIM([PRQ].[Tablename]) AS 'table',TRIM([PRQ].[PartitionName]) AS 'partition'\nFROM [Controls].[SSASPartitionRefreshQueue] PRQ\nINNER JOIN [Controls].[AzureEventQueue] AEQ ON [AEQ].[RefreshId] = [PRQ].[RefreshId]\nWHERE [PRQ].[RefreshId] = '47B6FD08-5CA6-492D-ACF7-475EA6FB4BB0'\nFOR JSON AUTO",
+											"sqlReaderQuery": {
+												"value": "@concat('SELECT CAST(\n(\n\tSELECT TRIM([PRQ].[Tablename]) AS ''table'',TRIM([PRQ].[PartitionName]) AS ''partition''\n\tFROM [Controls].[SSASPartitionRefreshQueue] PRQ\n\tINNER JOIN [Controls].[AzureEventQueue] AEQ ON [AEQ].[RefreshId] = [PRQ].[RefreshId]\n\t\tWHERE [AEQ].[EventId] = ',activity('ReadRefresh').output.firstRow.EventId,'\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
+												"type": "Expression"
+											},
 											"queryTimeout": "02:00:00",
 											"partitionOption": "None"
 										},
@@ -97,7 +100,7 @@
 									},
 									"eventId": {
 										"value": {
-											"value": "@activity('ReadRefresh').output.firstRow.EventId",
+											"value": "@int(activity('ReadRefresh').output.firstRow.EventId)",
 											"type": "Expression"
 										},
 										"type": "Int32"
