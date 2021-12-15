@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[AzureSharedEventQueue]\n\tWHERE [EventType] = 'Warehouse2.0' AND [EventStatus] = 'R'\n)\nTHEN 1\nELSE 0 END AS 'Running'",
+						"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[AzureSharedEventQueue]\n\tWHERE [EventType] = 'SSAS Refresh'\n\t  AND [EventName] = 'OrdersTabularHourlyRetailTransactions'\n\t  AND [EventStatus] = 'R'\n)\nTHEN 1\nELSE 0 END AS 'Running'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -50,13 +50,13 @@
 					},
 					"ifFalseActivities": [
 						{
-							"name": "ProcessWarehouse_Refresh",
+							"name": "ProcessOrders_Refresh",
 							"type": "ExecutePipeline",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "ProcessWarehouse_Refresh",
+									"referenceName": "ProcessOrders_Refresh",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true
@@ -65,13 +65,13 @@
 					],
 					"ifTrueActivities": [
 						{
-							"name": "ProcessWarehouse_UpdateQueue",
+							"name": "ProcessOrders_UpdateQueue",
 							"type": "ExecutePipeline",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "ProcessWarehouse_UpdateQueue",
+									"referenceName": "ProcessOrders_UpdateQueue",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true
