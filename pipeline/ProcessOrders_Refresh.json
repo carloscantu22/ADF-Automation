@@ -21,7 +21,7 @@
 					},
 					"cases": [
 						{
-							"value": "Warehouse_Facts",
+							"value": "OrdersTabularFactPartitions",
 							"activities": [
 								{
 									"name": "Set_Facts",
@@ -67,7 +67,10 @@
 										"type": "Int32"
 									},
 									"refreshId": {
-										"value": null,
+										"value": {
+											"value": "@string(activity('GetRefreshId').output.firstRow.RefreshId)",
+											"type": "Expression"
+										},
 										"type": "String"
 									},
 									"startTime": {
@@ -107,7 +110,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT [EventId],[EventName] FROM [Controls].[AzureSharedEventQueue]\nWHERE EventType = 'Warehouse2.0' AND [EventStatus] IS NULL\nORDER BY EventId",
+						"sqlReaderQuery": "SELECT [EventId],[EventName],[RefreshId] FROM [Controls].[AzureEventQueue]\n\tWHERE [EventType] = 'SSAS Refresh'\n\t  AND [EventName] = 'OrdersTabularFactPartitions'\n\t  AND [EventStatus] IS NULL\nORDER BY [EventId]",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -141,7 +144,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Warehouse/refreshes",
+					"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Orders/refreshes",
 					"method": "POST",
 					"body": {
 						"value": "@variables('RefreshParameters')",
@@ -173,7 +176,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Warehouse/refreshes",
+					"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Orders/refreshes",
 					"method": "GET",
 					"body": {
 						"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
@@ -240,7 +243,7 @@
 						},
 						"refreshId": {
 							"value": {
-								"value": "@string(variables('Response')[0].RefreshId)",
+								"value": "@string(activity('ReadRefresh').output.firstRow.RefreshId)",
 								"type": "Expression"
 							},
 							"type": "String"
@@ -257,7 +260,10 @@
 							"type": "String"
 						},
 						"statusMessage": {
-							"value": null,
+							"value": {
+								"value": "@string(variables('Response')[0].RefreshId)",
+								"type": "Expression"
+							},
 							"type": "String"
 						}
 					}
