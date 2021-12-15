@@ -104,7 +104,7 @@
 									},
 									"refreshId": {
 										"value": {
-											"value": "@string(activity('GetRefreshId').output.firstRow.RefreshId)",
+											"value": "@string(activity('ReadRefresh').output.firstRow.RefreshId)",
 											"type": "Expression"
 										},
 										"type": "String"
