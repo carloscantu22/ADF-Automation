@@ -100,7 +100,7 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"storedProcedureName": "[Controls].[ADFQueueUpdate]",
+										"storedProcedureName": "[Controls].[ADFOrdersQueueUpdate]",
 										"storedProcedureParameters": {
 											"endTime": {
 												"value": {
@@ -166,7 +166,7 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"storedProcedureName": "[Controls].[ADFQueueUpdate]",
+										"storedProcedureName": "[Controls].[ADFOrdersQueueUpdate]",
 										"storedProcedureParameters": {
 											"endTime": {
 												"value": {
@@ -236,7 +236,7 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"storedProcedureName": "[Controls].[ADFQueueUpdate]",
+										"storedProcedureName": "[Controls].[ADFOrdersQueueUpdate]",
 										"storedProcedureParameters": {
 											"endTime": {
 												"value": null,
@@ -426,7 +426,7 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"storedProcedureName": "[Controls].[ADFQueueUpdate]",
+										"storedProcedureName": "[Controls].[ADFOrdersQueueUpdate]",
 										"storedProcedureParameters": {
 											"endTime": {
 												"value": null,
