@@ -26,13 +26,49 @@
 								{
 									"name": "Set_Facts",
 									"type": "SetVariable",
-									"dependsOn": [],
+									"dependsOn": [
+										{
+											"activity": "PartitionRefreshQueue",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
 									"userProperties": [],
 									"typeProperties": {
 										"variableName": "RefreshParameters",
 										"value": {
-											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"PickTicket\"\n        },\n        {\n            \"table\": \"PickTicketProcessing\"\n        }\n    ]\n}')",
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 8,\n    \"RetryCount\": 2,\n    \"Objects\": ',activity('PartitionRefreshQueue').output.firstRow.JSON_F52E2B61-18A1-11d1-B105-00805F49916B,'\n}')",
 											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "PartitionRefreshQueue",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": "SELECT TRIM([PRQ].[Tablename]) AS 'table',TRIM([PRQ].[PartitionName]) AS 'partition'\nFROM [Controls].[SSASPartitionRefreshQueue] PRQ\nINNER JOIN [Controls].[AzureEventQueue] AEQ ON [AEQ].[RefreshId] = [PRQ].[RefreshId]\nWHERE [PRQ].[RefreshId] = '47B6FD08-5CA6-492D-ACF7-475EA6FB4BB0'\nFOR JSON AUTO",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"dataset": {
+											"referenceName": "AzureSQLQueue",
+											"type": "DatasetReference",
+											"parameters": {
+												"Schema": "Lorem",
+												"Table": "Ipsum"
+											}
 										}
 									}
 								}
@@ -110,7 +146,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT [EventId],[EventName],[RefreshId] FROM [Controls].[AzureEventQueue]\n\tWHERE [EventType] = 'SSAS Refresh'\n\t  AND [EventName] = 'OrdersTabularFactPartitions'\n\t  AND [EventStatus] IS NULL\nORDER BY [EventId]",
+						"sqlReaderQuery": "SELECT [EventId],[RefreshId],[EventName] FROM [Controls].[AzureEventQueue]\n\tWHERE [EventType] = 'SSAS Refresh'\n\t  AND [EventName] = 'OrdersTabularFactPartitions'\n\t  AND [EventStatus] IS NULL\nORDER BY [EventId]",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
