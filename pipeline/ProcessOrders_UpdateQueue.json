@@ -23,7 +23,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"url": {
-						"value": "@concat('https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Warehouse/refreshes/',string(activity('GetRefreshId').output.firstRow.RefreshId))",
+						"value": "@concat('https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Orders/refreshes/',string(activity('GetRefreshId').output.firstRow.EventStatusMessage))",
 						"type": "Expression"
 					},
 					"method": "GET",
@@ -52,7 +52,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT [EventId],[RefreshId],[EventName] FROM [Controls].[AzureSharedEventQueue]\nWHERE [EventType] = 'Warehouse2.0' AND [EventStatus] = 'R'\nORDER BY [EventId]",
+						"sqlReaderQuery": "SELECT [EventId],[EventStatusMessage],[RefreshId],[EventName] FROM [Controls].[AzureEventQueue]\n\tWHERE [EventType] = 'SSAS Refresh'\n\t  AND [EventName] = 'OrdersTabularFactPartitions'\n\t  AND [EventStatus] = 'R'\nORDER BY [EventId]",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -135,7 +135,10 @@
 												"type": "String"
 											},
 											"statusMessage": {
-												"value": null,
+												"value": {
+													"value": "@string(activity('GetRefreshId').output.firstRow.EventStatusMessage)",
+													"type": "Expression"
+												},
 												"type": "String"
 											}
 										}
@@ -247,7 +250,10 @@
 												"type": "Int32"
 											},
 											"refreshId": {
-												"value": null,
+												"value": {
+													"value": "@string(activity('GetRefreshId').output.firstRow.RefreshId)",
+													"type": "Expression"
+												},
 												"type": "String"
 											},
 											"startTime": {
@@ -259,7 +265,7 @@
 												"type": "String"
 											},
 											"statusMessage": {
-												"value": "Exception Alerted.",
+												"value": null,
 												"type": "String"
 											}
 										}
