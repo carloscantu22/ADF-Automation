@@ -1,0 +1,36 @@
+{
+	"name": "RefreshInfo_Orders",
+	"properties": {
+		"activities": [
+			{
+				"name": "GetRefresh",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Orders/refreshes/8e5222fe-8ccf-4ea3-9b00-3b831a772459",
+					"method": "GET",
+					"body": {
+						"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://*.asazure.windows.net  "
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "WIP"
+		},
+		"annotations": []
+	}
+}
