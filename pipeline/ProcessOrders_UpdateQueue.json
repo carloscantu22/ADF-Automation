@@ -201,7 +201,7 @@
 												"type": "String"
 											},
 											"statusMessage": {
-												"value": "Cancelled due to request by user.",
+												"value": null,
 												"type": "String"
 											}
 										}
