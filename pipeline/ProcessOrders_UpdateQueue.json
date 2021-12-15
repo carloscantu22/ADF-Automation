@@ -459,7 +459,7 @@
 											},
 											"statusMessage": {
 												"value": {
-													"value": "@concat('Running: ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'HH:mm:ss'))",
+													"value": "@string(activity('GetRefreshId').output.firstRow.EventStatusMessage)",
 													"type": "Expression"
 												},
 												"type": "String"
