@@ -267,7 +267,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"storedProcedureName": "[Controls].[ADFQueueUpdate]",
+					"storedProcedureName": "[Controls].[ADFOrdersQueueUpdate]",
 					"storedProcedureParameters": {
 						"endTime": {
 							"value": null,
