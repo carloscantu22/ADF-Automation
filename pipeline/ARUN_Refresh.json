@@ -22,8 +22,19 @@
 						"type": "Expression"
 					},
 					"authentication": {
-						"type": "MSI",
-						"resource": "https://analysis.windows.net/powerbi/api"
+						"type": "ServicePrincipal",
+						"userTenant": "b4e848aa-20ef-4814-a34a-93fe53f3970f",
+						"username": "d660c6cc-578d-465e-8bf4-81a0f9347962",
+						"resource": "https://analysis.windows.net/powerbi/api",
+						"password": {
+							"type": "AzureKeyVaultSecret",
+							"store": {
+								"referenceName": "BIEKeyChain",
+								"type": "LinkedServiceReference"
+							},
+							"secretName": "ServicePrincipal",
+							"secretVersion": "83d549956966424db054cfd110489574"
+						}
 					}
 				}
 			}
