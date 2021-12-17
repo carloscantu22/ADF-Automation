@@ -22,10 +22,8 @@
 						"type": "Expression"
 					},
 					"authentication": {
-						"type": "ServicePrincipal",
-						"userTenant": "b4e848aa-20ef-4814-a34a-93fe53f3970f",
-						"username": "d660c6cc-578d-465e-8bf4-81a0f9347962",
-						"resource": "https://analysis.windows.net/powerbi/api",
+						"type": "Basic",
+						"username": "app:c1371b68-427d-45b2-bd35-25fcc163d044@b4e848aa-20ef-4814-a34a-93fe53f3970f",
 						"password": {
 							"type": "AzureKeyVaultSecret",
 							"store": {
