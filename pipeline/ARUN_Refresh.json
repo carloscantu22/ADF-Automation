@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"url": "https://api.powerbi.com/v1.0/myorg/datasets/effad75f-c7e7-45d5-9be7-018725791ec9/refreshes",
-					"method": "GET",
+					"method": "POST",
 					"body": {
 						"value": "@concat('{\n\tnotifyOption: \"MailOnFailure\"\n','}')",
 						"type": "Expression"
