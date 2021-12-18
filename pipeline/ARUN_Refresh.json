@@ -18,21 +18,12 @@
 					"url": "https://api.powerbi.com/v1.0/myorg/datasets/effad75f-c7e7-45d5-9be7-018725791ec9/refreshes",
 					"method": "POST",
 					"body": {
-						"value": "@concat('{\n\tnotifyOption: \"MailOnFailure\"\n','}')",
+						"value": "@concat('{','}')",
 						"type": "Expression"
 					},
 					"authentication": {
-						"type": "Basic",
-						"username": "app:c1371b68-427d-45b2-bd35-25fcc163d044@b4e848aa-20ef-4814-a34a-93fe53f3970f",
-						"password": {
-							"type": "AzureKeyVaultSecret",
-							"store": {
-								"referenceName": "BIEKeyChain",
-								"type": "LinkedServiceReference"
-							},
-							"secretName": "ServicePrincipal",
-							"secretVersion": "83d549956966424db054cfd110489574"
-						}
+						"type": "MSI",
+						"resource": "https://analysis.windows.net/powerbi/api"
 					}
 				}
 			}
