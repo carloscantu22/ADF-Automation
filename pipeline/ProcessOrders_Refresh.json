@@ -204,34 +204,184 @@
 							]
 						},
 						{
-							"value": "OrdersTabularFullEnd"
+							"value": "OrdersTabularFullEnd",
+							"activities": [
+								{
+									"name": "Set_GenericFE",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
 						},
 						{
-							"value": "OrdersTabularHourlyEnd"
+							"value": "OrdersTabularHourlyEnd",
+							"activities": [
+								{
+									"name": "Set_GenericHE",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
 						},
 						{
-							"value": "OrdersTabularFullRevenuePacing"
+							"value": "OrdersTabularFullRevenuePacing",
+							"activities": [
+								{
+									"name": "Set_FullRevenuePacing",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
 						},
 						{
-							"value": "OrdersTabularFullEMEA"
+							"value": "OrdersTabularFullEMEA",
+							"activities": [
+								{
+									"name": "Set_FullEMEA",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
 						},
 						{
-							"value": "OrdersTabularHourlyDimensions"
+							"value": "OrdersTabularHourlyDimensions",
+							"activities": [
+								{
+									"name": "Set_HourlyDimensions",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
 						},
 						{
-							"value": "OrdersTabularHourlyRetailTransactions"
+							"value": "OrdersTabularHourlyRetailTransactions",
+							"activities": [
+								{
+									"name": "Set_HourlyRetail",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
 						},
 						{
-							"value": "OrdersRefreshMonthlyGoals"
+							"value": "OrdersRefreshMonthlyGoals",
+							"activities": [
+								{
+									"name": "Set_MonthlyGoals",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
 						},
 						{
-							"value": "OrdersTabularHourlyRetailTraffic"
+							"value": "OrdersTabularHourlyRetailTraffic",
+							"activities": [
+								{
+									"name": "Set_HourlyRetailTraffic",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
 						},
 						{
-							"value": "OrdersTabularFullStart"
+							"value": "OrdersTabularFullStart",
+							"activities": [
+								{
+									"name": "Set_GenericFS",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
 						},
 						{
-							"value": "OrdersTabularHourlyStart"
+							"value": "OrdersTabularHourlyStart",
+							"activities": [
+								{
+									"name": "Set_GenericHS",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
 						},
 						{
 							"value": "FactPartitionsEnd"
