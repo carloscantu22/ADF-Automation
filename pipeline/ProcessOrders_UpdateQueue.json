@@ -169,10 +169,7 @@
 										"storedProcedureName": "[Controls].[ADFOrdersQueueUpdate]",
 										"storedProcedureParameters": {
 											"endTime": {
-												"value": {
-													"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.endTime),'Eastern Standard Time')",
-													"type": "Expression"
-												},
+												"value": null,
 												"type": "DateTime"
 											},
 											"eventId": {
@@ -190,14 +187,11 @@
 												"type": "String"
 											},
 											"startTime": {
-												"value": {
-													"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.startTime),'Eastern Standard Time')",
-													"type": "Expression"
-												},
+												"value": null,
 												"type": "DateTime"
 											},
 											"status": {
-												"value": "F",
+												"value": null,
 												"type": "String"
 											},
 											"statusMessage": {
