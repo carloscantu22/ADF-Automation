@@ -245,7 +245,7 @@
 											"Content-Type": "application/json"
 										},
 										"body": {
-											"value": "@concat('{\"ModelName\" : \"','Warehouse 2.0','\" , \"StartDateTime\" : \"',utcnow(),'\"}')",
+											"value": "@concat('{','}')",
 											"type": "Expression"
 										}
 									}
