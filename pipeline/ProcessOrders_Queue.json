@@ -51,7 +51,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT CASE\n\tWHEN EXISTS (\n\t\tSELECT * FROM [Controls].[AzureEventQueue]\n\t\tWHERE [EventType] = 'SSAS Refresh'\n\t\t  AND [EventName] = 'FactPartitionsStart'\n\t\t  AND [EventStatus] IS NULL\n\t) THEN 1\n\tWHEN EXISTS (\n\t\tSELECT * FROM [Controls].[AzureEventQueue]\n\t\tWHERE [EventType] = 'SSAS Refresh'\n\t\t  AND [EventName] = 'OrdersTabularFactPartitions'\n\t\t  AND ([EventStatus] = 'R' OR [EventStatus] IS NULL)\n\t) THEN 0\nELSE 1 END AS 'Idle'",
+						"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[AzureEventQueue]\n\tWHERE [EventType] = 'SSAS Refresh'\n\t  AND ([EventStatus] = 'R' OR [EventStatus] IS NULL)\n)\nTHEN 0\nELSE 1 END AS 'Idle'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
