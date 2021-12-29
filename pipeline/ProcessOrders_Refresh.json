@@ -124,7 +124,7 @@
 									"typeProperties": {
 										"variableName": "RefreshParameters",
 										"value": {
-											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"EMEA Orders\",\n            \"partition\":\"EMEA Orders Hourly\"\n        }\n    ]\n}')",
 											"type": "Expression"
 										}
 									}
@@ -263,7 +263,7 @@
 									"typeProperties": {
 										"variableName": "RefreshParameters",
 										"value": {
-											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Date Bridge\"\n        }\n    ]\n}')",
 											"type": "Expression"
 										}
 									}
@@ -281,7 +281,7 @@
 									"typeProperties": {
 										"variableName": "RefreshParameters",
 										"value": {
-											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Revenue Pacing\"\n        }\n    ]\n}')",
 											"type": "Expression"
 										}
 									}
@@ -317,7 +317,7 @@
 									"typeProperties": {
 										"variableName": "RefreshParameters",
 										"value": {
-											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Carhartt Retail Traffic\"\n        },\n        {\n            \"table\": \"Daily Goals\"\n        },\n        {\n            \"table\": \"Contracts\"\n        },\n        {\n            \"table\": \"RefreshDateTime\"\n        }\n\n    ]\n}')",
 											"type": "Expression"
 										}
 									}
@@ -335,7 +335,7 @@
 									"typeProperties": {
 										"variableName": "RefreshParameters",
 										"value": {
-											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Carhartt Retail Stores\"\n        },\n        {\n            \"table\": \"Carhartt Retail Transactions\",\n            \"partition\": \"Retail Transactions Hourly\"\n        }\n    ]\n}')",
 											"type": "Expression"
 										}
 									}
@@ -371,7 +371,7 @@
 									"typeProperties": {
 										"variableName": "RefreshParameters",
 										"value": {
-											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Carhartt Retail Traffic\"\n        }\n    ]\n}')",
 											"type": "Expression"
 										}
 									}
@@ -407,7 +407,7 @@
 									"typeProperties": {
 										"variableName": "RefreshParameters",
 										"value": {
-											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Date Bridge\"\n        }\n    ]\n}')",
 											"type": "Expression"
 										}
 									}
@@ -454,14 +454,14 @@
 							"value": "OrdersTabularFullFacts",
 							"activities": [
 								{
-									"name": "Set_FullFacts",
+									"name": "Set_GenericFF",
 									"type": "SetVariable",
 									"dependsOn": [],
 									"userProperties": [],
 									"typeProperties": {
 										"variableName": "RefreshParameters",
 										"value": {
-											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Date Bridge\"\n        }\n    ]\n}')",
 											"type": "Expression"
 										}
 									}
