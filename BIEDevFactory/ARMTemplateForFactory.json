@@ -6415,7 +6415,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Date Bridge\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
@@ -6644,7 +6644,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Date Bridge\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
