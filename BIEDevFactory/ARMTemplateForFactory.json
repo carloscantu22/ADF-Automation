@@ -6325,7 +6325,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Daily Goals\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
@@ -6343,7 +6343,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"EMEA Orders\",\n            \"partition\":\"EMEA Orders Hourly\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
@@ -6361,7 +6361,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Carhartt Retail Stores\"\n        },\n        {\n            \"table\": \"Carhartt Retail Transactions\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
@@ -6379,7 +6379,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Cancel Reasons\"\n        },\n        {\n            \"table\": \"445 Calendar\"\n        },\n        {\n            \"table\": \"Carhartt Retail Date Periods\"\n        },\n        {\n            \"table\": \"Carhartt Retail Traffic\"\n        },\n        {\n            \"table\": \"Contracts\"\n        },\n        {\n            \"table\": \"Consumers\"\n        },\n        {\n            \"table\": \"Customers\"\n        },\n        {\n            \"table\": \"Daily Goals\"\n        },\n        {\n            \"table\": \"Delivery Block Categories\"\n        },\n        {\n            \"table\": \"Display Date\"\n        },\n        {\n            \"table\": \"Event Date\"\n        },\n        {\n            \"table\": \"Event Date Periods\"\n        },\n        {\n            \"table\": \"Expected Delivery Date\"\n        },\n        {\n            \"table\": \"Expected Ship Date\"\n        },\n        {\n            \"table\": \"Geography\"\n        },\n        {\n            \"table\": \"Inventory Stock Levels\"\n        },\n        {\n            \"table\": \"Item Plans Customers\"\n        },\n        {\n            \"table\": \"Item Plans UPC\"\n        },\n        {\n            \"table\": \"Material Availability Date\"\n        },\n        {\n            \"table\": \"Material Programs\"\n        },\n        {\n            \"table\": \"Materials\"\n        },\n        {\n            \"table\": \"Monthly Goals\"\n        },\n        {\n            \"table\": \"Order Date\"\n        },\n        {\n            \"table\": \"Original Expected Delivery Date\"\n        },\n        {\n            \"table\": \"Pick Ticket Start Ship Date\"\n        },\n        {\n            \"table\": \"Pick Ticket Status\"\n        },\n        {\n            \"table\": \"Pick Tickets\"\n        },\n        {\n            \"table\": \"ProductCategories\"\n        },\n        {\n            \"table\": \"Products\"\n        },\n        {\n            \"table\": \"RefreshDateTime\"\n        },\n        {\n            \"table\": \"Reporting Notification Messages\"\n        },\n        {\n            \"table\": \"Requested Delivery Date\"\n        },\n        {\n            \"table\": \"Required Ship Date\"\n        },\n        {\n            \"table\": \"Retail Discounts\"\n        },\n        {\n            \"table\": \"Retail Discounts Bridge\"\n        },\n        {\n            \"table\": \"Revenue\"\n        },\n        {\n            \"table\": \"Revenue Segments\"\n        },\n        {\n            \"table\": \"Sales Segments\"\n        },\n        {\n            \"table\": \"ShipVia Codes\"\n        },\n        {\n            \"table\": \"SLA Ship Date\"\n        },\n        {\n            \"table\": \"Stop Ship Date\"\n        },\n        {\n            \"table\": \"System Dates\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
@@ -6433,7 +6433,38 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Date Bridge\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										},
+										{
+											"name": "SendCompletionEmail",
+											"type": "WebActivity",
+											"dependsOn": [
+												{
+													"activity": "Set_GenericFE",
+													"dependencyConditions": [
+														"Succeeded"
+													]
+												}
+											],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"url": "https://prod-08.northcentralus.logic.azure.com:443/workflows/741160cf9fc944e29ca979527b4043e5/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=s30mG3Chr2YBMW7TsrkUonyVbvinFKGrR67lr6BKJpA",
+												"method": "POST",
+												"headers": {
+													"Content-Type": "application/json"
+												},
+												"body": {
+													"value": "@concat('{\"ModelName\" : \"','Warehouse 2.0','\" , \"StartDateTime\" : \"',utcnow(),'\"}')",
 													"type": "Expression"
 												}
 											}
@@ -6451,7 +6482,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Date Bridge\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
@@ -6469,7 +6500,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Revenue Pacing\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
@@ -6487,7 +6518,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"EMEA Orders\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
@@ -6505,7 +6536,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Carhartt Retail Traffic\"\n        },\n        {\n            \"table\": \"Daily Goals\"\n        },\n        {\n            \"table\": \"Contracts\"\n        },\n        {\n            \"table\": \"RefreshDateTime\"\n        }\n\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
@@ -6523,7 +6554,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Carhartt Retail Stores\"\n        },\n        {\n            \"table\": \"Carhartt Retail Transactions\",\n            \"partition\": \"Retail Transactions Hourly\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
@@ -6541,7 +6572,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"AtOnceBudgetNeed\"\n        },\n        {\n            \"table\": \"Monthly Goals\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
@@ -6559,7 +6590,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Carhartt Retail Traffic\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
@@ -6595,7 +6626,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Date Bridge\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
@@ -6642,14 +6673,14 @@
 									"value": "OrdersTabularFullFacts",
 									"activities": [
 										{
-											"name": "Set_FullFacts",
+											"name": "Set_GenericFF",
 											"type": "SetVariable",
 											"dependsOn": [],
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Date Bridge\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
