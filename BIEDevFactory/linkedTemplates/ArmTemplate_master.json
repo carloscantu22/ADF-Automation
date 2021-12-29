@@ -39,6 +39,10 @@
 			"type": "string",
 			"defaultValue": "bobjservice@carhartt.com"
 		},
+		"BIEKeyChain_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://BIEDevKeyChain.vault.azure.net/"
+		},
 		"DBNSQLP01_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "carhartt-nt\\bobjservice"
@@ -84,6 +88,9 @@
 					},
 					"AzureBIDevelopment_properties_typeProperties_userName": {
 						"value": "[parameters('AzureBIDevelopment_properties_typeProperties_userName')]"
+					},
+					"BIEKeyChain_properties_typeProperties_baseUrl": {
+						"value": "[parameters('BIEKeyChain_properties_typeProperties_baseUrl')]"
 					}
 				}
 			},
