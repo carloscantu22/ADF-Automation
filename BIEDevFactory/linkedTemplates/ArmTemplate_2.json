@@ -54,7 +54,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 8,\n    \"RetryCount\": 2,\n    \"Objects\": ',activity('PartitionRefreshQueue').output.firstRow.Refresh,'\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 6,\n    \"RetryCount\": 2,\n    \"Objects\": ',activity('PartitionRefreshQueue').output.firstRow.Refresh,'\n}')",
 													"type": "Expression"
 												}
 											}

@@ -4624,8 +4624,8 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Orders/refreshes/7749f1b9-d096-47f0-89e0-e4793962aaf6",
-							"method": "DELETE",
+							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Orders/refreshes/806521de-2fcb-4003-9066-d3fa5922b091",
+							"method": "GET",
 							"headers": {},
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
@@ -4643,7 +4643,7 @@
 					"cancelAfter": {}
 				},
 				"folder": {
-					"name": "WIP"
+					"name": "Orders"
 				},
 				"annotations": []
 			},
@@ -6257,7 +6257,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 8,\n    \"RetryCount\": 2,\n    \"Objects\": ',activity('PartitionRefreshQueue').output.firstRow.Refresh,'\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 6,\n    \"RetryCount\": 2,\n    \"Objects\": ',activity('PartitionRefreshQueue').output.firstRow.Refresh,'\n}')",
 													"type": "Expression"
 												}
 											}
