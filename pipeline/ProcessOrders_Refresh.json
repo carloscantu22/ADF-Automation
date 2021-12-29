@@ -76,6 +76,171 @@
 									}
 								}
 							]
+						},
+						{
+							"value": "OrdersRefreshReportingNotifications",
+							"activities": [
+								{
+									"name": "Set_ReportingNotifications",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"value": "OrdersRefreshDailyGoals",
+							"activities": [
+								{
+									"name": "Set_DailyGoals",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"value": "OrdersTabularHourlyEMEA",
+							"activities": [
+								{
+									"name": "Set_HourlyEMEA",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"value": "OrdersTabularFullRetail",
+							"activities": [
+								{
+									"name": "Set_FullRetail",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"value": "OrdersTabularFullDimensions",
+							"activities": [
+								{
+									"name": "Set_FullDimensions",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"value": "OrdersTabularHourlyRevenuePacing",
+							"activities": [
+								{
+									"name": "Set_HourlyRevenuePacing",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"value": "FactPartitionsStart",
+							"activities": [
+								{
+									"name": "Set_GenericFPS",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"value": "OrdersTabularFullEnd"
+						},
+						{
+							"value": "OrdersTabularHourlyEnd"
+						},
+						{
+							"value": "OrdersTabularFullRevenuePacing"
+						},
+						{
+							"value": "OrdersTabularFullEMEA"
+						},
+						{
+							"value": "OrdersTabularHourlyDimensions"
+						},
+						{
+							"value": "OrdersTabularHourlyRetailTransactions"
+						},
+						{
+							"value": "OrdersRefreshMonthlyGoals"
+						},
+						{
+							"value": "OrdersTabularHourlyRetailTraffic"
+						},
+						{
+							"value": "OrdersTabularFullStart"
+						},
+						{
+							"value": "OrdersTabularHourlyStart"
+						},
+						{
+							"value": "FactPartitionsEnd"
+						},
+						{
+							"value": "OrdersTabularHourlyRetail"
+						},
+						{
+							"value": "OrdersTabularFullFacts"
 						}
 					],
 					"defaultActivities": [
