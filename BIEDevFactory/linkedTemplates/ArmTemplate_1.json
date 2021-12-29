@@ -1242,7 +1242,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT [EventId],[EventStatusMessage],[RefreshId],[EventName] FROM [Controls].[AzureEventQueue]\n\tWHERE [EventType] = 'SSAS Refresh'\n\t  AND [EventName] = 'OrdersTabularFactPartitions'\n\t  AND [EventStatus] = 'R'\nORDER BY [EventId]",
+								"sqlReaderQuery": "SELECT [EventId],[EventStatusMessage],[RefreshId],[EventName] FROM [Controls].[AzureEventQueue]\n\tWHERE [EventType] = 'SSAS Refresh'\n\t  AND [EventStatus] = 'R'\nORDER BY [EventId]",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
