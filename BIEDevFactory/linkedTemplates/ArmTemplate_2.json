@@ -904,13 +904,6 @@
 							"type": "PipelineReference"
 						},
 						"parameters": {}
-					},
-					{
-						"pipelineReference": {
-							"referenceName": "ProcessOrders_Queue",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
 					}
 				],
 				"type": "ScheduleTrigger",
@@ -925,8 +918,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/ProcessSupply_Queue')]",
-				"[concat(variables('factoryId'), '/pipelines/ProcessWarehouse_Queue')]",
-				"[concat(variables('factoryId'), '/pipelines/ProcessOrders_Queue')]"
+				"[concat(variables('factoryId'), '/pipelines/ProcessWarehouse_Queue')]"
 			]
 		}
 	]
