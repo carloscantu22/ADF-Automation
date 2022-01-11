@@ -61,7 +61,10 @@
 								},
 								"waitOnCompletion": true,
 								"parameters": {
-									"messageCard": "{\n    \"@type\": \"MessageCard\",\n    \"@context\": \"http://schema.org/extensions\",\n    \"themeColor\": \"FF0000\",\n    \"summary\": \"Supply Queue Error\",\n    \"sections\": [\n        {\n            \"activityTitle\": \"Supply Queue Error\",\n            \"facts\": [\n                {\n                    \"name\": \"Error:\",\n                    \"value\": \"Invalid Event Status\"\n                },\n                {\n                    \"name\": \"Queue:\",\n                    \"value\": \"Supply\"\n                },\n                {\n                    \"name\": \"Notification time (EST):\",\n                    \"value\": \"@{convertFromUtc(utcnow(),'Eastern Standard Time')}\"\n                }\n            ],\n            \"markdown\": true\n        }\n    ]\n}"
+									"messageCard": {
+										"value": "{\n    \"@type\": \"MessageCard\",\n    \"@context\": \"http://schema.org/extensions\",\n    \"themeColor\": \"FF0000\",\n    \"summary\": \"Supply Queue Error\",\n    \"sections\": [\n        {\n            \"activityTitle\": \"Supply Queue Error\",\n            \"facts\": [\n                {\n                    \"name\": \"Error:\",\n                    \"value\": \"Invalid Event Status\"\n                },\n                {\n                    \"name\": \"Queue:\",\n                    \"value\": \"Supply\"\n                },\n                {\n                    \"name\": \"Notification time (EST):\",\n                    \"value\": \"@{convertFromUtc(utcnow(),'Eastern Standard Time')}\"\n                }\n            ],\n            \"markdown\": true\n        }\n    ]\n}",
+										"type": "Expression"
+									}
 								}
 							}
 						}
@@ -70,7 +73,7 @@
 			}
 		],
 		"folder": {
-			"name": "Process Supply"
+			"name": "Supply"
 		},
 		"annotations": []
 	}
