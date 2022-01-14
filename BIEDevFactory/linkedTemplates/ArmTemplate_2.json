@@ -343,7 +343,7 @@
 					"cancelAfter": {}
 				},
 				"folder": {
-					"name": "Process Supply"
+					"name": "Supply"
 				},
 				"annotations": []
 			},
@@ -746,7 +746,7 @@
 					"cancelAfter": {}
 				},
 				"folder": {
-					"name": "Process Supply"
+					"name": "Supply"
 				},
 				"annotations": []
 			},
