@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "NightlyDimentions",
+				"name": "NightlyDimensions",
 				"type": "WebActivity",
 				"dependsOn": [],
 				"policy": {
