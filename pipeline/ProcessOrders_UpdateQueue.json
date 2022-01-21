@@ -147,6 +147,42 @@
 										"referenceName": "BIP01",
 										"type": "LinkedServiceReference"
 									}
+								},
+								{
+									"name": "Wait1",
+									"type": "Wait",
+									"dependsOn": [
+										{
+											"activity": "UpdateQueue_Succeed",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"waitTimeInSeconds": 3
+									}
+								},
+								{
+									"name": "Call_Queue",
+									"type": "ExecutePipeline",
+									"dependsOn": [
+										{
+											"activity": "Wait1",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "ProcessOrders_Queue",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true
+									}
 								}
 							]
 						},
