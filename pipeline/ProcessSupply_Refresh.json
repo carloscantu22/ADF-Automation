@@ -39,7 +39,7 @@
 							]
 						},
 						{
-							"value": "Supply_Hourl",
+							"value": "Supply_Hourly",
 							"activities": [
 								{
 									"name": "Set_Hourly",
