@@ -7,7 +7,7 @@
 		"typeProperties": {
 			"connectionString": "integrated security=True;data source=DBNSQLP01;initial catalog=CarharttDW",
 			"userName": "carhartt-nt\\bobjservice",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJhNzkxNTZmMi1hOTgzLTQwM2YtODkzMS1mZDA4OWE0NTk1YWIiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiIyNzk4NmNhMi0yZTM3LTQxNjItYjZhZC1mY2VmZGVjMDE4NGQiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "GWP02IntegrationRuntime",
