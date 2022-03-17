@@ -324,7 +324,7 @@
 							]
 						},
 						{
-							"value": "Supply_InventoryPlansNIghtly",
+							"value": "Supply_InventoryPlansNightly",
 							"activities": [
 								{
 									"name": "Set_InventoryPlans",
