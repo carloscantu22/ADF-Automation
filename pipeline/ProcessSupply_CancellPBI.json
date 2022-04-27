@@ -1,0 +1,110 @@
+{
+	"name": "ProcessSupply_CancellPBI",
+	"properties": {
+		"activities": [
+			{
+				"name": "GetRefresh",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
+					"method": "GET",
+					"body": {
+						"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://*.asazure.windows.net  "
+					}
+				}
+			},
+			{
+				"name": "FormatResponse",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "GetRefresh",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Response",
+					"value": {
+						"value": "@array(first(json(activity('GetRefresh').output.Response)))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "CheckStatus",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "FormatResponse",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@bool(startsWith(string(variables('Response')[0].status),'In'))",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "Cancell Current Refresh",
+							"type": "WebActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": {
+									"value": "@concat('https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes/',string(variables('Response')[0].refreshId))",
+									"type": "Expression"
+								},
+								"method": "DELETE",
+								"body": {
+									"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
+									"type": "Expression"
+								},
+								"authentication": {
+									"type": "MSI",
+									"resource": "https://*.asazure.windows.net  "
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"Response": {
+				"type": "Array"
+			}
+		},
+		"folder": {
+			"name": "Supply_PBI"
+		},
+		"annotations": []
+	}
+}
