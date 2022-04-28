@@ -21,13 +21,13 @@
 					},
 					"ifTrueActivities": [
 						{
-							"name": "ProcessSupply_Running",
+							"name": "ProcessSupply_RunningPBI",
 							"type": "ExecutePipeline",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "ProcessSupply_Running",
+									"referenceName": "ProcessSupply_RunningPBI",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true
