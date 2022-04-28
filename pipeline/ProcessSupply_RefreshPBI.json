@@ -410,7 +410,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT [EventId],[EventName] FROM [Controls].[AzureSharedEventQueue]\nWHERE EventType = 'Supply' AND [EventStatus] IS NULL\nORDER BY EventId",
+						"sqlReaderQuery": "SELECT [EventId],[EventName] FROM [Controls].[ADFRefreshQueue]\nWHERE [ModelName] = 'Supply'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND [EventStatus] IS NULL\nORDER BY [EventId]",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
