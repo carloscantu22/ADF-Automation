@@ -50,13 +50,13 @@
 					},
 					"ifFalseActivities": [
 						{
-							"name": "ProcessSupply_Refresh",
+							"name": "ProcessSupply_RefreshPBI",
 							"type": "ExecutePipeline",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "ProcessSupply_Refresh",
+									"referenceName": "ProcessSupply_RefreshPBI",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true
