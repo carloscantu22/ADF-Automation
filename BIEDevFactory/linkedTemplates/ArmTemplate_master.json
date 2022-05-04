@@ -77,20 +77,11 @@
 					"AzureBIDevelopment_password": {
 						"value": "[parameters('AzureBIDevelopment_password')]"
 					},
-					"BIP01_connectionString": {
-						"value": "[parameters('BIP01_connectionString')]"
-					},
-					"biedev storage_connectionString": {
-						"value": "[parameters('biedev storage_connectionString')]"
-					},
 					"AzureBIDevelopment_properties_typeProperties_url": {
 						"value": "[parameters('AzureBIDevelopment_properties_typeProperties_url')]"
 					},
 					"AzureBIDevelopment_properties_typeProperties_userName": {
 						"value": "[parameters('AzureBIDevelopment_properties_typeProperties_userName')]"
-					},
-					"BIEKeyChain_properties_typeProperties_baseUrl": {
-						"value": "[parameters('BIEKeyChain_properties_typeProperties_baseUrl')]"
 					}
 				}
 			},
@@ -110,6 +101,12 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"BIP01_connectionString": {
+						"value": "[parameters('BIP01_connectionString')]"
+					},
+					"biedev storage_connectionString": {
+						"value": "[parameters('biedev storage_connectionString')]"
+					},
 					"DBNSQLP01_connectionString": {
 						"value": "[parameters('DBNSQLP01_connectionString')]"
 					},
@@ -118,6 +115,9 @@
 					},
 					"Db21_connectionString": {
 						"value": "[parameters('Db21_connectionString')]"
+					},
+					"BIEKeyChain_properties_typeProperties_baseUrl": {
+						"value": "[parameters('BIEKeyChain_properties_typeProperties_baseUrl')]"
 					},
 					"DBNSQLP01_properties_typeProperties_userName": {
 						"value": "[parameters('DBNSQLP01_properties_typeProperties_userName')]"
@@ -146,6 +146,26 @@
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Resources/deployments', 'BIEDevFactory_ArmTemplate_1')]"
+			]
+		},
+		{
+			"name": "BIEDevFactory_ArmTemplate_3",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_3.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'BIEDevFactory_ArmTemplate_2')]"
 			]
 		}
 	]
