@@ -15,7 +15,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Orders/refreshes/c54ffebe-de21-42d0-9c12-c940530ce968",
+					"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Orders/refreshes/9a15de7a-5eb0-4132-8f66-776afbea8bf8",
 					"method": "DELETE",
 					"body": {
 						"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
