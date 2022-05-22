@@ -1,0 +1,28 @@
+{
+	"name": "TelegramNotifications",
+	"properties": {
+		"activities": [
+			{
+				"name": "Web1",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://api.telegram.org/bot5375063738:AAEW9zo8N5Ij2DdVrOJWWtpecK70xK83oGw/sendMessage?chat_id=-528140690&disable_web_page_preview=1&parse_mode=Markdown&text=Sorry%20for%20you.",
+					"method": "GET"
+				}
+			}
+		],
+		"folder": {
+			"name": "WIP"
+		},
+		"annotations": []
+	}
+}

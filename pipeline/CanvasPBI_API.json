@@ -15,10 +15,10 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"url": "https://api.powerbi.com/v1.0/myorg/groups/516449d1-03ba-45f4-9500-c94aee0d3912/datasets/52aaffc7-8f20-4b88-8354-a9f3e40a6789/refreshes",
+					"url": "https://api.powerbi.com/v1.0/myorg/groups/d2584f83-3b80-414f-a5c5-2f3035983c85/datasets/5f7a2fe6-b9bd-4c35-91e2-ce420255bc6c/refreshes",
 					"method": "POST",
 					"body": {
-						"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"Nightly Partition ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'dddd'),'\"\n        },\n        {\n            \"table\": \"Inventory Plans\",\n            \"partition\": \"Nightly Partition ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'dddd'),'\"\n        }\n    ]\n}')",
+						"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\"\n        },\n    ]\n}')",
 						"type": "Expression"
 					},
 					"authentication": {
