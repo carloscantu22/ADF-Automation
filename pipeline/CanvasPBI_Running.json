@@ -1,0 +1,53 @@
+{
+	"name": "CanvasPBI_Running",
+	"properties": {
+		"activities": [
+			{
+				"name": "If Condition1",
+				"type": "IfCondition",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(activity('RunningValidation').output.firstRow.Running,1)",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "ProcessSupply_RefreshPBI",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "ProcessSupply_RefreshPBI",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "ProcessSupply_UpdateQueuePBI",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "ProcessSupply_UpdateQueuePBI",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true
+							}
+						}
+					]
+				}
+			}
+		],
+		"folder": {
+			"name": "Canvas"
+		},
+		"annotations": []
+	}
+}
