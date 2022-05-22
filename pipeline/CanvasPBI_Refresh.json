@@ -311,6 +311,10 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
+					"expression": {
+						"value": "@equals(int(variables('ProcessingConditional')),1)",
+						"type": "Expression"
+					},
 					"ifTrueActivities": [
 						{
 							"name": "RefreshCanvasPBI",
