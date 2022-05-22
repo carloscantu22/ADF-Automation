@@ -384,7 +384,7 @@
 							"typeProperties": {
 								"variableName": "Response",
 								"value": {
-									"value": "@array(first(json(activity('GetRefresh').output.Response)))",
+									"value": "@array(first(json(activity('GetRefresh').output.Value)))",
 									"type": "Expression"
 								}
 							}
@@ -429,16 +429,9 @@
 										},
 										"type": "String"
 									},
-									"refreshId": {
-										"value": {
-											"value": "@string(variables('Response')[0].RefreshId)",
-											"type": "Expression"
-										},
-										"type": "String"
-									},
 									"requestId": {
 										"value": {
-											"value": "@string(pipeline().TriggerId)",
+											"value": "@string(variables('Response')[0].requestId)",
 											"type": "Expression"
 										},
 										"type": "String"
