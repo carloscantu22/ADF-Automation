@@ -23,7 +23,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"url": {
-						"value": "@concat('https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes/',string(activity('GetRefreshId').output.firstRow.RefreshId))",
+						"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/d2584f83-3b80-414f-a5c5-2f3035983c85/datasets/5f7a2fe6-b9bd-4c35-91e2-ce420255bc6c/refreshes/',string(activity('GetRefreshId').output.firstRow.RefreshId))",
 						"type": "Expression"
 					},
 					"method": "GET",
@@ -33,7 +33,7 @@
 					},
 					"authentication": {
 						"type": "MSI",
-						"resource": "https://*.asazure.windows.net  "
+						"resource": "https://analysis.windows.net/powerbi/api"
 					}
 				}
 			},
@@ -52,7 +52,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT [EventId],[RefreshId],[EventName] FROM [Controls].[AzureSharedEventQueue]\nWHERE [EventType] = 'Supply' AND [EventStatus] = 'R'\nORDER BY [EventId]",
+						"sqlReaderQuery": "  SELECT [EventId],[RefreshId],[EventName] FROM [Controls].[ADFRefreshQueue]\nWHERE [EventType] = 'PBI Refresh' AND [ModelName] = 'Canvas' AND [EventStatus] = 'R'\nORDER BY [EventId]",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
