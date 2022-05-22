@@ -4484,10 +4484,10 @@
 									]
 								},
 								{
-									"value": "inProgress",
+									"value": "InProgress",
 									"activities": [
 										{
-											"name": "UpdateQueue_Running",
+											"name": "UpdateCanvas_Running",
 											"type": "SqlServerStoredProcedure",
 											"dependsOn": [],
 											"policy": {
@@ -4499,7 +4499,7 @@
 											},
 											"userProperties": [],
 											"typeProperties": {
-												"storedProcedureName": "[[Controls].[ADFQueueUpdate]",
+												"storedProcedureName": "[[Controls].[UpdateADFQueueRefresh]",
 												"storedProcedureParameters": {
 													"endTime": {
 														"value": null,
@@ -4512,9 +4512,16 @@
 														},
 														"type": "Int32"
 													},
-													"refreshId": {
+													"pipelineRunId": {
 														"value": {
-															"value": "@string(activity('GetRefreshId').output.firstRow.RefreshId)",
+															"value": "@activity('GetRefreshId').output.firstRow.PipelineRunID",
+															"type": "Expression"
+														},
+														"type": "String"
+													},
+													"requestId": {
+														"value": {
+															"value": "@activity('GetRefreshId').output.firstRow.RequestID",
 															"type": "Expression"
 														},
 														"type": "String"
