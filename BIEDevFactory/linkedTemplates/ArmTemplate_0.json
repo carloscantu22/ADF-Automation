@@ -6,18 +6,6 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "BIEDevFactory"
-		},
-		"AzureBIDevelopment_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'AzureBIDevelopment'"
-		},
-		"AzureBIDevelopment_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://management.azure.com/"
-		},
-		"AzureBIDevelopment_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "bobjservice@carhartt.com"
 		}
 	},
 	"variables": {
@@ -239,6 +227,48 @@
 				},
 				"folder": {
 					"name": "ARUN"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CompletionEmailTemplate')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "SendCompletionEmail",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod-13.northcentralus.logic.azure.com:443/workflows/edec3768a21d4a618a89c7ccf8c4ad0b/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Om-PN4tQZfPmI_KeEBQTkW7qGjSwrgbMrvF8RSqCfQ8",
+							"method": "POST",
+							"headers": {
+								"Content-Type": "application/json"
+							},
+							"body": {
+								"value": "@concat('{\"ModelName\" : \"','Canvas','\" , \"StartDateTime\" : \"',utcnow(),'\"}')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Canvas"
 				},
 				"annotations": []
 			},
@@ -1451,26 +1481,6 @@
 				},
 				"annotations": [],
 				"lastPublishTime": "2021-06-01T09:19:35Z"
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureBIDevelopment')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "RestService",
-				"typeProperties": {
-					"url": "[parameters('AzureBIDevelopment_properties_typeProperties_url')]",
-					"enableServerCertificateValidation": true,
-					"authenticationType": "Basic",
-					"userName": "[parameters('AzureBIDevelopment_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('AzureBIDevelopment_password')]"
-					}
-				}
 			},
 			"dependsOn": []
 		}

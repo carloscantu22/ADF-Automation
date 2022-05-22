@@ -13,6 +13,155 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/ProcessWarehouse_Running')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "RunningValidation",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[AzureSharedEventQueue]\n\tWHERE [EventType] = 'Warehouse2.0' AND [EventStatus] = 'R'\n)\nTHEN 1\nELSE 0 END AS 'Running'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						}
+					},
+					{
+						"name": "If Condition1",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "RunningValidation",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@equals(activity('RunningValidation').output.firstRow.Running,1)",
+								"type": "Expression"
+							},
+							"ifFalseActivities": [
+								{
+									"name": "ProcessWarehouse_Refresh",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "ProcessWarehouse_Refresh",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {}
+									}
+								}
+							],
+							"ifTrueActivities": [
+								{
+									"name": "ProcessWarehouse_UpdateQueue",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "ProcessWarehouse_UpdateQueue",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {}
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Warehouse"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/HourlyRun')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Warehouse_WMIPlantsHourly",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2021-08-24T23:05:00",
+						"timeZone": "Eastern Standard Time",
+						"schedule": {
+							"minutes": [
+								15
+							],
+							"hours": [
+								4,
+								5,
+								6,
+								7,
+								8,
+								9,
+								10,
+								11,
+								12,
+								13,
+								14,
+								15,
+								16,
+								17,
+								18,
+								19
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/MidnightRun')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -101,13 +250,48 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/CanvasPBI_Running')]",
+			"name": "[concat(parameters('factoryName'), '/CanvasPBI_Queue')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "RunningValidation",
+						"name": "If Condition1",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "ReadQueue",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@equals(activity('ReadQueue').output.firstRow.Idle,0)",
+								"type": "Expression"
+							},
+							"ifTrueActivities": [
+								{
+									"name": "ProcessCanvas_RunningPBI",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "CanvasPBI_Running",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {}
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "ReadQueue",
 						"type": "Lookup",
 						"dependsOn": [],
 						"policy": {
@@ -121,7 +305,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "  SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE [ModelName] = 'Canvas'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND [EventStatus] = 'R'\n)\nTHEN 1\nELSE 0 END AS 'Running'",
+								"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE [ModelName] = 'Canvas'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND ([EventStatus] = 'R' OR [EventStatus] IS NULL)\n)\nTHEN 0\nELSE 1 END AS 'Idle'",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -133,57 +317,6 @@
 									"Table": "Ipsum"
 								}
 							}
-						}
-					},
-					{
-						"name": "If Condition1",
-						"type": "IfCondition",
-						"dependsOn": [
-							{
-								"activity": "RunningValidation",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"expression": {
-								"value": "@equals(activity('RunningValidation').output.firstRow.Running,1)",
-								"type": "Expression"
-							},
-							"ifFalseActivities": [
-								{
-									"name": "ProcessCanvas_RefreshPBI",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "CanvasPBI_Refresh",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {}
-									}
-								}
-							],
-							"ifTrueActivities": [
-								{
-									"name": "ProcessSCanvas_UpdateQueuePBI",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "CanvasPBI_Update",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {}
-									}
-								}
-							]
 						}
 					}
 				],
@@ -524,7 +657,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/ProcessWarehouse_Running')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/HourlyWindow')]",
@@ -568,90 +703,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CanvasPBI_Queue')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "If Condition1",
-						"type": "IfCondition",
-						"dependsOn": [
-							{
-								"activity": "ReadQueue",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"expression": {
-								"value": "@equals(activity('ReadQueue').output.firstRow.Idle,0)",
-								"type": "Expression"
-							},
-							"ifTrueActivities": [
-								{
-									"name": "ProcessCanvas_RunningPBI",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "CanvasPBI_Running",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {}
-									}
-								}
-							]
-						}
-					},
-					{
-						"name": "ReadQueue",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE [ModelName] = 'Canvas'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND ([EventStatus] = 'R' OR [EventStatus] IS NULL)\n)\nTHEN 0\nELSE 1 END AS 'Idle'",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "AzureSQLQueue",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Lorem",
-									"Table": "Ipsum"
-								}
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Canvas"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/CanvasPBI_Running')]"
-			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ProcessAASEvents')]",
