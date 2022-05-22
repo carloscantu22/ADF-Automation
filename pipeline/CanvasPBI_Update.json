@@ -88,64 +88,6 @@
 							"value": "Completed",
 							"activities": [
 								{
-									"name": "UpdateQueue_Succeed",
-									"type": "SqlServerStoredProcedure",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"storedProcedureName": "[Controls].[ADFQueueUpdate]",
-										"storedProcedureParameters": {
-											"endTime": {
-												"value": {
-													"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.endTime),'Eastern Standard Time')",
-													"type": "Expression"
-												},
-												"type": "DateTime"
-											},
-											"eventId": {
-												"value": {
-													"value": "@int(activity('GetRefreshId').output.firstRow.EventId)",
-													"type": "Expression"
-												},
-												"type": "Int32"
-											},
-											"refreshId": {
-												"value": {
-													"value": "@string(activity('GetRefreshId').output.firstRow.RefreshId)",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"startTime": {
-												"value": {
-													"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.startTime),'Eastern Standard Time')",
-													"type": "Expression"
-												},
-												"type": "DateTime"
-											},
-											"status": {
-												"value": "C",
-												"type": "String"
-											},
-											"statusMessage": {
-												"value": null,
-												"type": "String"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "BIP01",
-										"type": "LinkedServiceReference"
-									}
-								},
-								{
 									"name": "UpdateQueue_Succeed_copy1",
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [],
