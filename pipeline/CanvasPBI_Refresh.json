@@ -621,7 +621,7 @@
 							"typeProperties": {
 								"variableName": "Response",
 								"value": {
-									"value": "@array(first(json(activity('GetRefresh').output.value)))",
+									"value": "@array(first(activity('GetRefresh').output.value))",
 									"type": "Expression"
 								}
 							}
