@@ -88,7 +88,7 @@
 							"value": "Completed",
 							"activities": [
 								{
-									"name": "UpdateQueue_Succeed_copy1",
+									"name": "UpdateQueue_Succeed",
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [],
 									"policy": {
@@ -104,7 +104,7 @@
 										"storedProcedureParameters": {
 											"endTime": {
 												"value": {
-													"value": "@convertFromUtc(activity('GetRefresh').output.endTime,'Eastern Standard Time')",
+													"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.endTime, 'yyyy-MM-ddTHH:mm:ss.fffffffZ'),'Eastern Standard Time')",
 													"type": "Expression"
 												},
 												"type": "DateTime"
@@ -125,7 +125,7 @@
 											},
 											"startTime": {
 												"value": {
-													"value": "@convertFromUtc(activity('GetRefresh').output.startTime,'Eastern Standard Time')",
+													"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.startTime, 'yyyy-MM-ddTHH:mm:ss.fffffffZ'),'Eastern Standard Time')",
 													"type": "Expression"
 												},
 												"type": "DateTime"
@@ -140,7 +140,7 @@
 											},
 											"pipelineRunId": {
 												"value": {
-													"value": "@int(activity('GetRefreshId').output.firstRow.PipelineRunID)",
+													"value": "@activity('GetRefreshId').output.firstRow.PipelineRunID",
 													"type": "Expression"
 												},
 												"type": "String"
