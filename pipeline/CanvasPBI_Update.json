@@ -23,7 +23,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"url": {
-						"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/d2584f83-3b80-414f-a5c5-2f3035983c85/datasets/5f7a2fe6-b9bd-4c35-91e2-ce420255bc6c/refreshes/',string(activity('GetRefreshId').output.firstRow.RefreshId))",
+						"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/d2584f83-3b80-414f-a5c5-2f3035983c85/datasets/5f7a2fe6-b9bd-4c35-91e2-ce420255bc6c/refreshes/',string(activity('GetRefreshId').output.firstRow.RequestId))",
 						"type": "Expression"
 					},
 					"method": "GET",
@@ -85,7 +85,7 @@
 					},
 					"cases": [
 						{
-							"value": "succeeded",
+							"value": "Completed",
 							"activities": [
 								{
 									"name": "UpdateQueue_Succeed",
