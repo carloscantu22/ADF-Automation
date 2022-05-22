@@ -57,19 +57,75 @@
 							]
 						},
 						{
-							"value": "NightlyDimensions",
+							"value": "Nightly_Dimensions",
 							"activities": [
 								{
-									"name": "Set_NightlyDimensions",
+									"name": "Set_Tables",
 									"type": "SetVariable",
-									"dependsOn": [],
+									"dependsOn": [
+										{
+											"activity": "TableRefreshQueue",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
 									"userProperties": [],
 									"typeProperties": {
 										"variableName": "RefreshParameters",
 										"value": {
-											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Country Codes\"\n        },\n       {\n            \"table\": \"Customers\"\n        },\n       {\n            \"table\": \"Item Plans Customers\"\n        },\n       {\n            \"table\": \"Date Periods\"\n        },\n       {\n            \"table\": \"Factory\"\n        },\n       {\n            \"table\": \"Dates\"\n        },\n       {\n            \"table\": \"Materials\"\n        },\n       {\n            \"table\": \"Production Plans Plan Source\"\n        },\n       {\n            \"table\": \"Products\"\n        },\n       {\n            \"table\": \"Raw Products\"\n        },\n       {\n            \"table\": \"Refresh Date Time\"\n        },\n       {\n            \"table\": \"Inventory Plans End Month\"\n        },\n       {\n            \"table\": \"Inventory Plans Start Month\"\n        },\n       {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 6,\n    \"RetryCount\": 0,\n    \"Objects\": ',activity('TableRefreshQueue').output.firstRow.Refresh,'\n}')",
 											"type": "Expression"
 										}
+									}
+								},
+								{
+									"name": "TableRefreshQueue",
+									"type": "Lookup",
+									"dependsOn": [
+										{
+											"activity": "SetForRefresh",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "@concat('SELECT CAST(\n(\n\tSELECT TRIM([Tablename]) AS ''table''\n\tFROM [Controls].[ADFEventRefreshCatalog]\n\t\tWHERE [EventName] = ''',activity('ReadRefresh').output.firstRow.EventName,'''\n\t\tAND [ModelName] = ''Canvas''\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
+												"type": "Expression"
+											},
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"dataset": {
+											"referenceName": "AzureSQLQueue",
+											"type": "DatasetReference",
+											"parameters": {
+												"Schema": "Lorem",
+												"Table": "Ipsum"
+											}
+										}
+									}
+								},
+								{
+									"name": "SetForRefresh",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "ProcessingConditional",
+										"value": "1"
 									}
 								}
 							]
@@ -228,7 +284,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT [EventId],[EventName] FROM [Controls].[ADFRefreshQueue]\nWHERE [ModelName] = 'Supply'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND [EventStatus] IS NULL\nORDER BY [EventId]",
+						"sqlReaderQuery": "SELECT [EventId],[EventName] FROM [Controls].[ADFRefreshQueue]\nWHERE [ModelName] = 'Canvas'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND [EventStatus] IS NULL\nORDER BY [EventId]",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -243,8 +299,8 @@
 				}
 			},
 			{
-				"name": "RefreshSupply",
-				"type": "WebActivity",
+				"name": "If Condition1",
+				"type": "IfCondition",
 				"dependsOn": [
 					{
 						"activity": "Switch1",
@@ -253,139 +309,163 @@
 						]
 					}
 				],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
 				"userProperties": [],
 				"typeProperties": {
-					"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
-					"method": "POST",
-					"body": {
-						"value": "@variables('RefreshParameters')",
-						"type": "Expression"
-					},
-					"authentication": {
-						"type": "MSI",
-						"resource": "https://*.asazure.windows.net  "
-					}
-				}
-			},
-			{
-				"name": "GetRefresh",
-				"type": "WebActivity",
-				"dependsOn": [
-					{
-						"activity": "RefreshSupply",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
-					"method": "GET",
-					"body": {
-						"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
-						"type": "Expression"
-					},
-					"authentication": {
-						"type": "MSI",
-						"resource": "https://*.asazure.windows.net  "
-					}
-				}
-			},
-			{
-				"name": "FormatResponse",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "GetRefresh",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "Response",
-					"value": {
-						"value": "@array(first(json(activity('GetRefresh').output.Response)))",
-						"type": "Expression"
-					}
-				}
-			},
-			{
-				"name": "UpdateQueue",
-				"type": "SqlServerStoredProcedure",
-				"dependsOn": [
-					{
-						"activity": "FormatResponse",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"storedProcedureName": "[Controls].[ADFQueueUpdate]",
-					"storedProcedureParameters": {
-						"endTime": {
-							"value": null,
-							"type": "DateTime"
-						},
-						"eventId": {
-							"value": {
-								"value": "@int(activity('ReadRefresh').output.firstRow.EventId)",
-								"type": "Expression"
+					"ifTrueActivities": [
+						{
+							"name": "RefreshCanvasPBI",
+							"type": "WebActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "00:00:25",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
 							},
-							"type": "Int32"
+							"userProperties": [],
+							"typeProperties": {
+								"url": "https://api.powerbi.com/v1.0/myorg/groups/d2584f83-3b80-414f-a5c5-2f3035983c85/datasets/5f7a2fe6-b9bd-4c35-91e2-ce420255bc6c/refreshes",
+								"method": "POST",
+								"body": {
+									"value": "@variables('RefreshParameters')",
+									"type": "Expression"
+								},
+								"authentication": {
+									"type": "MSI",
+									"resource": "https://*.asazure.windows.net  "
+								}
+							}
 						},
-						"refreshId": {
-							"value": {
-								"value": "@string(variables('Response')[0].RefreshId)",
-								"type": "Expression"
+						{
+							"name": "GetRefresh",
+							"type": "WebActivity",
+							"dependsOn": [
+								{
+									"activity": "RefreshCanvasPBI",
+									"dependencyConditions": [
+										"Completed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
 							},
-							"type": "String"
+							"userProperties": [],
+							"typeProperties": {
+								"url": "https://api.powerbi.com/v1.0/myorg/groups/d2584f83-3b80-414f-a5c5-2f3035983c85/datasets/5f7a2fe6-b9bd-4c35-91e2-ce420255bc6c/refreshes$top=2",
+								"method": "GET",
+								"body": {
+									"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
+									"type": "Expression"
+								},
+								"authentication": {
+									"type": "MSI",
+									"resource": "https://*.asazure.windows.net  "
+								}
+							}
 						},
-						"startTime": {
-							"value": {
-								"value": "@convertFromUtc(utcnow(),'Eastern Standard Time')",
-								"type": "Expression"
+						{
+							"name": "FormatResponse",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "GetRefresh",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "Response",
+								"value": {
+									"value": "@array(first(json(activity('GetRefresh').output.Response)))",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "UpdateQueue",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "FormatResponse",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
 							},
-							"type": "DateTime"
-						},
-						"status": {
-							"value": "R",
-							"type": "String"
-						},
-						"statusMessage": {
-							"value": null,
-							"type": "String"
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[Controls].[UpdateADFQueueRefresh]",
+								"storedProcedureParameters": {
+									"endTime": {
+										"value": null,
+										"type": "DateTime"
+									},
+									"eventId": {
+										"value": {
+											"value": "@int(activity('ReadRefresh').output.firstRow.EventId)",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"pipelineRunId": {
+										"value": {
+											"value": "@string(pipeline().RunId)",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"refreshId": {
+										"value": {
+											"value": "@string(variables('Response')[0].RefreshId)",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"requestId": {
+										"value": {
+											"value": "@string(pipeline().TriggerId)",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"startTime": {
+										"value": {
+											"value": "@convertFromUtc(utcnow(),'Eastern Standard Time')",
+											"type": "Expression"
+										},
+										"type": "DateTime"
+									},
+									"status": {
+										"value": "R",
+										"type": "String"
+									},
+									"statusMessage": {
+										"value": "Just Started",
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "BIP01",
+								"type": "LinkedServiceReference"
+							}
 						}
-					}
-				},
-				"linkedServiceName": {
-					"referenceName": "BIP01",
-					"type": "LinkedServiceReference"
+					]
 				}
 			}
 		],
@@ -400,6 +480,9 @@
 				"type": "String"
 			},
 			"EventId": {
+				"type": "String"
+			},
+			"ProcessingConditional": {
 				"type": "String"
 			}
 		},
