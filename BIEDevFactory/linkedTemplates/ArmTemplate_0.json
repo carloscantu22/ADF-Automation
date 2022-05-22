@@ -1119,7 +1119,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes/5b66e28c-5da3-4257-8c51-26460754d277",
+							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes/68921597-5306-4826-9202-339a9e10a48c",
 							"method": "GET",
 							"headers": {},
 							"body": {
