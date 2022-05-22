@@ -104,7 +104,7 @@
 										"storedProcedureParameters": {
 											"endTime": {
 												"value": {
-													"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.endTime),'Eastern Standard Time')",
+													"value": "@convertFromUtc(activity('GetRefresh').output.endTime,'Eastern Standard Time')",
 													"type": "Expression"
 												},
 												"type": "DateTime"
@@ -125,7 +125,7 @@
 											},
 											"startTime": {
 												"value": {
-													"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.startTime),'Eastern Standard Time')",
+													"value": "@convertFromUtc(activity('GetRefresh').output.startTime,'Eastern Standard Time')",
 													"type": "Expression"
 												},
 												"type": "DateTime"
@@ -142,7 +142,8 @@
 												"value": {
 													"value": "@int(activity('GetRefreshId').output.firstRow.PipelineRunID)",
 													"type": "Expression"
-												}
+												},
+												"type": "String"
 											}
 										}
 									},
