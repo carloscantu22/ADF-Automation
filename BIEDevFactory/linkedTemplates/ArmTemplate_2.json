@@ -2960,7 +2960,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "  SELECT [EventId],[RequestId],[EventName],[PipelineRunID] FROM [Controls].[ADFRefreshQueue]\nWHERE [EventType] = 'PBI Refresh' AND [ModelName] = 'Supply' AND [EventStatus] = 'R'\nORDER BY EventId",
+								"sqlReaderQuery": "  SELECT [EventId],[RequestId],[EventName],[PipelineRunID],[ModelName] FROM [Controls].[ADFRefreshQueue]\nWHERE [EventType] = 'PBI Refresh' AND [ModelName] = 'Supply' AND [EventStatus] = 'R'\nORDER BY EventId",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -3290,7 +3290,7 @@
 													"Content-Type": "application/json"
 												},
 												"body": {
-													"value": "@concat('{\"RefreshId\" : \"',trim(activity('GetRefreshId').output.firstRow.RefreshId),'\" , \"EventName\" : \"',activity('GetRefreshId').output.firstRow.EventName,'\"}')",
+													"value": "@concat('{\"RefreshId\" : \"',trim(activity('GetRefreshId').output.firstRow.RequestId),'\" , \"EventName\" : \"',activity('GetRefreshId').output.firstRow.EventName,'\", \"ModelName\" : \"',activity('GetRefreshId').output.firstRow.ModelName,'\"}')",
 													"type": "Expression"
 												}
 											}
@@ -3315,7 +3315,7 @@
 												"waitOnCompletion": true,
 												"parameters": {
 													"messageCard": {
-														"value": "{\n    \"@type\": \"MessageCard\",\n    \"@context\": \"http://schema.org/extensions\",\n    \"themeColor\": \"FF0000\",\n    \"summary\": \"Supply Event Failed\",\n    \"sections\": [\n        {\n            \"activityTitle\": \"Supply Event Failed\",\n            \"facts\": [\n                {\n                    \"name\": \"Event ID:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.EventId}\"\n                },\n                {\n                    \"name\": \"Event Name:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.EventName}\"\n                },\n                {\n                    \"name\": \"Refresh ID:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.RefreshId}\"\n                },\n                {\n                    \"name\": \"Notification time (EST):\",\n                    \"value\": \"@{convertFromUtc(utcnow(),'Eastern Standard Time')}\"\n                }\n            ],\n            \"markdown\": true\n        }\n    ]\n}",
+														"value": "{\n    \"@type\": \"MessageCard\",\n    \"@context\": \"http://schema.org/extensions\",\n    \"themeColor\": \"FF0000\",\n    \"summary\": \"Supply Event Failed\",\n    \"sections\": [\n        {\n            \"activityTitle\": \"PBI Supply Event Failed\",\n            \"facts\": [\n                {\n                    \"name\": \"Event ID:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.EventId}\"\n                },\n                {\n                    \"name\": \"Event Name:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.EventName}\"\n                },\n                {\n                    \"name\": \"Refresh ID:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.RequestId}\"\n                },\n                {\n                    \"name\": \"Notification time (EST):\",\n                    \"value\": \"@{convertFromUtc(utcnow(),'Eastern Standard Time')}\"\n                }\n            ],\n            \"markdown\": true\n        }\n    ]\n}",
 														"type": "Expression"
 													}
 												}
