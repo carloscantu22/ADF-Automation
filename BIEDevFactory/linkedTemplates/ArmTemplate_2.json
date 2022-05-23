@@ -4085,7 +4085,7 @@
 							],
 							"ifTrueActivities": [
 								{
-									"name": "RefreshCanvasPBI",
+									"name": "RefreshSupplyPBI",
 									"type": "WebActivity",
 									"dependsOn": [],
 									"policy": {
@@ -4097,7 +4097,7 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"url": "https://api.powerbi.com/v1.0/myorg/groups/d2584f83-3b80-414f-a5c5-2f3035983c85/datasets/5f7a2fe6-b9bd-4c35-91e2-ce420255bc6c/refreshes",
+										"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/ab4a9a2a-8b91-42ae-95aa-4d027c90c86f/refreshes",
 										"method": "POST",
 										"headers": {},
 										"body": {
@@ -4115,7 +4115,7 @@
 									"type": "WebActivity",
 									"dependsOn": [
 										{
-											"activity": "RefreshCanvasPBI",
+											"activity": "RefreshSupplyPBI",
 											"dependencyConditions": [
 												"Completed"
 											]
@@ -4130,7 +4130,7 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"url": "https://api.powerbi.com/v1.0/myorg/groups/d2584f83-3b80-414f-a5c5-2f3035983c85/datasets/5f7a2fe6-b9bd-4c35-91e2-ce420255bc6c/refreshes?$top=2",
+										"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/ab4a9a2a-8b91-42ae-95aa-4d027c90c86f/refreshes?$top=2",
 										"method": "GET",
 										"headers": {},
 										"authentication": {
@@ -4287,7 +4287,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"url": {
-								"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/d2584f83-3b80-414f-a5c5-2f3035983c85/datasets/5f7a2fe6-b9bd-4c35-91e2-ce420255bc6c/refreshes/',string(activity('GetRefreshId').output.firstRow.RequestId))",
+								"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/ab4a9a2a-8b91-42ae-95aa-4d027c90c86f/refreshes/',string(activity('GetRefreshId').output.firstRow.RequestId))",
 								"type": "Expression"
 							},
 							"method": "GET",
