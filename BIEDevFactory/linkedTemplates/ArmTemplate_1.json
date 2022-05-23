@@ -53,107 +53,6 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/TelegramNotifications')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Web1",
-						"type": "WebActivity",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"url": "https://api.telegram.org/bot5375063738:AAEW9zo8N5Ij2DdVrOJWWtpecK70xK83oGw/sendMessage?chat_id=-528140690&disable_web_page_preview=1&parse_mode=Markdown&text=Sorry%20for%20you.",
-							"method": "GET",
-							"headers": {}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "WIP"
-				},
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "GetRefresh",
-						"type": "WebActivity",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"url": "https://api.powerbi.com/v1.0/myorg/groups/d2584f83-3b80-414f-a5c5-2f3035983c85/datasets/5f7a2fe6-b9bd-4c35-91e2-ce420255bc6c/refreshes?$top=2",
-							"method": "GET",
-							"headers": {},
-							"authentication": {
-								"type": "MSI",
-								"resource": "https://analysis.windows.net/powerbi/api"
-							}
-						}
-					},
-					{
-						"name": "FormatResponse",
-						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "GetRefresh",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "Response",
-							"value": {
-								"value": "@array(first(activity('GetRefresh').output.value))",
-								"type": "Expression"
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"variables": {
-					"Response": {
-						"type": "Array"
-					}
-				},
-				"folder": {
-					"name": "Canvas"
-				},
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/AzureBIDevelopment')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -1367,116 +1266,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/AzureSQLQueue')]",
 				"[concat(variables('factoryId'), '/linkedServices/BIP01')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CanvasPBI_API')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "NightlyDimensions",
-						"type": "WebActivity",
-						"dependsOn": [
-							{
-								"activity": "Set_Tables",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "00:00:20",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"url": "https://api.powerbi.com/v1.0/myorg/groups/d2584f83-3b80-414f-a5c5-2f3035983c85/datasets/5f7a2fe6-b9bd-4c35-91e2-ce420255bc6c/refreshes",
-							"method": "POST",
-							"headers": {},
-							"body": {
-								"value": "@variables('RefreshParameters')",
-								"type": "Expression"
-							},
-							"authentication": {
-								"type": "MSI",
-								"resource": "https://analysis.windows.net/powerbi/api"
-							}
-						}
-					},
-					{
-						"name": "Set_Tables",
-						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "TableRefreshQueue",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "RefreshParameters",
-							"value": {
-								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 6,\n    \"RetryCount\": 0,\n    \"Objects\": ',activity('TableRefreshQueue').output.firstRow.Refresh,'\n}')",
-								"type": "Expression"
-							}
-						}
-					},
-					{
-						"name": "TableRefreshQueue",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": {
-									"value": "@concat('SELECT CAST(\n(\n\tSELECT TRIM([Tablename]) AS ''table''\n\tFROM [Controls].[ADFEventRefreshCatalog]\n\t\tWHERE [EventName] = ','''Nightly_Dimensions''','\n\t\tAND [ModelName] = ''Canvas''\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
-									"type": "Expression"
-								},
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "AzureSQLQueue",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Lorem",
-									"Table": "Ipsum"
-								}
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"variables": {
-					"RefreshParameters": {
-						"type": "String"
-					}
-				},
-				"folder": {
-					"name": "Canvas"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/AzureSQLQueue')]"
 			]
 		},
 		{
@@ -2725,6 +2514,1385 @@
 				},
 				"folder": {
 					"name": "Canvas"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureSQLQueue')]",
+				"[concat(variables('factoryId'), '/linkedServices/BIP01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ErrorLog')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetRefreshInfo",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes/01b78707-59dd-4fae-ac65-98bf99c8b1bf",
+							"method": "GET",
+							"headers": {},
+							"body": {
+								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://*.asazure.windows.net  "
+							}
+						}
+					},
+					{
+						"name": "SetMessage",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "GetRefreshInfo",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Messages",
+							"value": {
+								"value": "@replace(replace(join(activity('GetRefreshInfo').output.messages, ','), '{\"message\":', ''), '}', '')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Insert to Log",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "SetMessage",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "@concat('SELECT ',variables('RefreshId'),' AS ''EventId''\n\t  ,''',variables('Messages'),''' AS ''EventStatusMessage''')",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Controls",
+									"Table": "AzureSharedEventQueue"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"variables": {
+					"RefreshId": {
+						"type": "String"
+					},
+					"Messages": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "WIP"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureSQLQueue')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ProcessOrders_Refresh')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "OrdersEvents",
+						"type": "Switch",
+						"dependsOn": [
+							{
+								"activity": "ReadRefresh",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"on": {
+								"value": "@activity('ReadRefresh').output.firstRow.EventName",
+								"type": "Expression"
+							},
+							"cases": [
+								{
+									"value": "OrdersTabularFactPartitions",
+									"activities": [
+										{
+											"name": "Set_Facts",
+											"type": "SetVariable",
+											"dependsOn": [
+												{
+													"activity": "PartitionRefreshQueue",
+													"dependencyConditions": [
+														"Succeeded"
+													]
+												}
+											],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 6,\n    \"RetryCount\": 2,\n    \"Objects\": ',activity('PartitionRefreshQueue').output.firstRow.Refresh,'\n}')",
+													"type": "Expression"
+												}
+											}
+										},
+										{
+											"name": "PartitionRefreshQueue",
+											"type": "Lookup",
+											"dependsOn": [],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"source": {
+													"type": "AzureSqlSource",
+													"sqlReaderQuery": {
+														"value": "@concat('SELECT CAST(\n(\n\tSELECT TRIM([PRQ].[Tablename]) AS ''table'',TRIM([PRQ].[PartitionName]) AS ''partition''\n\tFROM [Controls].[SSASPartitionRefreshQueue] PRQ\n\tINNER JOIN [Controls].[AzureEventQueue] AEQ ON [AEQ].[RefreshId] = [PRQ].[RefreshId]\n\t\tWHERE [AEQ].[EventId] = ',activity('ReadRefresh').output.firstRow.EventId,'\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
+														"type": "Expression"
+													},
+													"queryTimeout": "02:00:00",
+													"partitionOption": "None"
+												},
+												"dataset": {
+													"referenceName": "AzureSQLQueue",
+													"type": "DatasetReference",
+													"parameters": {
+														"Schema": "Lorem",
+														"Table": "Ipsum"
+													}
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "OrdersRefreshReportingNotifications",
+									"activities": [
+										{
+											"name": "Set_ReportingNotifications",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "OrdersRefreshDailyGoals",
+									"activities": [
+										{
+											"name": "Set_DailyGoals",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Daily Goals\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "OrdersTabularHourlyEMEA",
+									"activities": [
+										{
+											"name": "Set_HourlyEMEA",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"EMEA Orders\",\n            \"partition\":\"EMEA Orders Hourly\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "OrdersTabularFullRetail",
+									"activities": [
+										{
+											"name": "Set_FullRetail",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Carhartt Retail Stores\"\n        },\n        {\n            \"table\": \"Carhartt Retail Transactions\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "OrdersTabularFullDimensions",
+									"activities": [
+										{
+											"name": "Set_FullDimensions",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Cancel Reasons\"\n        },\n        {\n            \"table\": \"445 Calendar\"\n        },\n        {\n            \"table\": \"Carhartt Retail Date Periods\"\n        },\n        {\n            \"table\": \"Carhartt Retail Traffic\"\n        },\n        {\n            \"table\": \"Contracts\"\n        },\n        {\n            \"table\": \"Consumers\"\n        },\n        {\n            \"table\": \"Customers\"\n        },\n        {\n            \"table\": \"Daily Goals\"\n        },\n        {\n            \"table\": \"Delivery Block Categories\"\n        },\n        {\n            \"table\": \"Display Date\"\n        },\n        {\n            \"table\": \"Event Date\"\n        },\n        {\n            \"table\": \"Event Date Periods\"\n        },\n        {\n            \"table\": \"Expected Delivery Date\"\n        },\n        {\n            \"table\": \"Expected Ship Date\"\n        },\n        {\n            \"table\": \"Geography\"\n        },\n        {\n            \"table\": \"Inventory Stock Levels\"\n        },\n        {\n            \"table\": \"Item Plans Customers\"\n        },\n        {\n            \"table\": \"Item Plans UPC\"\n        },\n        {\n            \"table\": \"Material Availability Date\"\n        },\n        {\n            \"table\": \"Material Programs\"\n        },\n        {\n            \"table\": \"Materials\"\n        },\n        {\n            \"table\": \"Monthly Goals\"\n        },\n        {\n            \"table\": \"Order Date\"\n        },\n        {\n            \"table\": \"Original Expected Delivery Date\"\n        },\n        {\n            \"table\": \"Pick Ticket Start Ship Date\"\n        },\n        {\n            \"table\": \"Pick Ticket Status\"\n        },\n        {\n            \"table\": \"Pick Tickets\"\n        },\n        {\n            \"table\": \"ProductCategories\"\n        },\n        {\n            \"table\": \"Products\"\n        },\n        {\n            \"table\": \"RefreshDateTime\"\n        },\n        {\n            \"table\": \"Reporting Notification Messages\"\n        },\n        {\n            \"table\": \"Requested Delivery Date\"\n        },\n        {\n            \"table\": \"Required Ship Date\"\n        },\n        {\n            \"table\": \"Retail Discounts\"\n        },\n        {\n            \"table\": \"Retail Discounts Bridge\"\n        },\n        {\n            \"table\": \"Revenue\"\n        },\n        {\n            \"table\": \"Revenue Segments\"\n        },\n        {\n            \"table\": \"Sales Segments\"\n        },\n        {\n            \"table\": \"ShipVia Codes\"\n        },\n        {\n            \"table\": \"SLA Ship Date\"\n        },\n        {\n            \"table\": \"Stop Ship Date\"\n        },\n        {\n            \"table\": \"System Dates\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "OrdersTabularHourlyRevenuePacing",
+									"activities": [
+										{
+											"name": "Set_HourlyRevenuePacing",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "FactPartitionsStart",
+									"activities": [
+										{
+											"name": "Set_GenericFPS",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Date Bridge\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "OrdersTabularFullEnd",
+									"activities": [
+										{
+											"name": "Set_GenericFE",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Date Bridge\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										},
+										{
+											"name": "SendCompletionEmail",
+											"type": "WebActivity",
+											"dependsOn": [
+												{
+													"activity": "Set_GenericFE",
+													"dependencyConditions": [
+														"Succeeded"
+													]
+												}
+											],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"url": "https://prod-08.northcentralus.logic.azure.com:443/workflows/741160cf9fc944e29ca979527b4043e5/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=s30mG3Chr2YBMW7TsrkUonyVbvinFKGrR67lr6BKJpA",
+												"method": "GET",
+												"headers": {
+													"Content-Type": "application/json"
+												},
+												"body": {
+													"value": "@concat('{','}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "OrdersTabularHourlyEnd",
+									"activities": [
+										{
+											"name": "Set_GenericHE",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Date Bridge\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "OrdersTabularFullRevenuePacing",
+									"activities": [
+										{
+											"name": "Set_FullRevenuePacing",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Revenue Pacing\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "OrdersTabularFullEMEA",
+									"activities": [
+										{
+											"name": "Set_FullEMEA",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"EMEA Orders\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "OrdersTabularHourlyDimensions",
+									"activities": [
+										{
+											"name": "Set_HourlyDimensions",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Carhartt Retail Traffic\"\n        },\n        {\n            \"table\": \"Daily Goals\"\n        },\n        {\n            \"table\": \"Contracts\"\n        },\n        {\n            \"table\": \"RefreshDateTime\"\n        }\n\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "OrdersTabularHourlyRetailTransactions",
+									"activities": [
+										{
+											"name": "Set_HourlyRetailTransactions",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Carhartt Retail Stores\"\n        },\n        {\n            \"table\": \"Carhartt Retail Transactions\",\n            \"partition\": \"Retail Transactions Hourly\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "OrdersRefreshMonthlyGoals",
+									"activities": [
+										{
+											"name": "Set_MonthlyGoals",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"AtOnceBudgetNeed\"\n        },\n        {\n            \"table\": \"Monthly Goals\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "OrdersTabularHourlyRetailTraffic",
+									"activities": [
+										{
+											"name": "Set_HourlyRetailTraffic",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Carhartt Retail Traffic\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "OrdersTabularFullStart",
+									"activities": [
+										{
+											"name": "Set_GenericFS",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Date Bridge\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "OrdersTabularHourlyStart",
+									"activities": [
+										{
+											"name": "Set_GenericHS",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Date Bridge\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "FactPartitionsEnd",
+									"activities": [
+										{
+											"name": "Set_GenericFPE",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Date Bridge\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "OrdersTabularHourlyRetail",
+									"activities": [
+										{
+											"name": "Set_HourlyRetail",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "OrdersTabularFullFacts",
+									"activities": [
+										{
+											"name": "Set_GenericFF",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Date Bridge\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							],
+							"defaultActivities": [
+								{
+									"name": "UpdateQueue_UnknowEvent",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[Controls].[ADFQueueUpdate]",
+										"storedProcedureParameters": {
+											"endTime": {
+												"value": null,
+												"type": "DateTime"
+											},
+											"eventId": {
+												"value": {
+													"value": "@int(activity('ReadRefresh').output.firstRow.EventId)",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"refreshId": {
+												"value": {
+													"value": "@string(activity('ReadRefresh').output.firstRow.RefreshId)",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"startTime": {
+												"value": null,
+												"type": "DateTime"
+											},
+											"status": {
+												"value": "F",
+												"type": "String"
+											},
+											"statusMessage": {
+												"value": null,
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "BIP01",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "ReadRefresh",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT [EventId],[RefreshId],[EventName] FROM [Controls].[AzureEventQueue]\n\tWHERE [EventType] = 'SSAS Refresh'\n\t  AND [EventStatus] IS NULL\nORDER BY [EventId]",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						}
+					},
+					{
+						"name": "RefreshOrders",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "OrdersEvents",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Orders/refreshes",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"value": "@variables('RefreshParameters')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://*.asazure.windows.net  "
+							}
+						}
+					},
+					{
+						"name": "GetRefresh",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "RefreshOrders",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Orders/refreshes",
+							"method": "GET",
+							"headers": {},
+							"body": {
+								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://*.asazure.windows.net  "
+							}
+						}
+					},
+					{
+						"name": "FormatResponse",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "GetRefresh",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Response",
+							"value": {
+								"value": "@array(first(json(activity('GetRefresh').output.Response)))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "UpdateQueue",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "FormatResponse",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[Controls].[ADFOrdersQueueUpdate]",
+							"storedProcedureParameters": {
+								"endTime": {
+									"value": null,
+									"type": "DateTime"
+								},
+								"eventId": {
+									"value": {
+										"value": "@int(activity('ReadRefresh').output.firstRow.EventId)",
+										"type": "Expression"
+									},
+									"type": "Int32"
+								},
+								"refreshId": {
+									"value": {
+										"value": "@string(activity('ReadRefresh').output.firstRow.RefreshId)",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"startTime": {
+									"value": {
+										"value": "@convertFromUtc(utcnow(),'Eastern Standard Time')",
+										"type": "Expression"
+									},
+									"type": "DateTime"
+								},
+								"status": {
+									"value": "R",
+									"type": "String"
+								},
+								"statusMessage": {
+									"value": {
+										"value": "@string(variables('Response')[0].RefreshId)",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "BIP01",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"variables": {
+					"RefreshParameters": {
+						"type": "String"
+					},
+					"Response": {
+						"type": "Array"
+					},
+					"RefreshId": {
+						"type": "String"
+					},
+					"EventId": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Orders"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureSQLQueue')]",
+				"[concat(variables('factoryId'), '/linkedServices/BIP01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ProcessOrders_UpdateQueue')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetRefresh",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "GetRefreshId",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": {
+								"value": "@concat('https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Orders/refreshes/',string(activity('GetRefreshId').output.firstRow.EventStatusMessage))",
+								"type": "Expression"
+							},
+							"method": "GET",
+							"headers": {},
+							"body": {
+								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://*.asazure.windows.net  "
+							}
+						}
+					},
+					{
+						"name": "GetRefreshId",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT [EventId],[EventStatusMessage],[RefreshId],[EventName] FROM [Controls].[AzureEventQueue]\n\tWHERE [EventType] = 'SSAS Refresh'\n\t  AND [EventStatus] = 'R'\nORDER BY [EventId] ",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						}
+					},
+					{
+						"name": "Switch1",
+						"type": "Switch",
+						"dependsOn": [
+							{
+								"activity": "GetRefresh",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"on": {
+								"value": "@activity('GetRefresh').output.status",
+								"type": "Expression"
+							},
+							"cases": [
+								{
+									"value": "succeeded",
+									"activities": [
+										{
+											"name": "UpdateQueue_Succeed",
+											"type": "SqlServerStoredProcedure",
+											"dependsOn": [],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"storedProcedureName": "[[Controls].[ADFOrdersQueueUpdate]",
+												"storedProcedureParameters": {
+													"endTime": {
+														"value": {
+															"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.endTime),'Eastern Standard Time')",
+															"type": "Expression"
+														},
+														"type": "DateTime"
+													},
+													"eventId": {
+														"value": {
+															"value": "@int(activity('GetRefreshId').output.firstRow.EventId)",
+															"type": "Expression"
+														},
+														"type": "Int32"
+													},
+													"refreshId": {
+														"value": {
+															"value": "@string(activity('GetRefreshId').output.firstRow.RefreshId)",
+															"type": "Expression"
+														},
+														"type": "String"
+													},
+													"startTime": {
+														"value": {
+															"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.startTime),'Eastern Standard Time')",
+															"type": "Expression"
+														},
+														"type": "DateTime"
+													},
+													"status": {
+														"value": "C",
+														"type": "String"
+													},
+													"statusMessage": {
+														"value": {
+															"value": "@string(activity('GetRefreshId').output.firstRow.EventStatusMessage)",
+															"type": "Expression"
+														},
+														"type": "String"
+													}
+												}
+											},
+											"linkedServiceName": {
+												"referenceName": "BIP01",
+												"type": "LinkedServiceReference"
+											}
+										}
+									]
+								},
+								{
+									"value": "cancelled",
+									"activities": [
+										{
+											"name": "UpdateQueue_Cancelled",
+											"type": "SqlServerStoredProcedure",
+											"dependsOn": [],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"storedProcedureName": "[[Controls].[ADFOrdersQueueUpdate]",
+												"storedProcedureParameters": {
+													"endTime": {
+														"value": null,
+														"type": "DateTime"
+													},
+													"eventId": {
+														"value": {
+															"value": "@int(activity('GetRefreshId').output.firstRow.EventId)",
+															"type": "Expression"
+														},
+														"type": "Int32"
+													},
+													"refreshId": {
+														"value": {
+															"value": "@string(activity('GetRefreshId').output.firstRow.RefreshId)",
+															"type": "Expression"
+														},
+														"type": "String"
+													},
+													"startTime": {
+														"value": null,
+														"type": "DateTime"
+													},
+													"status": {
+														"value": null,
+														"type": "String"
+													},
+													"statusMessage": {
+														"value": null,
+														"type": "String"
+													}
+												}
+											},
+											"linkedServiceName": {
+												"referenceName": "BIP01",
+												"type": "LinkedServiceReference"
+											}
+										}
+									]
+								},
+								{
+									"value": "failed",
+									"activities": [
+										{
+											"name": "UpdateQueue_Fail",
+											"type": "SqlServerStoredProcedure",
+											"dependsOn": [
+												{
+													"activity": "Insert to Log",
+													"dependencyConditions": [
+														"Succeeded"
+													]
+												}
+											],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"storedProcedureName": "[[Controls].[ADFOrdersQueueUpdate]",
+												"storedProcedureParameters": {
+													"endTime": {
+														"value": null,
+														"type": "DateTime"
+													},
+													"eventId": {
+														"value": {
+															"value": "@int(activity('GetRefreshId').output.firstRow.EventId)",
+															"type": "Expression"
+														},
+														"type": "Int32"
+													},
+													"refreshId": {
+														"value": {
+															"value": "@string(activity('GetRefreshId').output.firstRow.RefreshId)",
+															"type": "Expression"
+														},
+														"type": "String"
+													},
+													"startTime": {
+														"value": null,
+														"type": "DateTime"
+													},
+													"status": {
+														"value": null,
+														"type": "String"
+													},
+													"statusMessage": {
+														"value": null,
+														"type": "String"
+													}
+												}
+											},
+											"linkedServiceName": {
+												"referenceName": "BIP01",
+												"type": "LinkedServiceReference"
+											}
+										},
+										{
+											"name": "SetMessage",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "Message",
+												"value": {
+													"value": "@replace(replace(replace(replace(join(activity('GetRefresh').output.messages, ','), '{\"message\":', ''), '}', ''), '-',''),'''','')",
+													"type": "Expression"
+												}
+											}
+										},
+										{
+											"name": "Insert to Log",
+											"type": "Copy",
+											"dependsOn": [
+												{
+													"activity": "SetMessage",
+													"dependencyConditions": [
+														"Succeeded"
+													]
+												}
+											],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"source": {
+													"type": "AzureSqlSource",
+													"sqlReaderQuery": {
+														"value": "@concat('SELECT ',activity('GetRefreshId').output.firstRow.EventId,' AS ''EventId''\n\t  ,''',variables('Message'),''' AS ''EventStatusMessage''')",
+														"type": "Expression"
+													},
+													"queryTimeout": "02:00:00",
+													"partitionOption": "None"
+												},
+												"sink": {
+													"type": "AzureSqlSink"
+												},
+												"enableStaging": false,
+												"translator": {
+													"type": "TabularTranslator",
+													"typeConversion": true,
+													"typeConversionSettings": {
+														"allowDataTruncation": true,
+														"treatBooleanAsNumber": false
+													}
+												}
+											},
+											"inputs": [
+												{
+													"referenceName": "AzureSQLQueue",
+													"type": "DatasetReference",
+													"parameters": {
+														"Schema": "Lorem",
+														"Table": "Ipsum"
+													}
+												}
+											],
+											"outputs": [
+												{
+													"referenceName": "AzureSQLQueue",
+													"type": "DatasetReference",
+													"parameters": {
+														"Schema": "Controls",
+														"Table": "AzureSharedEventQueueExceptions"
+													}
+												}
+											]
+										},
+										{
+											"name": "SendMail",
+											"type": "WebActivity",
+											"dependsOn": [
+												{
+													"activity": "Insert to Log",
+													"dependencyConditions": [
+														"Succeeded"
+													]
+												}
+											],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"url": "https://prod-05.northcentralus.logic.azure.com:443/workflows/a7ec1a338e8541f092c44178a0d0c201/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=co5WA5F6jucJvp2ui_nfHwjQ6ICRtwQ8NDiUCWi1998",
+												"method": "POST",
+												"headers": {
+													"Content-Type": "application/json"
+												},
+												"body": {
+													"value": "@concat('{\"RefreshId\" : \"',trim(activity('GetRefreshId').output.firstRow.RefreshId),'\" , \"EventName\" : \"',activity('GetRefreshId').output.firstRow.EventName,'\"}')",
+													"type": "Expression"
+												}
+											}
+										},
+										{
+											"name": "TeamsNotification",
+											"type": "ExecutePipeline",
+											"dependsOn": [
+												{
+													"activity": "Insert to Log",
+													"dependencyConditions": [
+														"Succeeded"
+													]
+												}
+											],
+											"userProperties": [],
+											"typeProperties": {
+												"pipeline": {
+													"referenceName": "Teams Notification",
+													"type": "PipelineReference"
+												},
+												"waitOnCompletion": true,
+												"parameters": {
+													"messageCard": {
+														"value": "{\n    \"@type\": \"MessageCard\",\n    \"@context\": \"http://schema.org/extensions\",\n    \"themeColor\": \"FF0000\",\n    \"summary\": \"Orders Event Failed\",\n    \"sections\": [\n        {\n            \"activityTitle\": \"Orders Event Failed\",\n            \"facts\": [\n                {\n                    \"name\": \"Event ID:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.EventId}\"\n                },\n                {\n                    \"name\": \"Event Name:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.EventName}\"\n                },\n                {\n                    \"name\": \"Refresh ID:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.EventStatusMessage}\"\n                },\n                {\n                    \"name\": \"Notification time (EST):\",\n                    \"value\": \"@{convertFromUtc(utcnow(),'Eastern Standard Time')}\"\n                }\n            ],\n            \"markdown\": true\n        }\n    ]\n}",
+														"type": "Expression"
+													}
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "inProgress",
+									"activities": [
+										{
+											"name": "UpdateQueue_Running",
+											"type": "SqlServerStoredProcedure",
+											"dependsOn": [],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"storedProcedureName": "[[Controls].[ADFOrdersQueueUpdate]",
+												"storedProcedureParameters": {
+													"endTime": {
+														"value": null,
+														"type": "DateTime"
+													},
+													"eventId": {
+														"value": {
+															"value": "@int(activity('GetRefreshId').output.firstRow.EventId)",
+															"type": "Expression"
+														},
+														"type": "Int32"
+													},
+													"refreshId": {
+														"value": {
+															"value": "@string(activity('GetRefreshId').output.firstRow.RefreshId)",
+															"type": "Expression"
+														},
+														"type": "String"
+													},
+													"startTime": {
+														"value": {
+															"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.startTime),'Eastern Standard Time')",
+															"type": "Expression"
+														},
+														"type": "DateTime"
+													},
+													"status": {
+														"value": "R",
+														"type": "String"
+													},
+													"statusMessage": {
+														"value": {
+															"value": "@string(activity('GetRefreshId').output.firstRow.EventStatusMessage)",
+															"type": "Expression"
+														},
+														"type": "String"
+													}
+												}
+											},
+											"linkedServiceName": {
+												"referenceName": "BIP01",
+												"type": "LinkedServiceReference"
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"variables": {
+					"Response": {
+						"type": "Array"
+					},
+					"RefreshId": {
+						"type": "String"
+					},
+					"EventId": {
+						"type": "String"
+					},
+					"Message": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Orders"
 				},
 				"annotations": []
 			},
