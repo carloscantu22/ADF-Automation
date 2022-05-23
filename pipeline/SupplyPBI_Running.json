@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "  SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE [ModelName] = 'Canvas'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND [EventStatus] = 'R'\n)\nTHEN 1\nELSE 0 END AS 'Running'",
+						"sqlReaderQuery": "  SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE [ModelName] = 'Supply'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND [EventStatus] = 'R'\n)\nTHEN 1\nELSE 0 END AS 'Running'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -50,13 +50,13 @@
 					},
 					"ifFalseActivities": [
 						{
-							"name": "ProcessCanvas_RefreshPBI",
+							"name": "ProcessSupply_RefreshPBI",
 							"type": "ExecutePipeline",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "CanvasPBI_Refresh",
+									"referenceName": "SupplyPBI_Refresh",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true
@@ -65,13 +65,13 @@
 					],
 					"ifTrueActivities": [
 						{
-							"name": "ProcessSCanvas_UpdateQueuePBI",
+							"name": "ProcessSupply_UpdateQueuePBI",
 							"type": "ExecutePipeline",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "CanvasPBI_Update",
+									"referenceName": "SupplyPBI_Update",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true
