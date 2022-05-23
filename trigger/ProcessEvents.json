@@ -1,5 +1,5 @@
 {
-	"name": "ProcessAASEvents",
+	"name": "ProcessEvents",
 	"properties": {
 		"annotations": [],
 		"runtimeState": "Started",
@@ -25,6 +25,12 @@
 			{
 				"pipelineReference": {
 					"referenceName": "CanvasPBI_Queue",
+					"type": "PipelineReference"
+				}
+			},
+			{
+				"pipelineReference": {
+					"referenceName": "SupplyPBI_Queue",
 					"type": "PipelineReference"
 				}
 			}
