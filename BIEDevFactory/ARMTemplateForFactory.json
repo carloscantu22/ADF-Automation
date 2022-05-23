@@ -2409,7 +2409,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://api.powerbi.com/v1.0/myorg/groups/516449d1-03ba-45f4-9500-c94aee0d3912/datasets/52aaffc7-8f20-4b88-8354-a9f3e40a6789/refreshes/5c9e9f22-c371-44df-9997-3a4417719997",
+							"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/ab4a9a2a-8b91-42ae-95aa-4d027c90c86f/refreshes/b75721a1-51d3-4d9e-adcb-e529886852b9",
 							"method": "GET",
 							"headers": {},
 							"body": {
@@ -10250,6 +10250,169 @@
 				"typeProperties": {}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CanvasNightlyRun')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "InsertCanvasNightly",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT [EventType]\n\t  ,[ModelName]\n\t  ,[EventName]\n\t  ,[RefreshId]\n\t  ,(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time') AS 'CreateDateTime'\nFROM \n(\nVALUES ('PBI Refresh','Canvas','Nightly_Begin',NULL) \n\t  ,('PBI Refresh','Canvas','Nightly_Dimensions','815210b8-e644-4b91-a326-115b1344d7e7') \n\t  ,('PBI Refresh','Canvas','Nightly_Facts','e5847484-b8b3-408d-ada6-b2d59c53b6ee') \n\t  ,('PBI Refresh','Canvas','Facts_Partitions','a4e27111-c905-4143-8ec7-d4540cc99856') \n\t  ,('PBI Refresh','Canvas','Nightly_End',NULL) \n) AS CR (EventType,ModelName,EventName,RefreshId)",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "EventType",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "EventType",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "ModelName",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "ModelName",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "EventName",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "EventName",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "RefreshId",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "RefreshId",
+											"type": "String",
+											"physicalType": "char"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Controls",
+									"Table": "ADFRefreshQueue"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Canvas"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureSQLQueue')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/2300HoursNightly')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "CanvasNightlyRun",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2022-05-23T22:14:00",
+						"timeZone": "Eastern Standard Time",
+						"schedule": {
+							"minutes": [
+								0
+							],
+							"hours": [
+								23
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/CanvasNightlyRun')]"
+			]
 		}
 	]
 }
