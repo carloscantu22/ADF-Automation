@@ -51,7 +51,14 @@
 								{
 									"name": "SendCompletionEmail",
 									"type": "WebActivity",
-									"dependsOn": [],
+									"dependsOn": [
+										{
+											"activity": "SetNoRefresh_02",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
 									"policy": {
 										"timeout": "7.00:00:00",
 										"retry": 0,
@@ -67,7 +74,7 @@
 											"Content-Type": "application/json"
 										},
 										"body": {
-											"value": "@concat('{\"ModelName\" : \"','Canvas','\" , \"StartDateTime\" : \"',utcnow(),'\"}')",
+											"value": "@concat('{\"ModelName\" : \"','Supply','\" , \"StartDateTime\" : \"',utcnow(),'\"}')",
 											"type": "Expression"
 										}
 									}
@@ -120,7 +127,7 @@
 										"source": {
 											"type": "AzureSqlSource",
 											"sqlReaderQuery": {
-												"value": "@concat('SELECT CAST(\n(\n\tSELECT TRIM([Tablename]) AS ''table''\n\tFROM [Controls].[ADFEventRefreshCatalog]\n\t\tWHERE [EventName] = ''',activity('ReadRefresh').output.firstRow.EventName,'''\n\t\tAND [ModelName] = ''Canvas''\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
+												"value": "@concat('SELECT CAST(\n(\n\tSELECT TRIM([Tablename]) AS ''table''\n\tFROM [Controls].[ADFEventRefreshCatalog]\n\t\tWHERE [EventName] = ''',activity('ReadRefresh').output.firstRow.EventName,'''\n\t\tAND [ModelName] = ''Supply''\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
 												"type": "Expression"
 											},
 											"queryTimeout": "02:00:00",
@@ -152,7 +159,7 @@
 							"value": "Nightly_Facts",
 							"activities": [
 								{
-									"name": "Set_Tables_copy1",
+									"name": "Set_Tables_02",
 									"type": "SetVariable",
 									"dependsOn": [
 										{
@@ -194,7 +201,7 @@
 										"source": {
 											"type": "AzureSqlSource",
 											"sqlReaderQuery": {
-												"value": "@concat('SELECT CAST(\n(\n\tSELECT TRIM([Tablename]) AS ''table''\n\tFROM [Controls].[ADFEventRefreshCatalog]\n\t\tWHERE [EventName] = ''',activity('ReadRefresh').output.firstRow.EventName,'''\n\t\tAND [ModelName] = ''Canvas''\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
+												"value": "@concat('SELECT CAST(\n(\n\tSELECT TRIM([Tablename]) AS ''table''\n\tFROM [Controls].[ADFEventRefreshCatalog]\n\t\tWHERE [EventName] = ''',activity('ReadRefresh').output.firstRow.EventName,'''\n\t\tAND [ModelName] = ''Supply''\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
 												"type": "Expression"
 											},
 											"queryTimeout": "02:00:00",
@@ -403,7 +410,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "[Controls].[ADFQueueUpdate]",
+								"storedProcedureName": "[Controls].[UpdateADFQueueRefresh]",
 								"storedProcedureParameters": {
 									"endTime": {
 										"value": null,
@@ -411,12 +418,19 @@
 									},
 									"eventId": {
 										"value": {
-											"value": "@activity('ReadRefresh').output.firstRow.EventId",
+											"value": "@int(activity('ReadRefresh').output.firstRow.EventId)",
 											"type": "Expression"
 										},
 										"type": "Int32"
 									},
-									"refreshId": {
+									"pipelineRunId": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"requestId": {
 										"value": null,
 										"type": "String"
 									},
@@ -429,7 +443,7 @@
 										"type": "String"
 									},
 									"statusMessage": {
-										"value": "Invalid or Unknow EventName",
+										"value": "ERROR: Unknown Event Name",
 										"type": "String"
 									}
 								}
@@ -457,7 +471,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT [EventId],[EventName] FROM [Controls].[ADFRefreshQueue]\nWHERE [ModelName] = 'Canvas'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND [EventStatus] IS NULL\nORDER BY [EventId]",
+						"sqlReaderQuery": "SELECT [EventId],[EventName] FROM [Controls].[ADFRefreshQueue]\nWHERE [ModelName] = 'Supply'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND [EventStatus] IS NULL\nORDER BY [EventId]",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
