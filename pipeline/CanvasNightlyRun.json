@@ -77,6 +77,18 @@
 									"type": "String",
 									"physicalType": "char"
 								}
+							},
+							{
+								"source": {
+									"name": "CreateDateTime",
+									"type": "DateTimeOffset",
+									"physicalType": "datetimeoffset"
+								},
+								"sink": {
+									"name": "CreateDateTime",
+									"type": "DateTime",
+									"physicalType": "datetime"
+								}
 							}
 						],
 						"typeConversion": true,
