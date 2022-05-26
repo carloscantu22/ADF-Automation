@@ -1237,6 +1237,143 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/CanvasNightlyRun')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "InsertCanvasNightly",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT [EventType]\n\t  ,[ModelName]\n\t  ,[EventName]\n\t  ,[RefreshId]\n\t  ,(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time') AS 'CreateDateTime'\nFROM \n(\nVALUES ('PBI Refresh','Canvas','Nightly_Begin',NULL) \n\t  ,('PBI Refresh','Canvas','Nightly_Dimensions','815210b8-e644-4b91-a326-115b1344d7e7') \n\t  ,('PBI Refresh','Canvas','Nightly_Facts','e5847484-b8b3-408d-ada6-b2d59c53b6ee') \n\t  ,('PBI Refresh','Canvas','Facts_Partitions','a4e27111-c905-4143-8ec7-d4540cc99856') \n\t  ,('PBI Refresh','Canvas','Nightly_End',NULL) \n) AS CR (EventType,ModelName,EventName,RefreshId)",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "EventType",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "EventType",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "ModelName",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "ModelName",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "EventName",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "EventName",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "RefreshId",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "RefreshId",
+											"type": "String",
+											"physicalType": "char"
+										}
+									},
+									{
+										"source": {
+											"name": "CreateDateTime",
+											"type": "DateTimeOffset",
+											"physicalType": "datetimeoffset"
+										},
+										"sink": {
+											"name": "CreateDateTime",
+											"type": "DateTime",
+											"physicalType": "datetime"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Controls",
+									"Table": "ADFRefreshQueue"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Canvas"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureSQLQueue')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/CanvasPBI_Refresh')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -2791,7 +2928,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Cancel Reasons\"\n        },\n        {\n            \"table\": \"445 Calendar\"\n        },\n        {\n            \"table\": \"Carhartt Retail Date Periods\"\n        },\n        {\n            \"table\": \"Carhartt Retail Traffic\"\n        },\n        {\n            \"table\": \"Contracts\"\n        },\n        {\n            \"table\": \"Consumers\"\n        },\n        {\n            \"table\": \"Customers\"\n        },\n        {\n            \"table\": \"Daily Goals\"\n        },\n        {\n            \"table\": \"Delivery Block Categories\"\n        },\n        {\n            \"table\": \"Display Date\"\n        },\n        {\n            \"table\": \"Event Date\"\n        },\n        {\n            \"table\": \"Event Date Periods\"\n        },\n        {\n            \"table\": \"Expected Delivery Date\"\n        },\n        {\n            \"table\": \"Expected Ship Date\"\n        },\n        {\n            \"table\": \"Geography\"\n        },\n        {\n            \"table\": \"Inventory Stock Levels\"\n        },\n        {\n            \"table\": \"Item Plans Customers\"\n        },\n        {\n            \"table\": \"Item Plans UPC\"\n        },\n        {\n            \"table\": \"Material Availability Date\"\n        },\n        {\n            \"table\": \"Material Programs\"\n        },\n        {\n            \"table\": \"Materials\"\n        },\n        {\n            \"table\": \"Monthly Goals\"\n        },\n        {\n            \"table\": \"Order Date\"\n        },\n        {\n            \"table\": \"Original Expected Delivery Date\"\n        },\n        {\n            \"table\": \"Pick Ticket Start Ship Date\"\n        },\n        {\n            \"table\": \"Pick Ticket Status\"\n        },\n        {\n            \"table\": \"Pick Tickets\"\n        },\n        {\n            \"table\": \"ProductCategories\"\n        },\n        {\n            \"table\": \"Products\"\n        },\n        {\n            \"table\": \"RefreshDateTime\"\n        },\n        {\n            \"table\": \"Reporting Notification Messages\"\n        },\n        {\n            \"table\": \"Requested Delivery Date\"\n        },\n        {\n            \"table\": \"Required Ship Date\"\n        },\n        {\n            \"table\": \"Retail Discounts\"\n        },\n        {\n            \"table\": \"Retail Discounts Bridge\"\n        },\n        {\n            \"table\": \"Revenue\"\n        },\n        {\n            \"table\": \"Revenue Segments\"\n        },\n        {\n            \"table\": \"Sales Segments\"\n        },\n        {\n            \"table\": \"ShipVia Codes\"\n        },\n        {\n            \"table\": \"SLA Ship Date\"\n        },\n        {\n            \"table\": \"Stop Ship Date\"\n        },\n        {\n            \"table\": \"System Dates\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Cancel Reasons\"\n        },\n        {\n            \"table\": \"445 Calendar\"\n        },\n        {\n            \"table\": \"Carhartt Retail Date Periods\"\n        },\n        {\n            \"table\": \"Carhartt Retail Traffic\"\n        },\n        {\n            \"table\": \"Contracts\"\n        },\n        {\n            \"table\": \"Consumers\"\n        },\n        {\n            \"table\": \"Customers\"\n        },\n        {\n            \"table\": \"Daily Goals\"\n        },\n        {\n            \"table\": \"Delivery Block Categories\"\n        },\n        {\n            \"table\": \"Display Date\"\n        },\n        {\n            \"table\": \"Event Date\"\n        },\n        {\n            \"table\": \"Event Date Periods\"\n        },\n        {\n            \"table\": \"Expected Delivery Date\"\n        },\n        {\n            \"table\": \"Expected Ship Date\"\n        },\n        {\n            \"table\": \"Geography\"\n        },\n        {\n            \"table\": \"Inventory Stock Levels\"\n        },\n        {\n            \"table\": \"Item Plans Customers\"\n        },\n        {\n            \"table\": \"Item Plans UPC\"\n        },\n        {\n            \"table\": \"Material Availability Date\"\n        },\n        {\n            \"table\": \"Material Programs\"\n        },\n        {\n            \"table\": \"Materials\"\n        },\n        {\n            \"table\": \"Monthly Goals\"\n        },\n        {\n            \"table\": \"Order Date\"\n        },\n        {\n            \"table\": \"Original Expected Delivery Date\"\n        },\n        {\n            \"table\": \"Pick Ticket Start Ship Date\"\n        },\n        {\n            \"table\": \"Pick Ticket Status\"\n        },\n        {\n            \"table\": \"Pick Tickets\"\n        },\n        {\n            \"table\": \"ProductCategories\"\n        },\n        {\n            \"table\": \"Products\"\n        },\n        {\n            \"table\": \"RefreshDateTime\"\n        },\n        {\n            \"table\": \"Reporting Notification Messages\"\n        },\n        {\n            \"table\": \"Requested Delivery Date\"\n        },\n        {\n            \"table\": \"Required Ship Date\"\n        },\n        {\n            \"table\": \"Retail Discounts\"\n        },\n        {\n            \"table\": \"Retail Discounts Bridge\"\n        },\n       {\n            \"table\": \"Revenue Segments\"\n        },\n        {\n            \"table\": \"Sales Segments\"\n        },\n        {\n            \"table\": \"ShipVia Codes\"\n        },\n        {\n            \"table\": \"SLA Ship Date\"\n        },\n        {\n            \"table\": \"Stop Ship Date\"\n        },\n        {\n            \"table\": \"System Dates\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
@@ -3867,95 +4004,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/AzureSQLQueue')]",
 				"[concat(variables('factoryId'), '/linkedServices/BIP01')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ProcessSupply_Error')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "StatusCheck",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[AzureSharedEventQueue]\n\tWHERE [EventType] = 'Supply' AND [EventStatus] NOT IN ('R','F','C') \n)\nTHEN 1\nELSE 0 END AS 'InvalidStatus'",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "AzureSQLQueue",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Lorem",
-									"Table": "Ipsum"
-								}
-							}
-						}
-					},
-					{
-						"name": "If Condition1",
-						"type": "IfCondition",
-						"dependsOn": [
-							{
-								"activity": "StatusCheck",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"expression": {
-								"value": "@equals(activity('StatusCheck').output.firstRow.InvalidStatus,1)",
-								"type": "Expression"
-							},
-							"ifTrueActivities": [
-								{
-									"name": "ErrorNotification",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "Teams Notification",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {
-											"messageCard": {
-												"value": "{\n    \"@type\": \"MessageCard\",\n    \"@context\": \"http://schema.org/extensions\",\n    \"themeColor\": \"FF0000\",\n    \"summary\": \"Supply Queue Error\",\n    \"sections\": [\n        {\n            \"activityTitle\": \"Supply Queue Error\",\n            \"facts\": [\n                {\n                    \"name\": \"Error:\",\n                    \"value\": \"Invalid Event Status\"\n                },\n                {\n                    \"name\": \"Queue:\",\n                    \"value\": \"Supply\"\n                },\n                {\n                    \"name\": \"Notification time (EST):\",\n                    \"value\": \"@{convertFromUtc(utcnow(),'Eastern Standard Time')}\"\n                }\n            ],\n            \"markdown\": true\n        }\n    ]\n}",
-												"type": "Expression"
-											}
-										}
-									}
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Supply"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/AzureSQLQueue')]"
 			]
 		}
 	]
