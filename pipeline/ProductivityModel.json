@@ -15,7 +15,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"storedProcedureName": "[WMS].[UpdateProductivityModelInputs_DG]",
+					"storedProcedureName": "[WMS].[UpdateProductivityModelInputs]",
 					"storedProcedureParameters": {
 						"ResetConfiguration": {
 							"value": "1",
