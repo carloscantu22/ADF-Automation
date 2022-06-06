@@ -23,7 +23,11 @@
 					},
 					"dataset": {
 						"referenceName": "CarharttDW",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "A",
+							"Table": "B"
+						}
 					}
 				}
 			},
@@ -41,7 +45,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@if(variables('IsData') = 0,true,False)",
+						"value": "@equals(variables('IsData'),0)",
 						"type": "Expression"
 					},
 					"ifTrueActivities": [
