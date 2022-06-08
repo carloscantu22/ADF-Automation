@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlServerSource",
-						"sqlReaderQuery": "SELECT\n\tCASE WHEN EXIST() THEN 1\n\tELSE 0\nEND",
+						"sqlReaderQuery": "SELECT\n\tCASE WHEN EXISTS (\n  Select Sum(NumPeopleEntered)  FROM [Tabular_Orders].[CarharttRetailTraffic] crt\n  Join Tabular_Orders.Days rt  on rt.DateKey = crt.DateKey\n  Where actualdate = Convert(Date, Getdate())) THEN 1\n\tELSE 0\nEND",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
