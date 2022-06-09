@@ -2715,6 +2715,41 @@
 											}
 										}
 									]
+								},
+								{
+									"value": "InventoryPlans_Draft",
+									"activities": [
+										{
+											"name": "Set_Tables_InvPlansDraft",
+											"type": "SetVariable",
+											"dependsOn": [
+												{
+													"activity": "SetRefreshFlag_InvPlansDraft",
+													"dependencyConditions": [
+														"Succeeded"
+													]
+												}
+											],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 1,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Inventory Plans\",\n            \"partition\": \"Draft Partition\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										},
+										{
+											"name": "SetRefreshFlag_InvPlansDraft",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "ProcessingConditional",
+												"value": "1"
+											}
+										}
+									]
 								}
 							],
 							"defaultActivities": [
@@ -4275,7 +4310,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlServerSource",
-								"sqlReaderQuery": "SELECT\n\tCASE WHEN EXIST() THEN 1\n\tELSE 0\nEND",
+								"sqlReaderQuery": "SELECT\n\tCASE WHEN EXISTS (\n  Select Sum(NumPeopleEntered)  FROM [Tabular_Orders].[CarharttRetailTraffic] crt\n  Join Tabular_Orders.Days rt  on rt.DateKey = crt.DateKey\n  Where actualdate = Convert(Date, Getdate())) THEN 1\n\tELSE 0\nEND",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
