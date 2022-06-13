@@ -1890,7 +1890,7 @@
 									]
 								},
 								{
-									"value": "failed",
+									"value": "Failed",
 									"activities": [
 										{
 											"name": "UpdateQueue_Fail",
@@ -1912,7 +1912,7 @@
 											},
 											"userProperties": [],
 											"typeProperties": {
-												"storedProcedureName": "[[Controls].[ADFQueueUpdate]",
+												"storedProcedureName": "[[Controls].[UpdateADFQueueRefresh]",
 												"storedProcedureParameters": {
 													"endTime": {
 														"value": null,
@@ -1925,7 +1925,11 @@
 														},
 														"type": "Int32"
 													},
-													"refreshId": {
+													"pipelineRunId": {
+														"value": null,
+														"type": "String"
+													},
+													"requestId": {
 														"value": null,
 														"type": "String"
 													},
@@ -1938,7 +1942,7 @@
 														"type": "String"
 													},
 													"statusMessage": {
-														"value": "Exception Alerted.",
+														"value": "Failed.",
 														"type": "String"
 													}
 												}
@@ -2050,7 +2054,7 @@
 													"Content-Type": "application/json"
 												},
 												"body": {
-													"value": "@concat('{\"RefreshId\" : \"',trim(activity('GetRefreshId').output.firstRow.RefreshId),'\" , \"EventName\" : \"',activity('GetRefreshId').output.firstRow.EventName,'\"}')",
+													"value": "@concat('{\"RefreshId\" : \"',trim(activity('GetRefreshId').output.firstRow.RequestId),'\" , \"EventName\" : \"',activity('GetRefreshId').output.firstRow.EventName,'\"}')",
 													"type": "Expression"
 												}
 											}
@@ -2075,7 +2079,7 @@
 												"waitOnCompletion": true,
 												"parameters": {
 													"messageCard": {
-														"value": "{\n    \"@type\": \"MessageCard\",\n    \"@context\": \"http://schema.org/extensions\",\n    \"themeColor\": \"FF0000\",\n    \"summary\": \"Supply Event Failed\",\n    \"sections\": [\n        {\n            \"activityTitle\": \"Supply Event Failed\",\n            \"facts\": [\n                {\n                    \"name\": \"Event ID:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.EventId}\"\n                },\n                {\n                    \"name\": \"Event Name:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.EventName}\"\n                },\n                {\n                    \"name\": \"Refresh ID:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.RefreshId}\"\n                },\n                {\n                    \"name\": \"Notification time (EST):\",\n                    \"value\": \"@{convertFromUtc(utcnow(),'Eastern Standard Time')}\"\n                }\n            ],\n            \"markdown\": true\n        }\n    ]\n}",
+														"value": "{\n    \"@type\": \"MessageCard\",\n    \"@context\": \"http://schema.org/extensions\",\n    \"themeColor\": \"FF0000\",\n    \"summary\": \"Canvas Event Failed\",\n    \"sections\": [\n        {\n            \"activityTitle\": \"Canvas Event Failed\",\n            \"facts\": [\n                {\n                    \"name\": \"Event ID:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.EventId}\"\n                },\n                {\n                    \"name\": \"Event Name:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.EventName}\"\n                },\n                {\n                    \"name\": \"Refresh ID:\",\n                    \"value\": \"@{activity('GetRefreshId').output.firstRow.RequestId}\"\n                },\n                {\n                    \"name\": \"Notification time (EST):\",\n                    \"value\": \"@{convertFromUtc(utcnow(),'Eastern Standard Time')}\"\n                }\n            ],\n            \"markdown\": true\n        }\n    ]\n}",
 														"type": "Expression"
 													}
 												}
@@ -2185,6 +2189,46 @@
 				"[concat(variables('factoryId'), '/linkedServices/BIP01')]",
 				"[concat(variables('factoryId'), '/pipelines/Teams Notification')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CanvasRefresh')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetRefresh",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://api.powerbi.com/v1.0/myorg/groups/d2584f83-3b80-414f-a5c5-2f3035983c85/datasets/5f7a2fe6-b9bd-4c35-91e2-ce420255bc6c/refreshes/d8253e64-07bf-44d1-af05-7b765c20d25a",
+							"method": "GET",
+							"headers": {},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://analysis.windows.net/powerbi/api"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Canvas"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ErrorLog')]",

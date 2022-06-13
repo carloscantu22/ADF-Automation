@@ -73,15 +73,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"AzureBIDevelopment_password": {
-						"value": "[parameters('AzureBIDevelopment_password')]"
-					},
-					"AzureBIDevelopment_properties_typeProperties_url": {
-						"value": "[parameters('AzureBIDevelopment_properties_typeProperties_url')]"
-					},
-					"AzureBIDevelopment_properties_typeProperties_userName": {
-						"value": "[parameters('AzureBIDevelopment_properties_typeProperties_userName')]"
 					}
 				}
 			},
@@ -101,6 +92,9 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"AzureBIDevelopment_password": {
+						"value": "[parameters('AzureBIDevelopment_password')]"
+					},
 					"BIP01_connectionString": {
 						"value": "[parameters('BIP01_connectionString')]"
 					},
@@ -115,6 +109,12 @@
 					},
 					"Db21_connectionString": {
 						"value": "[parameters('Db21_connectionString')]"
+					},
+					"AzureBIDevelopment_properties_typeProperties_url": {
+						"value": "[parameters('AzureBIDevelopment_properties_typeProperties_url')]"
+					},
+					"AzureBIDevelopment_properties_typeProperties_userName": {
+						"value": "[parameters('AzureBIDevelopment_properties_typeProperties_userName')]"
 					},
 					"BIEKeyChain_properties_typeProperties_baseUrl": {
 						"value": "[parameters('BIEKeyChain_properties_typeProperties_baseUrl')]"

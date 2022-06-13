@@ -6,18 +6,6 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "BIEDevFactory"
-		},
-		"AzureBIDevelopment_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'AzureBIDevelopment'"
-		},
-		"AzureBIDevelopment_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://management.azure.com/"
-		},
-		"AzureBIDevelopment_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "bobjservice@carhartt.com"
 		}
 	},
 	"variables": {
@@ -239,6 +227,46 @@
 				},
 				"folder": {
 					"name": "ARUN"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CanvasRefresh')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetRefresh",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://api.powerbi.com/v1.0/myorg/groups/d2584f83-3b80-414f-a5c5-2f3035983c85/datasets/5f7a2fe6-b9bd-4c35-91e2-ce420255bc6c/refreshes/d8253e64-07bf-44d1-af05-7b765c20d25a",
+							"method": "GET",
+							"headers": {},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://analysis.windows.net/powerbi/api"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Canvas"
 				},
 				"annotations": []
 			},
@@ -1368,26 +1396,6 @@
 					"name": "WIP"
 				},
 				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureBIDevelopment')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "RestService",
-				"typeProperties": {
-					"url": "[parameters('AzureBIDevelopment_properties_typeProperties_url')]",
-					"enableServerCertificateValidation": true,
-					"authenticationType": "Basic",
-					"userName": "[parameters('AzureBIDevelopment_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('AzureBIDevelopment_password')]"
-					}
-				}
 			},
 			"dependsOn": []
 		}
