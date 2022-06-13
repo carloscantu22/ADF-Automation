@@ -240,20 +240,21 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"storedProcedureName": "[Controls].[ADFQueueUpdate]",
+										"storedProcedureName": "[Controls].[UpdateADFQueueRefresh]",
 										"storedProcedureParameters": {
 											"endTime": {
 												"value": null,
 												"type": "DateTime"
 											},
 											"eventId": {
-												"value": {
-													"value": "@int(activity('GetRefreshId').output.firstRow.EventId)",
-													"type": "Expression"
-												},
+												"value": "@int(activity('GetRefreshId').output.firstRow.EventId)",
 												"type": "Int32"
 											},
-											"refreshId": {
+											"pipelineRunId": {
+												"value": null,
+												"type": "String"
+											},
+											"requestId": {
 												"value": null,
 												"type": "String"
 											},
@@ -266,7 +267,7 @@
 												"type": "String"
 											},
 											"statusMessage": {
-												"value": "Exception Alerted.",
+												"value": "Failed.",
 												"type": "String"
 											}
 										}
