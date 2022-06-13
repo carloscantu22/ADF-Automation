@@ -1,0 +1,32 @@
+{
+	"name": "CanvasRefresh",
+	"properties": {
+		"activities": [
+			{
+				"name": "GetRefresh",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://api.powerbi.com/v1.0/myorg/groups/d2584f83-3b80-414f-a5c5-2f3035983c85/datasets/5f7a2fe6-b9bd-4c35-91e2-ce420255bc6c/refreshes/d8253e64-07bf-44d1-af05-7b765c20d25a",
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://analysis.windows.net/powerbi/api"
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "Canvas"
+		},
+		"annotations": []
+	}
+}
