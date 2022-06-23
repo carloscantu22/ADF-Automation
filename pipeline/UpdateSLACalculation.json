@@ -1,0 +1,248 @@
+{
+	"name": "UpdateSLACalculation",
+	"properties": {
+		"activities": [
+			{
+				"name": "CopySLACalculation",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"preCopyScript": "TRUNCATE TABLE [Tabular_Warehouse2].[SLACalculation]",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "PickTicketControlNumber",
+									"type": "String",
+									"physicalType": "char"
+								},
+								"sink": {
+									"name": "PickTicketControlNumber",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "SLAOrderProcessingID",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "SLAOrderProcessingID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "SLAOrderQualifier",
+									"type": "String",
+									"physicalType": "varchar"
+								},
+								"sink": {
+									"name": "SLAOrderQualifier",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "ExcludeTicket",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "ExcludeTicket",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "IsInternational",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "IsInternational",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "IsIrregular",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "IsIrregular",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "FirstQuality",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "FirstQuality",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "ProductEnhancement",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "ProductEnhancement",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "ShipVia",
+									"type": "String",
+									"physicalType": "char"
+								},
+								"sink": {
+									"name": "ShipVia",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "ReadyToShipDateKey",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "ReadyToShipDateKey",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "SLAProcessingCategory",
+									"type": "String",
+									"physicalType": "varchar"
+								},
+								"sink": {
+									"name": "SLAProcessingCategory",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "IsExpedited",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "IsExpedited",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "IsParcel",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "IsParcel",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "IsEmployeeSale",
+									"type": "String",
+									"physicalType": "char"
+								},
+								"sink": {
+									"name": "IsEmployeeSale",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "SLATargetDateKey",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "SLATargetDateKey",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "CarharttDW",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Tabular_Warehouse2",
+							"Table": "ADF_SLACalculation"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CarharttDW",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Tabular_Warehouse2",
+							"Table": "SLACalculation"
+						}
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "Warehouse_PBI"
+		},
+		"annotations": []
+	}
+}
