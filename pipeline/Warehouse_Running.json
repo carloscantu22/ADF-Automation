@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "  SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE [ModelName] = 'Supply'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND [EventStatus] = 'R'\n)\nTHEN 1\nELSE 0 END AS 'Running'",
+						"sqlReaderQuery": "  SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE [ModelName] = 'Warehouse'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND [EventStatus] = 'R'\n)\nTHEN 1\nELSE 0 END AS 'Running'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -50,13 +50,13 @@
 					},
 					"ifFalseActivities": [
 						{
-							"name": "ProcessSupply_RefreshPBI",
+							"name": "Warehouse_RefreshPBI",
 							"type": "ExecutePipeline",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "SupplyPBI_Refresh",
+									"referenceName": "Warehouse_Refresh",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true
@@ -65,13 +65,13 @@
 					],
 					"ifTrueActivities": [
 						{
-							"name": "ProcessSupply_UpdateQueuePBI",
+							"name": "Warehouse_UpdateQueuePBI",
 							"type": "ExecutePipeline",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "SupplyPBI_Update",
+									"referenceName": "Warehouse_Update",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true
