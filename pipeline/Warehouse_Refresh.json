@@ -74,7 +74,7 @@
 											"Content-Type": "application/json"
 										},
 										"body": {
-											"value": "@concat('{\"ModelName\" : \"','Supply','\" , \"StartDateTime\" : \"',utcnow(),'\"}')",
+											"value": "@concat('{\"ModelName\" : \"','PBI Warehouse','\" , \"StartDateTime\" : \"',utcnow(),'\"}')",
 											"type": "Expression"
 										}
 									}
@@ -671,7 +671,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT [EventId],[EventName] FROM [Controls].[ADFRefreshQueue]\nWHERE [ModelName] = 'Supply'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND [EventStatus] IS NULL\nORDER BY [EventId]",
+						"sqlReaderQuery": "SELECT [EventId],[EventName] FROM [Controls].[ADFRefreshQueue]\nWHERE [ModelName] = 'Warehouse'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND [EventStatus] IS NULL\nORDER BY [EventId]",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -768,7 +768,7 @@
 					],
 					"ifTrueActivities": [
 						{
-							"name": "RefreshSupplyPBI",
+							"name": "RefreshWarehousePBI",
 							"type": "WebActivity",
 							"dependsOn": [],
 							"policy": {
@@ -780,7 +780,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/ab4a9a2a-8b91-42ae-95aa-4d027c90c86f/refreshes",
+								"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1e04c36c-aa71-43a4-bd7b-843e24169196/refreshes",
 								"method": "POST",
 								"body": {
 									"value": "@variables('RefreshParameters')",
@@ -797,7 +797,7 @@
 							"type": "WebActivity",
 							"dependsOn": [
 								{
-									"activity": "RefreshSupplyPBI",
+									"activity": "RefreshWarehousePBI",
 									"dependencyConditions": [
 										"Completed"
 									]
@@ -812,7 +812,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/ab4a9a2a-8b91-42ae-95aa-4d027c90c86f/refreshes?$top=2",
+								"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1e04c36c-aa71-43a4-bd7b-843e24169196/refreshes?$top=2",
 								"method": "GET",
 								"authentication": {
 									"type": "MSI",
