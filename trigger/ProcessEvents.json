@@ -33,6 +33,12 @@
 					"referenceName": "SupplyPBI_Queue",
 					"type": "PipelineReference"
 				}
+			},
+			{
+				"pipelineReference": {
+					"referenceName": "Warehouse_Queue",
+					"type": "PipelineReference"
+				}
 			}
 		],
 		"type": "ScheduleTrigger",
