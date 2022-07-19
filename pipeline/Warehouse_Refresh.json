@@ -34,7 +34,7 @@
 									}
 								},
 								{
-									"name": "Update SLA",
+									"name": "Update Drop Units",
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [
 										{
@@ -79,6 +79,10 @@
 									],
 									"userProperties": [],
 									"typeProperties": {
+										"pipeline": {
+											"referenceName": "UpdateSLACalculation",
+											"type": "PipelineReference"
+										},
 										"waitOnCompletion": true
 									}
 								}
