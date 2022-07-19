@@ -1,5 +1,5 @@
 {
-	"name": "SupplyPBI_Queue_copy1",
+	"name": "Warehouse_Queue",
 	"properties": {
 		"activities": [
 			{
@@ -21,13 +21,13 @@
 					},
 					"ifTrueActivities": [
 						{
-							"name": "ProcessSupply_RunningPBI",
+							"name": "Warehouse_RunningPBI",
 							"type": "ExecutePipeline",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "SupplyPBI_Running",
+									"referenceName": "Warehouse_Running",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true
@@ -51,7 +51,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE [ModelName] = 'Supply'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND ([EventStatus] = 'R' OR [EventStatus] IS NULL)\n)\nTHEN 0\nELSE 1 END AS 'Idle'",
+						"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE [ModelName] = 'Warehouse'\n\t\tAND [EventType] = 'PBI Refresh'\n\t\tAND ([EventStatus] = 'R' OR [EventStatus] IS NULL)\n)\nTHEN 0\nELSE 1 END AS 'Idle'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
