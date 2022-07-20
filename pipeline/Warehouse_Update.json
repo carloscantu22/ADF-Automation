@@ -52,7 +52,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "  SELECT [EventId],[RequestId],[EventName],[PipelineRunID],[ModelName] FROM [Controls].[ADFRefreshQueue]\nWHERE [EventType] = 'PBI Refresh' AND [ModelName] = 'Supply' AND [EventStatus] = 'R'\nORDER BY EventId",
+						"sqlReaderQuery": "  SELECT [EventId],[RequestId],[EventName],[PipelineRunID],[ModelName] FROM [Controls].[ADFRefreshQueue]\nWHERE [EventType] = 'PBI Refresh' AND [ModelName] = 'Warehouse' AND [EventStatus] = 'R'\nORDER BY EventId",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
