@@ -13,6 +13,104 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/ProcessWarehouse_Running')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "RunningValidation",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[AzureSharedEventQueue]\n\tWHERE [EventType] = 'Warehouse2.0' AND [EventStatus] = 'R'\n)\nTHEN 1\nELSE 0 END AS 'Running'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						}
+					},
+					{
+						"name": "If Condition1",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "RunningValidation",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@equals(activity('RunningValidation').output.firstRow.Running,1)",
+								"type": "Expression"
+							},
+							"ifFalseActivities": [
+								{
+									"name": "ProcessWarehouse_Refresh",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "ProcessWarehouse_Refresh",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {}
+									}
+								}
+							],
+							"ifTrueActivities": [
+								{
+									"name": "ProcessWarehouse_UpdateQueue",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "ProcessWarehouse_UpdateQueue",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {}
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Warehouse2.0"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Simple Alert')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -964,7 +1062,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/ProcessWarehouse_Running')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SupplyPBI_Queue')]",
@@ -1274,44 +1374,11 @@
 										{
 											"name": "SetRefreshFlag05",
 											"type": "SetVariable",
-											"dependsOn": [
-												{
-													"activity": "Update Drop Units",
-													"dependencyConditions": [
-														"Succeeded"
-													]
-												}
-											],
+											"dependsOn": [],
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
 												"value": "1"
-											}
-										},
-										{
-											"name": "Update Drop Units",
-											"type": "SqlServerStoredProcedure",
-											"dependsOn": [],
-											"policy": {
-												"timeout": "7.00:00:00",
-												"retry": 0,
-												"retryIntervalInSeconds": 30,
-												"secureOutput": false,
-												"secureInput": false
-											},
-											"userProperties": [],
-											"typeProperties": {
-												"storedProcedureName": "[[Tabular_Warehouse].[RollingUnitsNotWaved]",
-												"storedProcedureParameters": {
-													"option": {
-														"value": "L3D",
-														"type": "String"
-													}
-												}
-											},
-											"linkedServiceName": {
-												"referenceName": "DBNSQLP01",
-												"type": "LinkedServiceReference"
 											}
 										}
 									]
@@ -1342,98 +1409,11 @@
 										{
 											"name": "SetRefreshFlag06",
 											"type": "SetVariable",
-											"dependsOn": [
-												{
-													"activity": "CalculateSLA",
-													"dependencyConditions": [
-														"Succeeded"
-													]
-												}
-											],
+											"dependsOn": [],
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
 												"value": "1"
-											}
-										},
-										{
-											"name": "CalculateSLA",
-											"type": "ExecutePipeline",
-											"dependsOn": [
-												{
-													"activity": "UpdateFlagQueue_copy1",
-													"dependencyConditions": [
-														"Succeeded"
-													]
-												}
-											],
-											"userProperties": [],
-											"typeProperties": {
-												"pipeline": {
-													"referenceName": "UpdateSLACalculation",
-													"type": "PipelineReference"
-												},
-												"waitOnCompletion": true,
-												"parameters": {}
-											}
-										},
-										{
-											"name": "UpdateFlagQueue_copy1",
-											"type": "SqlServerStoredProcedure",
-											"dependsOn": [],
-											"policy": {
-												"timeout": "7.00:00:00",
-												"retry": 0,
-												"retryIntervalInSeconds": 30,
-												"secureOutput": false,
-												"secureInput": false
-											},
-											"userProperties": [],
-											"typeProperties": {
-												"storedProcedureName": "[[Controls].[UpdateADFQueueRefresh]",
-												"storedProcedureParameters": {
-													"endTime": {
-														"value": null,
-														"type": "DateTime"
-													},
-													"eventId": {
-														"value": {
-															"value": "@int(activity('ReadRefresh').output.firstRow.EventId)",
-															"type": "Expression"
-														},
-														"type": "Int32"
-													},
-													"pipelineRunId": {
-														"value": {
-															"value": "@string(pipeline().RunId)",
-															"type": "Expression"
-														},
-														"type": "String"
-													},
-													"requestId": {
-														"value": null,
-														"type": "String"
-													},
-													"startTime": {
-														"value": {
-															"value": "@convertFromUtc(pipeline().TriggerTime,'Eastern Standard Time')",
-															"type": "Expression"
-														},
-														"type": "DateTime"
-													},
-													"status": {
-														"value": "R",
-														"type": "String"
-													},
-													"statusMessage": {
-														"value": "Running Update SP",
-														"type": "String"
-													}
-												}
-											},
-											"linkedServiceName": {
-												"referenceName": "BIP01",
-												"type": "LinkedServiceReference"
 											}
 										}
 									]
@@ -1508,6 +1488,165 @@
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
 												"value": "1"
+											}
+										}
+									]
+								},
+								{
+									"value": "UpdateSP",
+									"activities": [
+										{
+											"name": "Update Drop Units",
+											"type": "SqlServerStoredProcedure",
+											"dependsOn": [
+												{
+													"activity": "SetCompleteHold",
+													"dependencyConditions": [
+														"Succeeded"
+													]
+												}
+											],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"storedProcedureName": "[[Tabular_Warehouse].[RollingUnitsNotWaved]",
+												"storedProcedureParameters": {
+													"option": {
+														"value": "L3D",
+														"type": "String"
+													}
+												}
+											},
+											"linkedServiceName": {
+												"referenceName": "DBNSQLP01",
+												"type": "LinkedServiceReference"
+											}
+										},
+										{
+											"name": "UpdateSLA",
+											"type": "ExecutePipeline",
+											"dependsOn": [
+												{
+													"activity": "Update Drop Units",
+													"dependencyConditions": [
+														"Succeeded"
+													]
+												}
+											],
+											"userProperties": [],
+											"typeProperties": {
+												"pipeline": {
+													"referenceName": "UpdateSLACalculation",
+													"type": "PipelineReference"
+												},
+												"waitOnCompletion": true,
+												"parameters": {}
+											}
+										},
+										{
+											"name": "SetCompleteHold",
+											"type": "SqlServerStoredProcedure",
+											"dependsOn": [],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"storedProcedureName": "[[Controls].[UpdateADFQueueRefresh]",
+												"storedProcedureParameters": {
+													"endTime": {
+														"value": {
+															"value": "@convertFromUtc(utcnow(),'Eastern Standard Time')",
+															"type": "Expression"
+														},
+														"type": "DateTime"
+													},
+													"eventId": {
+														"value": {
+															"value": "@int(activity('ReadRefresh').output.firstRow.EventId)",
+															"type": "Expression"
+														},
+														"type": "Int32"
+													},
+													"pipelineRunId": {
+														"value": {
+															"value": "@string(pipeline().RunId)",
+															"type": "Expression"
+														},
+														"type": "String"
+													},
+													"requestId": {
+														"value": null,
+														"type": "String"
+													},
+													"startTime": {
+														"value": {
+															"value": "@convertFromUtc(pipeline().TriggerTime,'Eastern Standard Time')",
+															"type": "Expression"
+														},
+														"type": "DateTime"
+													},
+													"status": {
+														"value": "C",
+														"type": "String"
+													},
+													"statusMessage": {
+														"value": "Flag Event",
+														"type": "String"
+													}
+												}
+											},
+											"linkedServiceName": {
+												"referenceName": "BIP01",
+												"type": "LinkedServiceReference"
+											}
+										},
+										{
+											"name": "Insert Nightly Events",
+											"type": "ExecutePipeline",
+											"dependsOn": [
+												{
+													"activity": "UpdateSLA",
+													"dependencyConditions": [
+														"Succeeded"
+													]
+												}
+											],
+											"userProperties": [],
+											"typeProperties": {
+												"pipeline": {
+													"referenceName": "WarehouseNightlyRun",
+													"type": "PipelineReference"
+												},
+												"waitOnCompletion": true,
+												"parameters": {}
+											}
+										},
+										{
+											"name": "SetNoRefresh_SLA",
+											"type": "SetVariable",
+											"dependsOn": [
+												{
+													"activity": "Insert Nightly Events",
+													"dependencyConditions": [
+														"Succeeded"
+													]
+												}
+											],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "ProcessingConditional",
+												"value": "0"
 											}
 										}
 									]
