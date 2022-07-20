@@ -475,6 +475,23 @@
 										},
 										"waitOnCompletion": true
 									}
+								},
+								{
+									"name": "SetNoRefresh_SLA",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "Insert Nightly Events",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "ProcessingConditional",
+										"value": "0"
+									}
 								}
 							]
 						}
