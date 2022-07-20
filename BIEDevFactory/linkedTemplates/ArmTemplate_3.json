@@ -1086,60 +1086,6 @@
 												"variableName": "ProcessingConditional",
 												"value": "0"
 											}
-										},
-										{
-											"name": "Update Drop Units",
-											"type": "SqlServerStoredProcedure",
-											"dependsOn": [
-												{
-													"activity": "SetNoRefresh_01",
-													"dependencyConditions": [
-														"Succeeded"
-													]
-												}
-											],
-											"policy": {
-												"timeout": "7.00:00:00",
-												"retry": 0,
-												"retryIntervalInSeconds": 30,
-												"secureOutput": false,
-												"secureInput": false
-											},
-											"userProperties": [],
-											"typeProperties": {
-												"storedProcedureName": "[[Tabular_Warehouse].[RollingUnitsNotWaved]",
-												"storedProcedureParameters": {
-													"option": {
-														"value": "L3D",
-														"type": "String"
-													}
-												}
-											},
-											"linkedServiceName": {
-												"referenceName": "DBNSQLP01",
-												"type": "LinkedServiceReference"
-											}
-										},
-										{
-											"name": "CalculateSLA",
-											"type": "ExecutePipeline",
-											"dependsOn": [
-												{
-													"activity": "SetNoRefresh_01",
-													"dependencyConditions": [
-														"Succeeded"
-													]
-												}
-											],
-											"userProperties": [],
-											"typeProperties": {
-												"pipeline": {
-													"referenceName": "UpdateSLACalculation",
-													"type": "PipelineReference"
-												},
-												"waitOnCompletion": true,
-												"parameters": {}
-											}
 										}
 									]
 								},
@@ -1328,11 +1274,44 @@
 										{
 											"name": "SetRefreshFlag05",
 											"type": "SetVariable",
-											"dependsOn": [],
+											"dependsOn": [
+												{
+													"activity": "Update Drop Units",
+													"dependencyConditions": [
+														"Succeeded"
+													]
+												}
+											],
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
 												"value": "1"
+											}
+										},
+										{
+											"name": "Update Drop Units",
+											"type": "SqlServerStoredProcedure",
+											"dependsOn": [],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"storedProcedureName": "[[Tabular_Warehouse].[RollingUnitsNotWaved]",
+												"storedProcedureParameters": {
+													"option": {
+														"value": "L3D",
+														"type": "String"
+													}
+												}
+											},
+											"linkedServiceName": {
+												"referenceName": "DBNSQLP01",
+												"type": "LinkedServiceReference"
 											}
 										}
 									]
@@ -1363,11 +1342,32 @@
 										{
 											"name": "SetRefreshFlag06",
 											"type": "SetVariable",
-											"dependsOn": [],
+											"dependsOn": [
+												{
+													"activity": "CalculateSLA",
+													"dependencyConditions": [
+														"Succeeded"
+													]
+												}
+											],
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
 												"value": "1"
+											}
+										},
+										{
+											"name": "CalculateSLA",
+											"type": "ExecutePipeline",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"pipeline": {
+													"referenceName": "UpdateSLACalculation",
+													"type": "PipelineReference"
+												},
+												"waitOnCompletion": true,
+												"parameters": {}
 											}
 										}
 									]
