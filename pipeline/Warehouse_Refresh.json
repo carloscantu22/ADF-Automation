@@ -220,44 +220,11 @@
 								{
 									"name": "SetRefreshFlag05",
 									"type": "SetVariable",
-									"dependsOn": [
-										{
-											"activity": "Update Drop Units",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
+									"dependsOn": [],
 									"userProperties": [],
 									"typeProperties": {
 										"variableName": "ProcessingConditional",
 										"value": "1"
-									}
-								},
-								{
-									"name": "Update Drop Units",
-									"type": "SqlServerStoredProcedure",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"storedProcedureName": "[Tabular_Warehouse].[RollingUnitsNotWaved]",
-										"storedProcedureParameters": {
-											"option": {
-												"value": "L3D",
-												"type": "String"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "DBNSQLP01",
-										"type": "LinkedServiceReference"
 									}
 								}
 							]
@@ -288,97 +255,11 @@
 								{
 									"name": "SetRefreshFlag06",
 									"type": "SetVariable",
-									"dependsOn": [
-										{
-											"activity": "CalculateSLA",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
+									"dependsOn": [],
 									"userProperties": [],
 									"typeProperties": {
 										"variableName": "ProcessingConditional",
 										"value": "1"
-									}
-								},
-								{
-									"name": "CalculateSLA",
-									"type": "ExecutePipeline",
-									"dependsOn": [
-										{
-											"activity": "UpdateFlagQueue_copy1",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "UpdateSLACalculation",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true
-									}
-								},
-								{
-									"name": "UpdateFlagQueue_copy1",
-									"type": "SqlServerStoredProcedure",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"storedProcedureName": "[Controls].[UpdateADFQueueRefresh]",
-										"storedProcedureParameters": {
-											"endTime": {
-												"value": null,
-												"type": "DateTime"
-											},
-											"eventId": {
-												"value": {
-													"value": "@int(activity('ReadRefresh').output.firstRow.EventId)",
-													"type": "Expression"
-												},
-												"type": "Int32"
-											},
-											"pipelineRunId": {
-												"value": {
-													"value": "@string(pipeline().RunId)",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"requestId": {
-												"value": null,
-												"type": "String"
-											},
-											"startTime": {
-												"value": {
-													"value": "@convertFromUtc(pipeline().TriggerTime,'Eastern Standard Time')",
-													"type": "Expression"
-												},
-												"type": "DateTime"
-											},
-											"status": {
-												"value": "R",
-												"type": "String"
-											},
-											"statusMessage": {
-												"value": "Running Update SP",
-												"type": "String"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "BIP01",
-										"type": "LinkedServiceReference"
 									}
 								}
 							]
@@ -453,6 +334,146 @@
 									"typeProperties": {
 										"variableName": "ProcessingConditional",
 										"value": "1"
+									}
+								}
+							]
+						},
+						{
+							"value": "UpdateSP",
+							"activities": [
+								{
+									"name": "Update Drop Units",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "SetCompleteHold",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[Tabular_Warehouse].[RollingUnitsNotWaved]",
+										"storedProcedureParameters": {
+											"option": {
+												"value": "L3D",
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "DBNSQLP01",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "UpdateSLA",
+									"type": "ExecutePipeline",
+									"dependsOn": [
+										{
+											"activity": "Update Drop Units",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "UpdateSLACalculation",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true
+									}
+								},
+								{
+									"name": "SetCompleteHold",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[Controls].[UpdateADFQueueRefresh]",
+										"storedProcedureParameters": {
+											"endTime": {
+												"value": {
+													"value": "@convertFromUtc(utcnow(),'Eastern Standard Time')",
+													"type": "Expression"
+												},
+												"type": "DateTime"
+											},
+											"eventId": {
+												"value": {
+													"value": "@int(activity('ReadRefresh').output.firstRow.EventId)",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"pipelineRunId": {
+												"value": {
+													"value": "@string(pipeline().RunId)",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"requestId": {
+												"value": null,
+												"type": "String"
+											},
+											"startTime": {
+												"value": {
+													"value": "@convertFromUtc(pipeline().TriggerTime,'Eastern Standard Time')",
+													"type": "Expression"
+												},
+												"type": "DateTime"
+											},
+											"status": {
+												"value": "C",
+												"type": "String"
+											},
+											"statusMessage": {
+												"value": "Flag Event",
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "BIP01",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "Insert Nightly Events",
+									"type": "ExecutePipeline",
+									"dependsOn": [
+										{
+											"activity": "UpdateSLA",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "WarehouseNightlyRun",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true
 									}
 								}
 							]
