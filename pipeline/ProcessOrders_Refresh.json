@@ -218,37 +218,6 @@
 											"type": "Expression"
 										}
 									}
-								},
-								{
-									"name": "SendCompletionEmail",
-									"type": "WebActivity",
-									"dependsOn": [
-										{
-											"activity": "Set_GenericFE",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"url": "https://prod-08.northcentralus.logic.azure.com:443/workflows/741160cf9fc944e29ca979527b4043e5/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=s30mG3Chr2YBMW7TsrkUonyVbvinFKGrR67lr6BKJpA",
-										"method": "GET",
-										"headers": {
-											"Content-Type": "application/json"
-										},
-										"body": {
-											"value": "@concat('{','}')",
-											"type": "Expression"
-										}
-									}
 								}
 							]
 						},
