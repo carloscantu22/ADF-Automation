@@ -2284,13 +2284,6 @@
 					},
 					{
 						"pipelineReference": {
-							"referenceName": "ProcessWarehouse_Queue",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					},
-					{
-						"pipelineReference": {
 							"referenceName": "ProcessOrders_Queue",
 							"type": "PipelineReference"
 						},
@@ -2330,7 +2323,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/ProcessSupply_Queue')]",
-				"[concat(variables('factoryId'), '/pipelines/ProcessWarehouse_Queue')]",
 				"[concat(variables('factoryId'), '/pipelines/ProcessOrders_Queue')]",
 				"[concat(variables('factoryId'), '/pipelines/CanvasPBI_Queue')]",
 				"[concat(variables('factoryId'), '/pipelines/SupplyPBI_Queue')]",
