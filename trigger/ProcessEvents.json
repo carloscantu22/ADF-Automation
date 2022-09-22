@@ -12,12 +12,6 @@
 			},
 			{
 				"pipelineReference": {
-					"referenceName": "ProcessWarehouse_Queue",
-					"type": "PipelineReference"
-				}
-			},
-			{
-				"pipelineReference": {
 					"referenceName": "ProcessOrders_Queue",
 					"type": "PipelineReference"
 				}
