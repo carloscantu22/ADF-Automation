@@ -36,13 +36,21 @@
 				"inputs": [
 					{
 						"referenceName": "WMIPROD",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "sdvsdv<",
+							"Table": "<vsdsdv"
+						}
 					}
 				],
 				"outputs": [
 					{
 						"referenceName": "CarharttDW",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "ds<fvdsv",
+							"Table": "sdvsdvsdv"
+						}
 					}
 				]
 			}
