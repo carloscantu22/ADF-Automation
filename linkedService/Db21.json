@@ -6,7 +6,7 @@
 		"type": "Db2",
 		"typeProperties": {
 			"connectionString": "server=10.17.82.54:446;database=WMIPROD;username=bidbuser;authenticationtype=Basic",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI2OThjZWE2Yi01ZmIzLTQ3YzctODdjYi04ZDhkZTg3MzE1NzIiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiIzZTgyZTM4ZS03ZWRlLTRjOTktOWNlNC1hMTRiNzE4N2UxZGIiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "GWP02IntegrationRuntime",
