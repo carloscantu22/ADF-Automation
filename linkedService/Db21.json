@@ -5,8 +5,8 @@
 		"annotations": [],
 		"type": "Db2",
 		"typeProperties": {
-			"connectionString": "server=10.17.82.54;database=WMIPROD;username=bidbuser;authenticationtype=Basic",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI5MWRjNTdlMS0xOGRjLTRkZTMtYTk3MC0xYmEzZDU1ZTBhYzYiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"connectionString": "server=10.17.82.54:446;database=WMIPROD;username=bidbuser;authenticationtype=Basic",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJiZmNiMWRmMi0wYzhkLTRmM2EtYWE0ZS03NTNiZmNmOTkxMTAiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "GWP02IntegrationRuntime",
