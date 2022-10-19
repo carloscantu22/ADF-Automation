@@ -1,5 +1,5 @@
 {
-	"name": "WMiStyles",
+	"name": "WMIPROD",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "Db21",
