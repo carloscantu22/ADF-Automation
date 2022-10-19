@@ -5,11 +5,11 @@
 		"annotations": [],
 		"type": "Db2",
 		"typeProperties": {
-			"connectionString": "server=10.17.82.54:446;database=WMIPROD;username=bidbuser;authenticationtype=Basic",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI2M2QxNGIyNC1hMzY5LTQxYjQtYTMyNS02N2E4MjlhYzc3NDciLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"connectionString": "server=10.17.82.54:446;database=WMIPROD;username=bidbuser;packagecollection=NULLID;authenticationtype=Basic",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI5MTI2MWM5OC1iNDRmLTQ5YjUtYjk3YS03Y2QyNjFkODA3MTciLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
-			"referenceName": "PNETIntegrationRuntime",
+			"referenceName": "GWP02IntegrationRuntime",
 			"type": "IntegrationRuntimeReference"
 		}
 	}
