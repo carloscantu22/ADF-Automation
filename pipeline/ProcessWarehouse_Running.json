@@ -70,10 +70,6 @@
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
-								"pipeline": {
-									"referenceName": "AASSupplyRefresh",
-									"type": "PipelineReference"
-								},
 								"waitOnCompletion": true
 							}
 						}
