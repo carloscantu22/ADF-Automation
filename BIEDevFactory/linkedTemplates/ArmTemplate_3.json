@@ -1193,7 +1193,7 @@
 							"source": {
 								"type": "AzureSqlSource",
 								"sqlReaderQuery": {
-									"value": "@concat('SELECT ''PBI Refresh'' AS ''EventType''\n\t  ,''Plants'' AS ''ModelName''\n\t  ,''Hourly'' AS ''EventName''\n\t  ,''3167dd37-7c14-4c39-af0d-ae13c90c727e'' AS ''RefreshId''\n\t  ,''',convertFromUtc(formatDateTime(activity('RefreshFacts').output.startTime, 'yyyy-MM-ddTHH:mm:ss.fffffffZ'),'Eastern Standard Time'),''' AS ''CreateDateTime''\n\t  ,''C'' AS ''EventStatus''\n\t  ,(GETDATE() AT TIME ZONE ''UTC'' AT TIME ZONE ''Eastern Standard Time'') AS ''ProcessEnd''\n\t  ,NULL AS ''RequestID''\n\t  ,''',pipeline().RunId,''' AS ''PipelineRunID''')",
+									"value": "@concat('SELECT ''PBI Refresh'' AS ''EventType''\n\t  ,''Plants'' AS ''ModelName''\n\t  ,''Hourly'' AS ''EventName''\n\t  ,''3167dd37-7c14-4c39-af0d-ae13c90c727e'' AS ''RefreshId''\n\t  ,''',convertFromUtc(formatDateTime(activity('RefreshFacts').output.startTime, 'yyyy-MM-ddTHH:mm:ss.fffffffZ'),'Eastern Standard Time'),''' AS ''CreateDateTime''\n\t  ,''',convertFromUtc(formatDateTime(activity('RefreshFacts').output.startTime, 'yyyy-MM-ddTHH:mm:ss.fffffffZ'),'Eastern Standard Time'),''' AS ''ProcessStart''\n\t  ,''C'' AS ''EventStatus''\n\t  ,''',convertFromUtc(formatDateTime(activity('RefreshFacts').output.endTime, 'yyyy-MM-ddTHH:mm:ss.fffffffZ'),'Eastern Standard Time'),''' AS ''ProcessEnd''\n\t  ,NULL AS ''RequestID''\n\t  ,''',pipeline().RunId,''' AS ''PipelineRunID''')",
 									"type": "Expression"
 								},
 								"queryTimeout": "02:00:00",
@@ -1747,7 +1747,7 @@
 							"source": {
 								"type": "AzureSqlSource",
 								"sqlReaderQuery": {
-									"value": "@concat('SELECT ''PBI Refresh'' AS ''EventType''\n\t  ,''Plants'' AS ''ModelName''\n\t  ,''20Min_Process'' AS ''EventName''\n\t  ,''3167dd37-7c14-4c39-af0d-ae13c90c727e'' AS ''RefreshId''\n\t  ,''',convertFromUtc(formatDateTime(activity('RefreshFacts').output.startTime, 'yyyy-MM-ddTHH:mm:ss.fffffffZ'),'Eastern Standard Time'),''' AS ''CreateDateTime''\n\t  ,''C'' AS ''EventStatus''\n\t  ,(GETDATE() AT TIME ZONE ''UTC'' AT TIME ZONE ''Eastern Standard Time'') AS ''ProcessEnd''\n\t  ,NULL AS ''RequestID''\n\t  ,''',pipeline().RunId,''' AS ''PipelineRunID''')",
+									"value": "@concat('SELECT ''PBI Refresh'' AS ''EventType''\n\t  ,''Plants'' AS ''ModelName''\n\t  ,''20Min_Process'' AS ''EventName''\n\t  ,''3167dd37-7c14-4c39-af0d-ae13c90c727e'' AS ''RefreshId''\n\t  ,''',convertFromUtc(formatDateTime(activity('RefreshFacts').output.startTime, 'yyyy-MM-ddTHH:mm:ss.fffffffZ'),'Eastern Standard Time'),''' AS ''CreateDateTime''\n\t  ,''',convertFromUtc(formatDateTime(activity('RefreshFacts').output.startTime, 'yyyy-MM-ddTHH:mm:ss.fffffffZ'),'Eastern Standard Time'),''' AS ''ProcessStart''\n\t  ,''C'' AS ''EventStatus''\n\t  ,''',convertFromUtc(formatDateTime(activity('RefreshFacts').output.endTime, 'yyyy-MM-ddTHH:mm:ss.fffffffZ'),'Eastern Standard Time'),''' AS ''ProcessEnd''\n\t  ,NULL AS ''RequestID''\n\t  ,''',pipeline().RunId,''' AS ''PipelineRunID''')",
 									"type": "Expression"
 								},
 								"queryTimeout": "02:00:00",
