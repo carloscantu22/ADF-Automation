@@ -506,7 +506,7 @@
 				}
 			},
 			{
-				"name": "Copy data1",
+				"name": "InsertQueue",
 				"type": "Copy",
 				"dependsOn": [
 					{
@@ -528,7 +528,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "@concat('SELECT [EventType]\n\t  ,[ModelName]\n\t  ,[EventName]\n\t  ,[RefreshId]\n\t  ,''',activity('StartTime').output.firstRow.TimeNow,''' AS ''CreateDateTime''\n\t  ,[EventStatus]\n\t  ,[ProcessEnd]\n\t  ,NULL AS ''RequestID''\n\t  ,''',pipeline().RunId,''' AS ''PipelineRunID''\nFROM \n(\nVALUES (''PBI Refresh'',''Plants'',''Nightly_Begin'',NULL,''C'',''2022-01-01'') \n\t  ,(''PBI Refresh'',''Plants'',''Nightly_Dimensions'',''15037fbd-2574-4243-807e-5e526b980169'',''C'',''2022-01-01'') \n\t  ,(''PBI Refresh'',''Plants'',''Nightly_Facts'',''cd7bc036-2814-4ded-a049-94fdde2fe347'',''C'',''2022-01-01'')\n\t  ,(''PBI Refresh'',''Plants'',''Nightly_End'',NULL,''C'',''2022-01-01'') \n) AS PR (EventType,ModelName,EventName,RefreshId,EventStatus,ProcessEnd)')",
+							"value": "@concat('SELECT [EventType]\n\t  ,[ModelName]\n\t  ,[EventName]\n\t  ,[RefreshId]\n\t  ,''',activity('StartTime').output.firstRow.TimeNow,''' AS ''CreateDateTime''\n\t  ,[EventStatus]\n\t  ,[ProcessEnd]\n\t  ,NULL AS ''RequestID''\n\t  ,''',pipeline().RunId,''' AS ''PipelineRunID''\nFROM \n(\nVALUES (''PBI Refresh'',''Plants'',''Nightly_Begin'',NULL,''C'',''',activity('StartTime').output.firstRow.TimeNow,''') \n\t  ,(''PBI Refresh'',''Plants'',''Nightly_Dimensions'',''15037fbd-2574-4243-807e-5e526b980169'',''C'',''2022-01-01'') \n\t  ,(''PBI Refresh'',''Plants'',''Nightly_Facts'',''cd7bc036-2814-4ded-a049-94fdde2fe347'',''C'',''2022-01-01'')\n\t  ,(''PBI Refresh'',''Plants'',''Nightly_End'',NULL,''C'',''2022-01-01'') \n) AS PR (EventType,ModelName,EventName,RefreshId,EventStatus,ProcessEnd)')",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00",
@@ -569,6 +569,37 @@
 						}
 					}
 				]
+			},
+			{
+				"name": "SendCompletionEmail",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "InsertQueue",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-13.northcentralus.logic.azure.com:443/workflows/edec3768a21d4a618a89c7ccf8c4ad0b/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Om-PN4tQZfPmI_KeEBQTkW7qGjSwrgbMrvF8RSqCfQ8",
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"body": {
+						"value": "@concat('{\"ModelName\" : \"','Plants PBI','\" , \"StartDateTime\" : \"',utcnow(),'\"}')",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"variables": {
