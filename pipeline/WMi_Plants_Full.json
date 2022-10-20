@@ -383,7 +383,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' AS 'TimeNow'",
+						"sqlReaderQuery": "SELECT GETDATE() AS 'TimeNow'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -440,7 +440,7 @@
 					"url": "https://api.powerbi.com/v1.0/myorg/groups/516449d1-03ba-45f4-9500-c94aee0d3912/datasets/6181c309-ac65-4198-b329-3892202ae9fe/refreshes",
 					"method": "POST",
 					"body": {
-						"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 10,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Style\"\n        }\n    ]\n}')",
+						"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 10,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Style\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
 						"type": "Expression"
 					},
 					"authentication": {
@@ -528,7 +528,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "@concat('SELECT [EventType]\n\t  ,[ModelName]\n\t  ,[EventName]\n\t  ,[RefreshId]\n\t  ,''',activity('StartTime').output.firstRow.TimeNow,''' AS ''CreateDateTime''\n\t  ,[EventStatus]\n\t  ,[ProcessEnd]\n\t  ,NULL AS ''RequestID''\n\t  ,''',pipeline().RunId,''' AS ''PipelineRunID''\nFROM \n(\nVALUES (''PBI Refresh'',''Plants'',''Nightly_Begin'',NULL,''C'',''',activity('StartTime').output.firstRow.TimeNow,''') \n\t  ,(''PBI Refresh'',''Plants'',''Nightly_Dimensions'',''15037fbd-2574-4243-807e-5e526b980169'',''C'',''2022-01-01'') \n\t  ,(''PBI Refresh'',''Plants'',''Nightly_Facts'',''cd7bc036-2814-4ded-a049-94fdde2fe347'',''C'',''2022-01-01'')\n\t  ,(''PBI Refresh'',''Plants'',''Nightly_End'',NULL,''C'',''2022-01-01'') \n) AS PR (EventType,ModelName,EventName,RefreshId,EventStatus,ProcessEnd)')",
+							"value": "@concat('SELECT [EventType]\n\t  ,[ModelName]\n\t  ,[EventName]\n\t  ,[RefreshId]\n\t  ,''',activity('StartTime').output.firstRow.TimeNow,''' AS ''CreateDateTime''\n\t  ,[EventStatus]\n\t  ,[ProcessEnd]\n\t  ,NULL AS ''RequestID''\n\t  ,''',pipeline().RunId,''' AS ''PipelineRunID''\nFROM \n(\nVALUES (''PBI Refresh'',''Plants'',''Nightly_Begin'',NULL,''C'',''',convertFromUtc(activity('StartTime').output.firstRow.TimeNow,'Eastern Standard Time'),''') \n\t  ,(''PBI Refresh'',''Plants'',''Nightly_Dimensions'',''15037fbd-2574-4243-807e-5e526b980169'',''C'',''',convertFromUtc(activity('StartTime').output.firstRow.TimeNow,'Eastern Standard Time'),''') \n\t  ,(''PBI Refresh'',''Plants'',''Nightly_Facts'',''cd7bc036-2814-4ded-a049-94fdde2fe347'',''C'',''',convertFromUtc(activity('StartTime').output.firstRow.TimeNow,'Eastern Standard Time'),''')\n\t  ,(''PBI Refresh'',''Plants'',''Nightly_End'',NULL,''C'',''',convertFromUtc(activity('StartTime').output.firstRow.TimeNow,'Eastern Standard Time'),''') \n) AS PR (EventType,ModelName,EventName,RefreshId,EventStatus,ProcessEnd)')\n",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00",
