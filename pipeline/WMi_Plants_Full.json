@@ -5,7 +5,14 @@
 			{
 				"name": "WMi_Styles",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "StartTime",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -237,7 +244,7 @@
 					},
 					"sink": {
 						"type": "SqlServerSink",
-						"preCopyScript": "TRUNCATE TABLE [Tabular_Plants].[C801E0WP]",
+						"preCopyScript": "TRUNCATE TABLE [Tabular_Plants].[C801E0WP2]",
 						"writeBehavior": "insert",
 						"sqlWriterUseTableLock": false
 					},
@@ -267,7 +274,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"Schema": "Tabular_Plants",
-							"Table": "C801E0WP"
+							"Table": "C801E0WP2"
 						}
 					}
 				]
@@ -325,8 +332,71 @@
 						}
 					}
 				]
+			},
+			{
+				"name": "StartTime",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' AS 'TimeNow'",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "AzureSQLQueue",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Lorem",
+							"Table": "Ipsum"
+						}
+					}
+				}
+			},
+			{
+				"name": "SetStart",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "StartTime",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "StartTime",
+					"value": {
+						"value": "@activity('StartTime').output.firstRow.TimeNow",
+						"type": "Expression"
+					}
+				}
 			}
 		],
+		"variables": {
+			"StartTime": {
+				"type": "String"
+			},
+			"DimensionsTime": {
+				"type": "String"
+			},
+			"FactsTime": {
+				"type": "String"
+			},
+			"EndTime": {
+				"type": "String"
+			}
+		},
 		"folder": {
 			"name": "Plants"
 		},
