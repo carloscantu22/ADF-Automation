@@ -9,6 +9,12 @@
 					"referenceName": "AASSupplyRefresh",
 					"type": "PipelineReference"
 				}
+			},
+			{
+				"pipelineReference": {
+					"referenceName": "WMi_Plants_Full",
+					"type": "PipelineReference"
+				}
 			}
 		],
 		"type": "ScheduleTrigger",
@@ -20,7 +26,7 @@
 				"timeZone": "Eastern Standard Time",
 				"schedule": {
 					"minutes": [
-						10
+						1
 					],
 					"hours": [
 						4
