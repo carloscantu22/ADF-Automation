@@ -97,6 +97,50 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "NightlyDimensions",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "00:15:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://api.powerbi.com/v1.0/myorg/groups/516449d1-03ba-45f4-9500-c94aee0d3912/datasets/6181c309-ac65-4198-b329-3892202ae9fe/refreshes",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 10,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Style\"\n        }\n    ]\n}')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://analysis.windows.net/powerbi/api"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Plants"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureBIDevelopment')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -174,50 +218,6 @@
 				"type": "SelfHosted",
 				"description": "This IR works as Gateway for internal resources in Carhartt Production",
 				"typeProperties": {}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "NightlyDimensions",
-						"type": "WebActivity",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "00:15:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"url": "https://api.powerbi.com/v1.0/myorg/groups/516449d1-03ba-45f4-9500-c94aee0d3912/datasets/6181c309-ac65-4198-b329-3892202ae9fe/refreshes",
-							"method": "POST",
-							"headers": {},
-							"body": {
-								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 10,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Style\"\n        }\n    ]\n}')",
-								"type": "Expression"
-							},
-							"authentication": {
-								"type": "MSI",
-								"resource": "https://analysis.windows.net/powerbi/api"
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Plants"
-				},
-				"annotations": []
 			},
 			"dependsOn": []
 		},
