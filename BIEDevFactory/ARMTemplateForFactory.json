@@ -10123,7 +10123,7 @@
 							"method": "POST",
 							"headers": {},
 							"body": {
-								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 10,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Country Of Origin\"\n        },\n        {\n            \"table\": \"Case Inventory\"\n        }\n    ]\n}')",
+								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 10,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Country Of Origin\"\n        },\n        {\n            \"table\": \"Case Inventory\"\n        },\n        {\n            \"table\": \"Transfer Load\"\n        }\n    ]\n}')",
 								"type": "Expression"
 							},
 							"authentication": {
@@ -10681,7 +10681,7 @@
 							"method": "POST",
 							"headers": {},
 							"body": {
-								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 10,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Country Of Origin\"\n        },\n        {\n            \"table\": \"Case Inventory\"\n        }\n    ]\n}')",
+								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 10,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Country Of Origin\"\n        },\n        {\n            \"table\": \"Case Inventory\"\n        },\n        {\n            \"table\": \"Transfer Load\"\n        }\n    ]\n}')",
 								"type": "Expression"
 							},
 							"authentication": {
