@@ -70,10 +70,6 @@
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
-								"pipeline": {
-									"referenceName": "ProcessWarehouse_UpdateQueue",
-									"type": "PipelineReference"
-								},
 								"waitOnCompletion": true
 							}
 						}
