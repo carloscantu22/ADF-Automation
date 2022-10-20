@@ -13,6 +13,112 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/OrderExclusion')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Pupulate Table",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "SqlServerSink",
+								"preCopyScript": "TRUNCATE TABLE [Tabular_eCommAging].[OrderExclusion]"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "ActualDate",
+											"type": "DateTime",
+											"physicalType": "date"
+										},
+										"sink": {
+											"name": "ActualDate",
+											"type": "DateTime",
+											"physicalType": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"name": "OrderNumber",
+											"type": "String",
+											"physicalType": "char"
+										},
+										"sink": {
+											"name": "OrderNumber",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "OrderLineNumber",
+											"type": "String",
+											"physicalType": "char"
+										},
+										"sink": {
+											"name": "OrderLineNumber",
+											"type": "String",
+											"physicalType": "String"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "CarharttDW",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Tabular_eCommAging",
+									"Table": "OrderExclusionQuery"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CarharttDW",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Tabular_eCommAging",
+									"Table": "OrderExclusion"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ProcessOrders_Running')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -794,57 +900,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/HourlyRun')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "Warehouse_WMIPlantsHourly",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2021-08-24T23:05:00",
-						"timeZone": "Eastern Standard Time",
-						"schedule": {
-							"minutes": [
-								15
-							],
-							"hours": [
-								4,
-								5,
-								6,
-								7,
-								8,
-								9,
-								10,
-								11,
-								12,
-								13,
-								14,
-								15,
-								16,
-								17,
-								18,
-								19
-							]
-						}
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/MidnightRun')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -929,6 +984,1193 @@
 						}
 					}
 				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/WMi_Plants_Full')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "WMi_Styles",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "StartTime",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "Db2Source",
+								"query": "SELECT STSEA\n\t  ,STSTYL\n\t  ,STCOLR\n\t  ,STSDIM\n\t  ,STSZCD\n\t  ,STSZPO\n\t  ,STSZDS\n\t  ,STSTYD\n\t  ,STSTAT\n\t  ,STDCR\n\t  ,STTCR\n\t  ,STDLM\n\t  ,STTLM\nFROM WM350PLTBD.STSTYL00"
+							},
+							"sink": {
+								"type": "SqlServerSink",
+								"preCopyScript": "TRUNCATE TABLE [Tabular_Plants].[STSTYL00]",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "WMIPROD",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Veniam",
+									"Table": "Minim"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CarharttDW",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Tabular_Plants",
+									"Table": "STSTYL00"
+								}
+							}
+						]
+					},
+					{
+						"name": "WMi_Case Inventory",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "NightlyDimensions",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "Db2Source",
+								"query": "SELECT IDCASN\n\t  ,IDSEA\n\t  ,IDSTYL\n\t  ,IDCOLR\n\t  ,IDSDIM\n\t  ,IDSZCD\n\t  ,IDSZPO\n\t  ,IDINVT\n\t  ,IDBCHN\n\t  ,IDSZDS\n\t  ,IDQTY\n\t  ,IDSQTY\n\t  ,IDWKON\n\t  ,IDSHMT\n\t  ,IDPON\n\t  ,IDTRLN\n\t  ,IDSTAT\n\t  ,IDWHSE\n\t  ,IDAREA\n\t  ,IDZONE\n\t  ,IDAISL\n\t  ,IDBAY\n\t  ,IDLEVL\n\t  ,IDPOSN\n\t  ,IDPAID\n\t  ,IDPXR3\n\t  ,IDDCR\n\t  ,IDTCR\n\t  ,IDUSER\nFROM WM350PLTBD.IDCASE00\nWHERE IDDCR >= 20220101"
+							},
+							"sink": {
+								"type": "SqlServerSink",
+								"preCopyScript": "TRUNCATE TABLE [Tabular_Plants].[IDCASE00]",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "WMIPROD",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Veniam",
+									"Table": "Minim"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CarharttDW",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Tabular_Plants",
+									"Table": "IDCASE00"
+								}
+							}
+						]
+					},
+					{
+						"name": "WMi_Country Origin",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "NightlyDimensions",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "Db2Source",
+								"query": "SELECT PRORDER\n\t  ,PRADJORG\n\t  ,PRPLTCTY\n\t  ,PRDTCR\n\t  ,PRTMCR\nFROM WM350PLTCD.PRPROD00\nWHERE PRDTCR >= 20220101"
+							},
+							"sink": {
+								"type": "SqlServerSink",
+								"preCopyScript": "TRUNCATE TABLE [Tabular_Plants].[PRPROD00]",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "WMIPROD",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Veniam",
+									"Table": "Minim"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CarharttDW",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Tabular_Plants",
+									"Table": "PRPROD00"
+								}
+							}
+						]
+					},
+					{
+						"name": "WMi_Work Order",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "NightlyDimensions",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "Db2Source",
+								"query": "SELECT DDWHSE\n\t  ,DDWKON\n\t  ,DDSEA\n\t  ,DDSTYL\n\t  ,DDCOLR\n\t  ,DDSDIM\n\t  ,DDSZCD\n\t  ,DDSZPO\n\t  ,DDSZDS\n\t  ,DDINVT\n\t  ,DDBORQ\n\t  ,DDDCR\nFROM WM350PLTBD.DDDCOR00\nWHERE DDDCR >= 20220101\nAND DDINVT = 'F'\nAND DDSDIM <> '   '"
+							},
+							"sink": {
+								"type": "SqlServerSink",
+								"preCopyScript": "TRUNCATE TABLE [Tabular_Plants].[DDDCOR00]",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "WMIPROD",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Veniam",
+									"Table": "Minim"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CarharttDW",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Tabular_Plants",
+									"Table": "DDDCOR00"
+								}
+							}
+						]
+					},
+					{
+						"name": "WMi_Transfer Load",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "NightlyDimensions",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "Db2Source",
+								"query": "SELECT *\nFROM WM350PLTCD.C801E0WP\nWHERE W2DCR >= 20220101\nAND W2CASN IS NOT NULL\nAND W2CASN <> ''\nAND W2CASN <> '                    '\nAND W2STAT <> '99'"
+							},
+							"sink": {
+								"type": "SqlServerSink",
+								"preCopyScript": "TRUNCATE TABLE [Tabular_Plants].[C801E0WP2]",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "WMIPROD",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Veniam",
+									"Table": "Minim"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CarharttDW",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Tabular_Plants",
+									"Table": "C801E0WP2"
+								}
+							}
+						]
+					},
+					{
+						"name": "WMIi_Transfer Seals",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "NightlyDimensions",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "Db2Source",
+								"query": "SELECT W2SHMT\n\t  ,W2SEA1\n\t  ,W2SEA2\n\t  ,W2SEA3\n\t  ,W2SEA4\n\t  ,W2SEA5\nFROM WM350PLTCD.C801E0WP\nWHERE W2DLM >= 20220101\nAND W2CASN = '                    '"
+							},
+							"sink": {
+								"type": "SqlServerSink",
+								"preCopyScript": "TRUNCATE TABLE [Tabular_Plants].[C801E0WP]",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "WMIPROD",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Veniam",
+									"Table": "Minim"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CarharttDW",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Tabular_Plants",
+									"Table": "C801E0WP"
+								}
+							}
+						]
+					},
+					{
+						"name": "StartTime",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT GETDATE() AS 'TimeNow'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						}
+					},
+					{
+						"name": "SetStart",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "StartTime",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "StartTime",
+							"value": {
+								"value": "@activity('StartTime').output.firstRow.TimeNow",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "NightlyDimensions",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "WMi_Styles",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "00:15:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://api.powerbi.com/v1.0/myorg/groups/516449d1-03ba-45f4-9500-c94aee0d3912/datasets/6181c309-ac65-4198-b329-3892202ae9fe/refreshes",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 10,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Style\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://analysis.windows.net/powerbi/api"
+							}
+						}
+					},
+					{
+						"name": "NightlyFacts",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "WMi_Case Inventory",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "WMi_Country Origin",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "WMIi_Transfer Seals",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "WMi_Transfer Load",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "WMi_Work Order",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "00:15:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://api.powerbi.com/v1.0/myorg/groups/516449d1-03ba-45f4-9500-c94aee0d3912/datasets/6181c309-ac65-4198-b329-3892202ae9fe/refreshes",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 10,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Country Of Origin\"\n        },\n        {\n            \"table\": \"Case Inventory\"\n        }\n    ]\n}')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://analysis.windows.net/powerbi/api"
+							}
+						}
+					},
+					{
+						"name": "InsertQueue",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "NightlyFacts",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "@concat('SELECT [EventType]\n\t  ,[ModelName]\n\t  ,[EventName]\n\t  ,[RefreshId]\n\t  ,''',activity('StartTime').output.firstRow.TimeNow,''' AS ''CreateDateTime''\n\t  ,[EventStatus]\n\t  ,[ProcessEnd]\n\t  ,NULL AS ''RequestID''\n\t  ,''',pipeline().RunId,''' AS ''PipelineRunID''\nFROM \n(\nVALUES (''PBI Refresh'',''Plants'',''Nightly_Begin'',NULL,''C'',''',convertFromUtc(activity('StartTime').output.firstRow.TimeNow,'Eastern Standard Time'),''') \n\t  ,(''PBI Refresh'',''Plants'',''Nightly_Dimensions'',''15037fbd-2574-4243-807e-5e526b980169'',''C'',''',convertFromUtc(activity('StartTime').output.firstRow.TimeNow,'Eastern Standard Time'),''') \n\t  ,(''PBI Refresh'',''Plants'',''Nightly_Facts'',''cd7bc036-2814-4ded-a049-94fdde2fe347'',''C'',''',convertFromUtc(activity('StartTime').output.firstRow.TimeNow,'Eastern Standard Time'),''')\n\t  ,(''PBI Refresh'',''Plants'',''Nightly_End'',NULL,''C'',''',convertFromUtc(activity('StartTime').output.firstRow.TimeNow,'Eastern Standard Time'),''') \n) AS PR (EventType,ModelName,EventName,RefreshId,EventStatus,ProcessEnd)')\n",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Controls",
+									"Table": "ADFRefreshQueue"
+								}
+							}
+						]
+					},
+					{
+						"name": "SendCompletionEmail",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "InsertQueue",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod-13.northcentralus.logic.azure.com:443/workflows/edec3768a21d4a618a89c7ccf8c4ad0b/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Om-PN4tQZfPmI_KeEBQTkW7qGjSwrgbMrvF8RSqCfQ8",
+							"method": "POST",
+							"headers": {
+								"Content-Type": "application/json"
+							},
+							"body": {
+								"value": "@concat('{\"ModelName\" : \"','Plants PBI','\" , \"StartDateTime\" : \"',utcnow(),'\"}')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"variables": {
+					"StartTime": {
+						"type": "String"
+					},
+					"DimensionsTime": {
+						"type": "String"
+					},
+					"FactsTime": {
+						"type": "String"
+					},
+					"EndTime": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Plants"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/WMi_Plants_Hourly')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "WMi_Case Inventory",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "ProcessDate",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "Db2Source",
+								"query": {
+									"value": "@concat('SELECT IDCASN\n\t  ,IDSEA\n\t  ,IDSTYL\n\t  ,IDCOLR\n\t  ,IDSDIM\n\t  ,IDSZCD\n\t  ,IDSZPO\n\t  ,IDINVT\n\t  ,IDBCHN\n\t  ,IDSZDS\n\t  ,IDQTY\n\t  ,IDSQTY\n\t  ,IDWKON\n\t  ,IDSHMT\n\t  ,IDPON\n\t  ,IDTRLN\n\t  ,IDSTAT\n\t  ,IDWHSE\n\t  ,IDAREA\n\t  ,IDZONE\n\t  ,IDAISL\n\t  ,IDBAY\n\t  ,IDLEVL\n\t  ,IDPOSN\n\t  ,IDPAID\n\t  ,IDPXR3\n\t  ,IDDCR\n\t  ,IDTCR\n\t  ,IDUSER\nFROM WM350PLTBD.IDCASE00\nWHERE IDDCR >= ',activity('ProcessDate').output.firstRow.StartDate)",
+									"type": "Expression"
+								}
+							},
+							"sink": {
+								"type": "SqlServerSink",
+								"preCopyScript": {
+									"value": "@{concat('DELETE FROM [Tabular_Plants].[IDCASE00]\nWHERE [IDDCR] >= ',activity('ProcessDate').output.firstRow.StartDate)}",
+									"type": "Expression"
+								},
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "WMIPROD",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Veniam",
+									"Table": "Minim"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CarharttDW",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Tabular_Plants",
+									"Table": "IDCASE00"
+								}
+							}
+						]
+					},
+					{
+						"name": "WMi_Country Origin",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "ProcessDate",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "Db2Source",
+								"query": {
+									"value": "@concat('SELECT PRORDER\n\t  ,PRADJORG\n\t  ,PRPLTCTY\n\t  ,PRDTCR\n\t  ,PRTMCR\nFROM WM350PLTCD.PRPROD00\nWHERE PRDTCR >= ',activity('ProcessDate').output.firstRow.StartDate)",
+									"type": "Expression"
+								}
+							},
+							"sink": {
+								"type": "SqlServerSink",
+								"preCopyScript": {
+									"value": "@{concat('DELETE FROM [Tabular_Plants].[PRPROD00]\nWHERE [PRDTCR] >= ',activity('ProcessDate').output.firstRow.StartDate)}",
+									"type": "Expression"
+								},
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "WMIPROD",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Veniam",
+									"Table": "Minim"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CarharttDW",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Tabular_Plants",
+									"Table": "PRPROD00"
+								}
+							}
+						]
+					},
+					{
+						"name": "WMi_Work Order",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "ProcessDate",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "Db2Source",
+								"query": {
+									"value": "@concat('SELECT DDWHSE\n\t  ,DDWKON\n\t  ,DDSEA\n\t  ,DDSTYL\n\t  ,DDCOLR\n\t  ,DDSDIM\n\t  ,DDSZCD\n\t  ,DDSZPO\n\t  ,DDSZDS\n\t  ,DDINVT\n\t  ,DDBORQ\n\t  ,DDDCR\nFROM WM350PLTBD.DDDCOR00\nWHERE DDDCR >= ',activity('ProcessDate').output.firstRow.StartDate,'\nAND DDINVT = ''F''\nAND DDSDIM <> ''   ''')",
+									"type": "Expression"
+								}
+							},
+							"sink": {
+								"type": "SqlServerSink",
+								"preCopyScript": {
+									"value": "@{concat('DELETE FROM [Tabular_Plants].[DDDCOR00]\nWHERE [DDDCR] >= ',activity('ProcessDate').output.firstRow.StartDate)}",
+									"type": "Expression"
+								},
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "WMIPROD",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Veniam",
+									"Table": "Minim"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CarharttDW",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Tabular_Plants",
+									"Table": "DDDCOR00"
+								}
+							}
+						]
+					},
+					{
+						"name": "WMi_Transfer Load",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "ProcessDate",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "Db2Source",
+								"query": {
+									"value": "@concat('SELECT *\nFROM WM350PLTCD.C801E0WP\nWHERE W2DCR >= ',activity('ProcessDate').output.firstRow.StartDate,'\nAND W2CASN IS NOT NULL\nAND W2CASN <> ''''\nAND W2CASN <> ''                    ''\nAND W2STAT <> ''99''')",
+									"type": "Expression"
+								}
+							},
+							"sink": {
+								"type": "SqlServerSink",
+								"preCopyScript": {
+									"value": "@{concat('DELETE FROM [Tabular_Plants].[C801E0WP2]\nWHERE [W2DCR] >= ',activity('ProcessDate').output.firstRow.StartDate)}",
+									"type": "Expression"
+								},
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "WMIPROD",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Veniam",
+									"Table": "Minim"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CarharttDW",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Tabular_Plants",
+									"Table": "C801E0WP2"
+								}
+							}
+						]
+					},
+					{
+						"name": "WMIi_Transfer Seals",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "ProcessDate",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "Db2Source",
+								"query": {
+									"value": "@concat('SELECT W2SHMT\n\t  ,W2SEA1\n\t  ,W2SEA2\n\t  ,W2SEA3\n\t  ,W2SEA4\n\t  ,W2SEA5\nFROM WM350PLTCD.C801E0WP\nWHERE W2DLM >= ',activity('ProcessDate').output.firstRow.StartDate,'\nAND W2CASN = ''                    ''')",
+									"type": "Expression"
+								}
+							},
+							"sink": {
+								"type": "SqlServerSink",
+								"preCopyScript": {
+									"value": "@{concat('DELETE FROM [Tabular_Plants].[C801E0WP]\nWHERE [W2DLM] >= ',activity('ProcessDate').output.firstRow.StartDate)}",
+									"type": "Expression"
+								},
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "WMIPROD",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Veniam",
+									"Table": "Minim"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CarharttDW",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Tabular_Plants",
+									"Table": "C801E0WP"
+								}
+							}
+						]
+					},
+					{
+						"name": "StartTime",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT GETDATE() AS 'TimeNow'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						}
+					},
+					{
+						"name": "RefreshFacts",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "WMi_Case Inventory",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "WMi_Country Origin",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "WMIi_Transfer Seals",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "WMi_Transfer Load",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "WMi_Work Order",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "00:15:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://api.powerbi.com/v1.0/myorg/groups/516449d1-03ba-45f4-9500-c94aee0d3912/datasets/6181c309-ac65-4198-b329-3892202ae9fe/refreshes",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 10,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Country Of Origin\"\n        },\n        {\n            \"table\": \"Case Inventory\"\n        }\n    ]\n}')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://analysis.windows.net/powerbi/api"
+							}
+						}
+					},
+					{
+						"name": "InsertQueue",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "RefreshFacts",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "@concat('SELECT ''PBI Refresh'' AS ''EventType''\n\t  ,''Plants'' AS ''ModelName''\n\t  ,''Hourly'' AS ''EventName''\n\t  ,''3167dd37-7c14-4c39-af0d-ae13c90c727e'' AS ''RefreshId''\n\t  ,''',convertFromUtc(formatDateTime(activity('RefreshFacts').output.startTime, 'yyyy-MM-ddTHH:mm:ss.fffffffZ'),'Eastern Standard Time'),''' AS ''CreateDateTime''\n\t  ,''C'' AS ''EventStatus''\n\t  ,(GETDATE() AT TIME ZONE ''UTC'' AT TIME ZONE ''Eastern Standard Time'') AS ''ProcessEnd''\n\t  ,NULL AS ''RequestID''\n\t  ,''',pipeline().RunId,''' AS ''PipelineRunID''')",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Controls",
+									"Table": "ADFRefreshQueue"
+								}
+							}
+						]
+					},
+					{
+						"name": "ProcessDate",
+						"type": "Lookup",
+						"dependsOn": [
+							{
+								"activity": "StartTime",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT CAST(CONVERT(varchar(8),GETDATE()-40 AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' ,112) AS int) AS 'StartDate'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"variables": {
+					"StartTime": {
+						"type": "String"
+					},
+					"DimensionsTime": {
+						"type": "String"
+					},
+					"FactsTime": {
+						"type": "String"
+					},
+					"EndTime": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Plants"
+				},
+				"annotations": []
 			},
 			"dependsOn": []
 		},
@@ -2241,6 +3483,66 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/HourlyRun')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Warehouse_WMIPlantsHourly",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					},
+					{
+						"pipelineReference": {
+							"referenceName": "WMi_Plants_Hourly",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2021-08-24T23:05:00",
+						"timeZone": "Eastern Standard Time",
+						"schedule": {
+							"minutes": [
+								15
+							],
+							"hours": [
+								4,
+								5,
+								6,
+								7,
+								8,
+								9,
+								10,
+								11,
+								12,
+								13,
+								14,
+								15,
+								16,
+								17,
+								18,
+								19
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/WMi_Plants_Hourly')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/HourlyWindow')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -2281,252 +3583,8 @@
 					}
 				}
 			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Warehouse_Running')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "RunningValidation",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "  SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE [ModelName] = 'Warehouse'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND [EventStatus] = 'R'\n)\nTHEN 1\nELSE 0 END AS 'Running'",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "AzureSQLQueue",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Lorem",
-									"Table": "Ipsum"
-								}
-							}
-						}
-					},
-					{
-						"name": "If Condition1",
-						"type": "IfCondition",
-						"dependsOn": [
-							{
-								"activity": "RunningValidation",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"expression": {
-								"value": "@equals(activity('RunningValidation').output.firstRow.Running,1)",
-								"type": "Expression"
-							},
-							"ifFalseActivities": [
-								{
-									"name": "Warehouse_RefreshPBI",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "Warehouse_Refresh",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {}
-									}
-								}
-							],
-							"ifTrueActivities": [
-								{
-									"name": "Warehouse_UpdateQueuePBI",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "Warehouse_Update",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {}
-									}
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Warehouse_PBI"
-				},
-				"annotations": []
-			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/Warehouse_Refresh')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Warehouse_Queue')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "If Condition1",
-						"type": "IfCondition",
-						"dependsOn": [
-							{
-								"activity": "ReadQueue",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"expression": {
-								"value": "@equals(activity('ReadQueue').output.firstRow.Idle,0)",
-								"type": "Expression"
-							},
-							"ifTrueActivities": [
-								{
-									"name": "Warehouse_RunningPBI",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "Warehouse_Running",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {}
-									}
-								}
-							]
-						}
-					},
-					{
-						"name": "ReadQueue",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE [ModelName] = 'Warehouse'\n\t\tAND [EventType] = 'PBI Refresh'\n\t\tAND ([EventStatus] = 'R' OR [EventStatus] IS NULL)\n)\nTHEN 0\nELSE 1 END AS 'Idle'",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "AzureSQLQueue",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Lorem",
-									"Table": "Ipsum"
-								}
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Warehouse_PBI"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/Warehouse_Running')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ProcessEvents')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "ProcessSupply_Queue",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					},
-					{
-						"pipelineReference": {
-							"referenceName": "ProcessOrders_Queue",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					},
-					{
-						"pipelineReference": {
-							"referenceName": "CanvasPBI_Queue",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					},
-					{
-						"pipelineReference": {
-							"referenceName": "SupplyPBI_Queue",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					},
-					{
-						"pipelineReference": {
-							"referenceName": "Warehouse_Queue",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Minute",
-						"interval": 2,
-						"startTime": "2021-08-17T13:00:00Z",
-						"timeZone": "UTC"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/ProcessSupply_Queue')]",
-				"[concat(variables('factoryId'), '/pipelines/ProcessOrders_Queue')]",
-				"[concat(variables('factoryId'), '/pipelines/CanvasPBI_Queue')]",
-				"[concat(variables('factoryId'), '/pipelines/SupplyPBI_Queue')]",
-				"[concat(variables('factoryId'), '/pipelines/Warehouse_Queue')]"
+				"[concat(variables('factoryId'), '/pipelines/OrderExclusion')]"
 			]
 		}
 	]
