@@ -6,12 +6,6 @@
 		"pipelines": [
 			{
 				"pipelineReference": {
-					"referenceName": "Warehouse_WMIPlantsHourly",
-					"type": "PipelineReference"
-				}
-			},
-			{
-				"pipelineReference": {
 					"referenceName": "WMi_Plants_Hourly",
 					"type": "PipelineReference"
 				}
