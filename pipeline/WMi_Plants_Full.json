@@ -1,0 +1,65 @@
+{
+	"name": "WMi_Plants_Full",
+	"properties": {
+		"activities": [
+			{
+				"name": "WMi_Styles",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "Db2Source",
+						"query": "SELECT STSEA\n\t  ,STSTYL\n\t  ,STCOLR\n\t  ,STSDIM\n\t  ,STSZCD\n\t  ,STSZPO\n\t  ,STSZDS\n\t  ,STSTYD\n\t  ,STSTAT\n\t  ,STDCR\n\t  ,STTCR\n\t  ,STDLM\n\t  ,STTLM\nFROM WM350PLTBD.STSTYL00"
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"preCopyScript": "TRUNCATE TABLE [Tabular_Plants].[STSTYL00]",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "WMIPROD",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Veniam",
+							"Table": "Minim"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CarharttDW",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Tabular_Plants",
+							"Table": "STSTYL00"
+						}
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "Plants"
+		},
+		"annotations": []
+	}
+}
