@@ -55,6 +55,276 @@
 						}
 					}
 				]
+			},
+			{
+				"name": "WMi_Case Inventory",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "Db2Source",
+						"query": "SELECT IDCASN\n\t  ,IDSEA\n\t  ,IDSTYL\n\t  ,IDCOLR\n\t  ,IDSDIM\n\t  ,IDSZCD\n\t  ,IDSZPO\n\t  ,IDINVT\n\t  ,IDBCHN\n\t  ,IDSZDS\n\t  ,IDQTY\n\t  ,IDSQTY\n\t  ,IDWKON\n\t  ,IDSHMT\n\t  ,IDPON\n\t  ,IDTRLN\n\t  ,IDSTAT\n\t  ,IDWHSE\n\t  ,IDAREA\n\t  ,IDZONE\n\t  ,IDAISL\n\t  ,IDBAY\n\t  ,IDLEVL\n\t  ,IDPOSN\n\t  ,IDPAID\n\t  ,IDPXR3\n\t  ,IDDCR\n\t  ,IDTCR\n\t  ,IDUSER\nFROM WM350PLTBD.IDCASE00\nWHERE IDDCR >= 20220101"
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"preCopyScript": "TRUNCATE TABLE [Tabular_Plants].[IDCASE00]",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "WMIPROD",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Veniam",
+							"Table": "Minim"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CarharttDW",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Tabular_Plants",
+							"Table": "IDCASE00"
+						}
+					}
+				]
+			},
+			{
+				"name": "WMi_Country Origin",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "Db2Source",
+						"query": "SELECT PRORDER\n\t  ,PRADJORG\n\t  ,PRPLTCTY\n\t  ,PRDTCR\n\t  ,PRTMCR\nFROM WM350PLTCD.PRPROD00\nWHERE PRDTCR >= 20220101"
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"preCopyScript": "TRUNCATE TABLE [Tabular_Plants].[PRPROD00]",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "WMIPROD",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Veniam",
+							"Table": "Minim"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CarharttDW",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Tabular_Plants",
+							"Table": "PRPROD00"
+						}
+					}
+				]
+			},
+			{
+				"name": "WMi_Work Order",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "Db2Source",
+						"query": "SELECT DDWHSE\n\t  ,DDWKON\n\t  ,DDSEA\n\t  ,DDSTYL\n\t  ,DDCOLR\n\t  ,DDSDIM\n\t  ,DDSZCD\n\t  ,DDSZPO\n\t  ,DDSZDS\n\t  ,DDINVT\n\t  ,DDBORQ\n\t  ,DDDCR\nFROM WM350PLTBD.DDDCOR00\nWHERE DDDCR >= 20220101\nAND DDINVT = 'F'\nAND DDSDIM <> '   '"
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"preCopyScript": "TRUNCATE TABLE [Tabular_Plants].[DDDCOR00]",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "WMIPROD",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Veniam",
+							"Table": "Minim"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CarharttDW",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Tabular_Plants",
+							"Table": "DDDCOR00"
+						}
+					}
+				]
+			},
+			{
+				"name": "WMi_Transfer Load",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "Db2Source",
+						"query": "SELECT *\nFROM WM350PLTCD.C801E0WP\nWHERE W2DCR >= 20220101\nAND W2CASN IS NOT NULL\nAND W2CASN <> ''\nAND W2CASN <> '                    '\nAND W2STAT <> '99'"
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"preCopyScript": "TRUNCATE TABLE [Tabular_Plants].[C801E0WP]",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "WMIPROD",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Veniam",
+							"Table": "Minim"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CarharttDW",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Tabular_Plants",
+							"Table": "C801E0WP"
+						}
+					}
+				]
+			},
+			{
+				"name": "WMIi_Transfer Seals",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "Db2Source",
+						"query": "SELECT W2SHMT\n\t  ,W2SEA1\n\t  ,W2SEA2\n\t  ,W2SEA3\n\t  ,W2SEA4\n\t  ,W2SEA5\nFROM WM350PLTCD.C801E0WP\nWHERE W2DLM >= 20220101\nAND W2CASN = '                    '"
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"preCopyScript": "TRUNCATE TABLE [Tabular_Plants].[C801E0WP]",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "WMIPROD",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Veniam",
+							"Table": "Minim"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CarharttDW",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Tabular_Plants",
+							"Table": "C801E0WP"
+						}
+					}
+				]
 			}
 		],
 		"folder": {
