@@ -1,5 +1,5 @@
 {
-	"name": "SupplyPBI_Refresh_copy1",
+	"name": "OrdersPBI_Refresh",
 	"properties": {
 		"activities": [
 			{
@@ -671,7 +671,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT [EventId],[EventName] FROM [Controls].[ADFRefreshQueue]\nWHERE [ModelName] = 'Supply'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND [EventStatus] IS NULL\nORDER BY [EventId]",
+						"sqlReaderQuery": "SELECT [EventId],[EventName] FROM [Controls].[ADFRefreshQueue]\nWHERE [ModelName] = 'Orders'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND [EventStatus] IS NULL\nORDER BY [EventId]",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -780,7 +780,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/ab4a9a2a-8b91-42ae-95aa-4d027c90c86f/refreshes",
+								"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1865273b-45f5-4639-b25f-5d8ca23358bc/refreshes",
 								"method": "POST",
 								"body": {
 									"value": "@variables('RefreshParameters')",
@@ -812,7 +812,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/ab4a9a2a-8b91-42ae-95aa-4d027c90c86f/refreshes?$top=2",
+								"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1865273b-45f5-4639-b25f-5d8ca23358bc/refreshes?$top=2",
 								"method": "GET",
 								"authentication": {
 									"type": "MSI",
