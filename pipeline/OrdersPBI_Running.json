@@ -1,5 +1,5 @@
 {
-	"name": "SupplyPBI_Running_copy1",
+	"name": "OrdersPBI_Running",
 	"properties": {
 		"activities": [
 			{
@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "  SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE [ModelName] = 'Supply'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND [EventStatus] = 'R'\n)\nTHEN 1\nELSE 0 END AS 'Running'",
+						"sqlReaderQuery": "  SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE [ModelName] = 'Orders'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND [EventStatus] = 'R'\n)\nTHEN 1\nELSE 0 END AS 'Running'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -50,13 +50,13 @@
 					},
 					"ifFalseActivities": [
 						{
-							"name": "ProcessSupply_RefreshPBI",
+							"name": "ProcessOrders_RefreshPBI",
 							"type": "ExecutePipeline",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "SupplyPBI_Refresh",
+									"referenceName": "SupplyPBI_Refresh_copy1",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true
@@ -65,13 +65,13 @@
 					],
 					"ifTrueActivities": [
 						{
-							"name": "ProcessSupply_UpdateQueuePBI",
+							"name": "ProcessOrders_UpdatePBI",
 							"type": "ExecutePipeline",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "SupplyPBI_Update",
+									"referenceName": "SupplyPBI_Update_copy1",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true
