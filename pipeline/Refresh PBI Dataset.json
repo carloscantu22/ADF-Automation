@@ -330,6 +330,9 @@
 				"defaultValue": "Unknown"
 			}
 		},
+		"folder": {
+			"name": "WIP"
+		},
 		"annotations": []
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
