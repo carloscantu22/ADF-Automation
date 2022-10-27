@@ -13,6 +13,261 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/SLACalculation')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopySLACalculation",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "SqlServerSink",
+								"preCopyScript": "TRUNCATE TABLE [Tabular_Warehouse2].[SLACalculation]",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "PickTicketControlNumber",
+											"type": "String",
+											"physicalType": "char"
+										},
+										"sink": {
+											"name": "PickTicketControlNumber",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "SLAOrderProcessingID",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "SLAOrderProcessingID",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									},
+									{
+										"source": {
+											"name": "SLAOrderQualifier",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "SLAOrderQualifier",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "ExcludeTicket",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "ExcludeTicket",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "IsInternational",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "IsInternational",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									},
+									{
+										"source": {
+											"name": "IsIrregular",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "IsIrregular",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									},
+									{
+										"source": {
+											"name": "FirstQuality",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "FirstQuality",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductEnhancement",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "ProductEnhancement",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									},
+									{
+										"source": {
+											"name": "ShipVia",
+											"type": "String",
+											"physicalType": "char"
+										},
+										"sink": {
+											"name": "ShipVia",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "ReadyToShipDateKey",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "ReadyToShipDateKey",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									},
+									{
+										"source": {
+											"name": "SLAProcessingCategory",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "SLAProcessingCategory",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "IsExpedited",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "IsExpedited",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									},
+									{
+										"source": {
+											"name": "IsParcel",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "IsParcel",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									},
+									{
+										"source": {
+											"name": "IsEmployeeSale",
+											"type": "String",
+											"physicalType": "char"
+										},
+										"sink": {
+											"name": "IsEmployeeSale",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "SLATargetDateKey",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "SLATargetDateKey",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "CarharttDW",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Tabular_Warehouse2",
+									"Table": "ADF_SLACalculation"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CarharttDW",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Tabular_Warehouse2",
+									"Table": "SLACalculation"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Warehouse_PBI"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/SupplyPBI_Running')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1895,6 +2150,104 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/OrdersPBI_Running')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "RunningValidation",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "  SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE [ModelName] = 'Orders'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND [EventStatus] = 'R'\n)\nTHEN 1\nELSE 0 END AS 'Running'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						}
+					},
+					{
+						"name": "If Condition1",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "RunningValidation",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@equals(activity('RunningValidation').output.firstRow.Running,1)",
+								"type": "Expression"
+							},
+							"ifFalseActivities": [
+								{
+									"name": "ProcessOrders_RefreshPBI",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "OrdersPBI_Refresh",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {}
+									}
+								}
+							],
+							"ifTrueActivities": [
+								{
+									"name": "ProcessOrders_UpdatePBI",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "OrdersPBI_Update",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {}
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Orders_PBI"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/CanvasPBI_Queue')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -3110,7 +3463,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/SLACalculation')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/4AM Process')]",
@@ -3298,6 +3653,90 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/WMi_Plants_Refresh')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OrdersPBI_Queue')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "If Condition1",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "ReadQueue",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@equals(activity('ReadQueue').output.firstRow.Idle,0)",
+								"type": "Expression"
+							},
+							"ifTrueActivities": [
+								{
+									"name": "ProcessOrders_RunningPBI",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "OrdersPBI_Running",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {}
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "ReadQueue",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE [ModelName] = 'Orders'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND ([EventStatus] = 'R' OR [EventStatus] IS NULL)\n)\nTHEN 0\nELSE 1 END AS 'Idle'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Orders_PBI"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/OrdersPBI_Running')]"
 			]
 		},
 		{
@@ -3526,6 +3965,13 @@
 							"type": "PipelineReference"
 						},
 						"parameters": {}
+					},
+					{
+						"pipelineReference": {
+							"referenceName": "OrdersPBI_Queue",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
 					}
 				],
 				"type": "ScheduleTrigger",
@@ -3543,7 +3989,8 @@
 				"[concat(variables('factoryId'), '/pipelines/ProcessOrders_Queue')]",
 				"[concat(variables('factoryId'), '/pipelines/CanvasPBI_Queue')]",
 				"[concat(variables('factoryId'), '/pipelines/SupplyPBI_Queue')]",
-				"[concat(variables('factoryId'), '/pipelines/Warehouse_Queue')]"
+				"[concat(variables('factoryId'), '/pipelines/Warehouse_Queue')]",
+				"[concat(variables('factoryId'), '/pipelines/OrdersPBI_Queue')]"
 			]
 		}
 	]
