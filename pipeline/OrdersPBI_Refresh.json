@@ -311,7 +311,7 @@
 									"type": "SetVariable",
 									"dependsOn": [
 										{
-											"activity": "TableRefreshQueue_Hourly",
+											"activity": "SetForRefresh_Hourly",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -321,47 +321,8 @@
 									"typeProperties": {
 										"variableName": "RefreshParameters",
 										"value": {
-											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 6,\n    \"RetryCount\": 0,\n    \"Objects\": ',activity('TableRefreshQueue_Hourly').output.firstRow.Refresh,'\n}')",
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 6,\n    \"RetryCount\": 0,\n    \"Objects\": \n    [\n\t{\n\t    \"table\": \"EMEA Orders\",\n\t    \"partition\":\"EMEA Orders Hourly\"\n\t},\n\t{\n\t    \"table\": \"Carhartt Retail Traffic\"\n\t},\n\t{\n\t    \"table\": \"Daily Goals\"\n\t},\n\t{\n\t    \"table\": \"Contracts\"\n\t},\n\t{\n\t    \"table\": \"RefreshDateTime\"\n\t},\n\t{\n\t    \"table\": \"Carhartt Retail Stores\"\n\t},\n\t{\n\t    \"table\": \"Carhartt Retail Transactions\",\n\t    \"partition\": \"Retail Transactions Hourly\"\n\t},\n\t{\n\t    \"table\": \"Reporting Notification Messages\"\n\t}\n]\n}')",
 											"type": "Expression"
-										}
-									}
-								},
-								{
-									"name": "TableRefreshQueue_Hourly",
-									"type": "Lookup",
-									"dependsOn": [
-										{
-											"activity": "SetForRefresh_Hourly",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "AzureSqlSource",
-											"sqlReaderQuery": {
-												"value": "@concat('[\n{\n    \"table\": \"EMEA Orders\",\n    \"partition\":\"EMEA Orders Hourly\"\n},\n{\n    \"table\": \"Carhartt Retail Traffic\"\n},\n{\n    \"table\": \"Daily Goals\"\n},\n{\n    \"table\": \"Contracts\"\n},\n{\n    \"table\": \"RefreshDateTime\"\n},\n{\n    \"table\": \"Carhartt Retail Stores\"\n},\n{\n    \"table\": \"Carhartt Retail Transactions\",\n    \"partition\": \"Retail Transactions Hourly\"\n},\n{\n    \"table\": \"Reporting Notification Messages\"\n}\n]')",
-												"type": "Expression"
-											},
-											"queryTimeout": "02:00:00",
-											"partitionOption": "None"
-										},
-										"dataset": {
-											"referenceName": "AzureSQLQueue",
-											"type": "DatasetReference",
-											"parameters": {
-												"Schema": "Lorem",
-												"Table": "Ipsum"
-											}
 										}
 									}
 								},
@@ -589,6 +550,41 @@
 								},
 								{
 									"name": "SetRefreshFlag09",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "ProcessingConditional",
+										"value": "1"
+									}
+								}
+							]
+						},
+						{
+							"value": "Retail",
+							"activities": [
+								{
+									"name": "Set_Tables_Retail",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "SetForRefresh_Retail",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 6,\n    \"RetryCount\": 0,\n    \"Objects\": [\n    {\n        \"table\": \"Carhartt Retail Stores\"\n    },\n    {\n        \"table\": \"Carhartt Retail Transactions\",\n        \"partition\": \"Retail Transactions Hourly\"\n    },\n    {\n        \"table\": \"Carhartt Retail Traffic\"\n    }\n]\n}')",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "SetForRefresh_Retail",
 									"type": "SetVariable",
 									"dependsOn": [],
 									"userProperties": [],
