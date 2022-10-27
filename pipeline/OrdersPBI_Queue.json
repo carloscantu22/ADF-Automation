@@ -27,7 +27,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "SupplyPBI_Running_copy1",
+									"referenceName": "OrdersPBI_Running",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true
