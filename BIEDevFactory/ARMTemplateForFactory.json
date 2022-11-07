@@ -11025,7 +11025,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT GETDATE() AS 'TimeNow'",
+								"sqlReaderQuery": "SELECT GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' AS 'TimeNow'",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -15013,7 +15013,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT GETDATE() AS 'TimeNow'",
+								"sqlReaderQuery": "SELECT GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' AS 'TimeNow'",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
