@@ -6763,6 +6763,182 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/MasterData_Full')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "NightlyFull",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "StartTime",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "00:15:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://api.powerbi.com/v1.0/myorg/groups/516449d1-03ba-45f4-9500-c94aee0d3912/datasets/b25fc398-0fc2-4a21-9633-c6f2cfaa18da/refreshes",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 10,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Seasons\"\n        },\n        {\n            \"table\": \"Material Season\"\n        },\n        {\n            \"table\": \"Products\"\n        },\n        {\n            \"table\": \"Factory\"\n        },\n        {\n            \"table\": \"Plant Materials\"\n        },\n        {\n            \"table\": \"Materials\"\n        }\n    ]\n}')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://analysis.windows.net/powerbi/api"
+							}
+						}
+					},
+					{
+						"name": "InsertQueue",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "NightlyFull",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "@concat('SELECT [EventType]\n\t  ,[ModelName]\n\t  ,[EventName]\n\t  ,[RefreshId]\n\t  ,''',activity('StartTime').output.firstRow.TimeNow,''' AS ''CreateDateTime''\n\t  ,[EventStatus]\n\t  ,[ProcessEnd]\n\t  ,NULL AS ''RequestID''\n\t  ,''',pipeline().RunId,''' AS ''PipelineRunID''\nFROM \n(\nVALUES (''PBI Refresh'',''MasterData'',''Nightly_Begin'',NULL,''C'',''',activity('StartTime').output.firstRow.TimeNow,''') \n\t  ,(''PBI Refresh'',''MasterData'',''Nightly_Full'',''0a5fc4bf-c617-4553-9b40-ff2da2055b47'',''C'',''',convertFromUtc(utcnow(),'Eastern Standard Time'),''') \n\t  ,(''PBI Refresh'',''MasterData'',''Nightly_End'',NULL,''C'',''',convertFromUtc(utcnow(),'Eastern Standard Time'),''') \n) AS PR (EventType,ModelName,EventName,RefreshId,EventStatus,ProcessEnd)')",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Controls",
+									"Table": "ADFRefreshQueue"
+								}
+							}
+						]
+					},
+					{
+						"name": "SendCompletionEmail",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "InsertQueue",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod-13.northcentralus.logic.azure.com:443/workflows/edec3768a21d4a618a89c7ccf8c4ad0b/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Om-PN4tQZfPmI_KeEBQTkW7qGjSwrgbMrvF8RSqCfQ8",
+							"method": "POST",
+							"headers": {
+								"Content-Type": "application/json"
+							},
+							"body": {
+								"value": "@concat('{\"ModelName\" : \"','Master Data','\" , \"StartDateTime\" : \"',utcnow(),'\"}')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "StartTime",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT GETDATE() AS 'TimeNow'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "MasterData"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/CanvasPBI_Running')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -7069,107 +7245,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/OrdersPBI_Refresh')]",
 				"[concat(variables('factoryId'), '/pipelines/OrdersPBI_Update')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ProcessOrders_Running')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "RunningValidation",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[AzureEventQueue]\n\tWHERE [EventType] = 'SSAS Refresh'\n\t  AND [EventStatus] = 'R'\n)\nTHEN 1\nELSE 0 END AS 'Running'",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "AzureSQLQueue",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Lorem",
-									"Table": "Ipsum"
-								}
-							}
-						}
-					},
-					{
-						"name": "If Condition1",
-						"type": "IfCondition",
-						"dependsOn": [
-							{
-								"activity": "RunningValidation",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"expression": {
-								"value": "@equals(activity('RunningValidation').output.firstRow.Running,1)",
-								"type": "Expression"
-							},
-							"ifFalseActivities": [
-								{
-									"name": "ProcessOrders_Refresh",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "ProcessOrders_Refresh",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {}
-									}
-								}
-							],
-							"ifTrueActivities": [
-								{
-									"name": "ProcessOrders_UpdateQueue",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "ProcessOrders_UpdateQueue",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {}
-									}
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Orders"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/ProcessOrders_Refresh')]",
-				"[concat(variables('factoryId'), '/pipelines/ProcessOrders_UpdateQueue')]"
 			]
 		}
 	]

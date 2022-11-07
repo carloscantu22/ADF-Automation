@@ -13,104 +13,6 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/Warehouse_Running')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "RunningValidation",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "  SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE [ModelName] = 'Warehouse'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND [EventStatus] = 'R'\n)\nTHEN 1\nELSE 0 END AS 'Running'",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "AzureSQLQueue",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Lorem",
-									"Table": "Ipsum"
-								}
-							}
-						}
-					},
-					{
-						"name": "If Condition1",
-						"type": "IfCondition",
-						"dependsOn": [
-							{
-								"activity": "RunningValidation",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"expression": {
-								"value": "@equals(activity('RunningValidation').output.firstRow.Running,1)",
-								"type": "Expression"
-							},
-							"ifFalseActivities": [
-								{
-									"name": "Warehouse_RefreshPBI",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "Warehouse_Refresh",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {}
-									}
-								}
-							],
-							"ifTrueActivities": [
-								{
-									"name": "Warehouse_UpdateQueuePBI",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "Warehouse_Update",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {}
-									}
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Warehouse_PBI"
-				},
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/Warehouse_Queue')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -190,9 +92,7 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/Warehouse_Running')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ProcessEvents')]",
@@ -233,6 +133,13 @@
 					{
 						"pipelineReference": {
 							"referenceName": "Warehouse_Queue",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					},
+					{
+						"pipelineReference": {
+							"referenceName": "OrdersPBI_Queue",
 							"type": "PipelineReference"
 						},
 						"parameters": {}
