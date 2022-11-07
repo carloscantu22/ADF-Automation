@@ -7,7 +7,7 @@
 				"type": "WebActivity",
 				"dependsOn": [
 					{
-						"activity": "SetStart",
+						"activity": "StartTime",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -156,26 +156,6 @@
 							"Schema": "Lorem",
 							"Table": "Ipsum"
 						}
-					}
-				}
-			},
-			{
-				"name": "SetStart",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "StartTime",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "StartTime",
-					"value": {
-						"value": "@activity('StartTime').output.firstRow.TimeNow",
-						"type": "Expression"
 					}
 				}
 			}
