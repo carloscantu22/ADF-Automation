@@ -12,7 +12,7 @@
 			"value": ""
 		},
 		"DBNSQLP01_connectionString": {
-			"value": ""
+			"value": "Integrated Security=True;Data Source=DBNSQLP01;Initial Catalog=CarharttDW"
 		},
 		"DBNSQLP01_password": {
 			"value": ""
@@ -21,6 +21,12 @@
 			"value": ""
 		},
 		"biedev storage_connectionString": {
+			"value": ""
+		},
+		"DBNSQLPNET_connectionString": {
+			"value": "Integrated Security=True;Data Source=dbnsqlpnet.carhartt-nt.carhartt.com;Initial Catalog=CarharttDW"
+		},
+		"DBNSQLPNET_password": {
 			"value": ""
 		},
 		"AzureBIDevelopment_properties_typeProperties_url": {
@@ -34,6 +40,9 @@
 		},
 		"DBNSQLP01_properties_typeProperties_userName": {
 			"value": "carhartt-nt\\bobjservice"
+		},
+		"DBNSQLPNET_properties_typeProperties_userName": {
+			"value": "bobjservice@carhartt.com"
 		},
 		"containerUri": {
 			"value": ""

@@ -17,7 +17,8 @@
 		},
 		"DBNSQLP01_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'DBNSQLP01'"
+			"metadata": "Secure string for 'connectionString' of 'DBNSQLP01'",
+			"defaultValue": "Integrated Security=True;Data Source=DBNSQLP01;Initial Catalog=CarharttDW"
 		},
 		"DBNSQLP01_password": {
 			"type": "secureString",
@@ -30,6 +31,15 @@
 		"biedev storage_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'biedev storage'"
+		},
+		"DBNSQLPNET_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'DBNSQLPNET'",
+			"defaultValue": "Integrated Security=True;Data Source=dbnsqlpnet.carhartt-nt.carhartt.com;Initial Catalog=CarharttDW"
+		},
+		"DBNSQLPNET_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'DBNSQLPNET'"
 		},
 		"AzureBIDevelopment_properties_typeProperties_url": {
 			"type": "string",
@@ -46,6 +56,10 @@
 		"DBNSQLP01_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "carhartt-nt\\bobjservice"
+		},
+		"DBNSQLPNET_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "bobjservice@carhartt.com"
 		}
 	},
 	"variables": {
@@ -2316,6 +2330,184 @@
 				},
 				"folder": {
 					"name": "WIP"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureSQLQueue')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MasterData_Full')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "NightlyFull",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "StartTime",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "00:15:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://api.powerbi.com/v1.0/myorg/groups/516449d1-03ba-45f4-9500-c94aee0d3912/datasets/b25fc398-0fc2-4a21-9633-c6f2cfaa18da/refreshes",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 10,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Seasons\"\n        },\n        {\n            \"table\": \"Material Season\"\n        },\n        {\n            \"table\": \"Products\"\n        },\n        {\n            \"table\": \"Factory\"\n        },\n        {\n            \"table\": \"Plant Materials\"\n        },\n        {\n            \"table\": \"Materials\"\n        }\n    ]\n}')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://analysis.windows.net/powerbi/api"
+							}
+						}
+					},
+					{
+						"name": "InsertQueue",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "NightlyFull",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "@concat('SELECT [EventType]\n\t  ,[ModelName]\n\t  ,[EventName]\n\t  ,[RefreshId]\n\t  ,''',activity('StartTime').output.firstRow.TimeNow,''' AS ''CreateDateTime''\n\t  ,[EventStatus]\n\t  ,[ProcessEnd]\n\t  ,NULL AS ''RequestID''\n\t  ,''',pipeline().RunId,''' AS ''PipelineRunID''\nFROM \n(\nVALUES (''PBI Refresh'',''MasterData'',''Nightly_Begin'',NULL,''C'',''',activity('StartTime').output.firstRow.TimeNow,''') \n\t  ,(''PBI Refresh'',''MasterData'',''Nightly_Full'',''0a5fc4bf-c617-4553-9b40-ff2da2055b47'',''C'',''',convertFromUtc(utcnow(),'Eastern Standard Time'),''') \n\t  ,(''PBI Refresh'',''MasterData'',''Nightly_End'',NULL,''C'',''',convertFromUtc(utcnow(),'Eastern Standard Time'),''') \n) AS PR (EventType,ModelName,EventName,RefreshId,EventStatus,ProcessEnd)')",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Controls",
+									"Table": "ADFRefreshQueue"
+								}
+							}
+						]
+					},
+					{
+						"name": "SendCompletionEmail",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "InsertQueue",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod-13.northcentralus.logic.azure.com:443/workflows/edec3768a21d4a618a89c7ccf8c4ad0b/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Om-PN4tQZfPmI_KeEBQTkW7qGjSwrgbMrvF8RSqCfQ8",
+							"method": "POST",
+							"headers": {
+								"Content-Type": "application/json"
+							},
+							"body": {
+								"value": "@concat('{\"ModelName\" : \"','Master Data','\" , \"StartDateTime\" : \"',utcnow(),'\"}')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "StartTime",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' AS 'TimeNow'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "MasterData"
 				},
 				"annotations": []
 			},
@@ -4606,6 +4798,19 @@
 									"activities": [
 										{
 											"name": "Set_FullDimensions",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Cancel Reasons\"\n        },\n        {\n            \"table\": \"Dates\"\n        },\n        {\n            \"table\": \"Carhartt Retail Date Periods\"\n        },\n        {\n            \"table\": \"Carhartt Retail Traffic\"\n        },\n        {\n            \"table\": \"Contracts\"\n        },\n        {\n            \"table\": \"Consumers\"\n        },\n        {\n            \"table\": \"Customers\"\n        },\n        {\n            \"table\": \"Daily Goals\"\n        },\n        {\n            \"table\": \"Delivery Block Categories\"\n        },\n        {\n            \"table\": \"Display Date\"\n        },\n        {\n            \"table\": \"Event Date\"\n        },\n        {\n            \"table\": \"Event Date Periods\"\n        },\n        {\n            \"table\": \"Expected Delivery Date\"\n        },\n        {\n            \"table\": \"Expected Ship Date\"\n        },\n        {\n            \"table\": \"Geography\"\n        },\n        {\n            \"table\": \"Inventory Stock Levels\"\n        },\n        {\n            \"table\": \"Item Plans Customers\"\n        },\n        {\n            \"table\": \"Item Plans\"\n        },\n        {\n            \"table\": \"Item Plans Monthly\"\n        },\n        {\n            \"table\": \"Material Availability Date\"\n        },\n        {\n            \"table\": \"Material Programs\"\n        },\n        {\n            \"table\": \"Materials\"\n        },\n        {\n            \"table\": \"Monthly Goals\"\n        },\n        {\n            \"table\": \"Order Date\"\n        },\n        {\n            \"table\": \"Original Expected Delivery Date\"\n        },\n        {\n            \"table\": \"Pick Ticket Start Ship Date\"\n        },\n        {\n            \"table\": \"Pick Ticket Status\"\n        },\n        {\n            \"table\": \"Pick Tickets\"\n        },\n        {\n            \"table\": \"ProductCategories\"\n        },\n        {\n            \"table\": \"Products\"\n        },\n        {\n            \"table\": \"RefreshDateTime\"\n        },\n        {\n            \"table\": \"Reporting Notification Messages\"\n        },\n        {\n            \"table\": \"Requested Delivery Date\"\n        },\n        {\n            \"table\": \"Required Ship Date\"\n        },\n        {\n            \"table\": \"Retail Discounts\"\n        },\n        {\n            \"table\": \"Retail Discounts Bridge\"\n        },\n       {\n            \"table\": \"Revenue Segments\"\n        },\n        {\n            \"table\": \"Sales Segments\"\n        },\n        {\n            \"table\": \"ShipVia Codes\"\n        },\n        {\n            \"table\": \"SLA Ship Date\"\n        },\n        {\n            \"table\": \"Stop Ship Date\"\n        },\n        {\n            \"table\": \"System Dates\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
+											}
+										},
+										{
+											"name": "Set_FullDimensions_copy1",
 											"type": "SetVariable",
 											"dependsOn": [],
 											"userProperties": [],
@@ -14554,6 +14759,44 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/6AM_Datasets')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "MasterData_Full",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2022-11-01T00:00:00",
+						"timeZone": "Eastern Standard Time",
+						"schedule": {
+							"minutes": [
+								0
+							],
+							"hours": [
+								6
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/MasterData_Full')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/EndOfDay')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -14597,7 +14840,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Started",
+				"runtimeState": "Stopped",
 				"pipelines": [
 					{
 						"pipelineReference": {
@@ -14650,7 +14893,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Started",
+				"runtimeState": "Stopped",
 				"pipelines": [
 					{
 						"pipelineReference": {
@@ -14723,7 +14966,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Started",
+				"runtimeState": "Stopped",
 				"pipelines": [
 					{
 						"pipelineReference": {
@@ -14793,7 +15036,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Started",
+				"runtimeState": "Stopped",
 				"pipelines": [
 					{
 						"pipelineReference": {
@@ -14864,220 +15107,22 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/MasterData_Full')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "NightlyFull",
-						"type": "WebActivity",
-						"dependsOn": [
-							{
-								"activity": "StartTime",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "00:15:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"url": "https://api.powerbi.com/v1.0/myorg/groups/516449d1-03ba-45f4-9500-c94aee0d3912/datasets/b25fc398-0fc2-4a21-9633-c6f2cfaa18da/refreshes",
-							"method": "POST",
-							"headers": {},
-							"body": {
-								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 10,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Seasons\"\n        },\n        {\n            \"table\": \"Material Season\"\n        },\n        {\n            \"table\": \"Products\"\n        },\n        {\n            \"table\": \"Factory\"\n        },\n        {\n            \"table\": \"Plant Materials\"\n        },\n        {\n            \"table\": \"Materials\"\n        }\n    ]\n}')",
-								"type": "Expression"
-							},
-							"authentication": {
-								"type": "MSI",
-								"resource": "https://analysis.windows.net/powerbi/api"
-							}
-						}
-					},
-					{
-						"name": "InsertQueue",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "NightlyFull",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": {
-									"value": "@concat('SELECT [EventType]\n\t  ,[ModelName]\n\t  ,[EventName]\n\t  ,[RefreshId]\n\t  ,''',activity('StartTime').output.firstRow.TimeNow,''' AS ''CreateDateTime''\n\t  ,[EventStatus]\n\t  ,[ProcessEnd]\n\t  ,NULL AS ''RequestID''\n\t  ,''',pipeline().RunId,''' AS ''PipelineRunID''\nFROM \n(\nVALUES (''PBI Refresh'',''MasterData'',''Nightly_Begin'',NULL,''C'',''',activity('StartTime').output.firstRow.TimeNow,''') \n\t  ,(''PBI Refresh'',''MasterData'',''Nightly_Full'',''0a5fc4bf-c617-4553-9b40-ff2da2055b47'',''C'',''',convertFromUtc(utcnow(),'Eastern Standard Time'),''') \n\t  ,(''PBI Refresh'',''MasterData'',''Nightly_End'',NULL,''C'',''',convertFromUtc(utcnow(),'Eastern Standard Time'),''') \n) AS PR (EventType,ModelName,EventName,RefreshId,EventStatus,ProcessEnd)')",
-									"type": "Expression"
-								},
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"sink": {
-								"type": "AzureSqlSink",
-								"writeBehavior": "insert",
-								"sqlWriterUseTableLock": false
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "AzureSQLQueue",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Lorem",
-									"Table": "Ipsum"
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "AzureSQLQueue",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Controls",
-									"Table": "ADFRefreshQueue"
-								}
-							}
-						]
-					},
-					{
-						"name": "SendCompletionEmail",
-						"type": "WebActivity",
-						"dependsOn": [
-							{
-								"activity": "InsertQueue",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"url": "https://prod-13.northcentralus.logic.azure.com:443/workflows/edec3768a21d4a618a89c7ccf8c4ad0b/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Om-PN4tQZfPmI_KeEBQTkW7qGjSwrgbMrvF8RSqCfQ8",
-							"method": "POST",
-							"headers": {
-								"Content-Type": "application/json"
-							},
-							"body": {
-								"value": "@concat('{\"ModelName\" : \"','Master Data','\" , \"StartDateTime\" : \"',utcnow(),'\"}')",
-								"type": "Expression"
-							}
-						}
-					},
-					{
-						"name": "StartTime",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' AS 'TimeNow'",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "AzureSQLQueue",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Lorem",
-									"Table": "Ipsum"
-								}
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "MasterData"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/AzureSQLQueue')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/6AM_Datasets')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
+			"name": "[concat(parameters('factoryName'), '/DBNSQLPNET')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "MasterData_Full",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
+				"type": "SqlServer",
 				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2022-11-01T00:00:00",
-						"timeZone": "Eastern Standard Time",
-						"schedule": {
-							"minutes": [
-								0
-							],
-							"hours": [
-								6
-							]
-						}
+					"connectionString": "[parameters('DBNSQLPNET_connectionString')]",
+					"userName": "[parameters('DBNSQLPNET_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('DBNSQLPNET_password')]"
 					}
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/MasterData_Full')]"
-			]
+			"dependsOn": []
 		}
 	]
 }
