@@ -2,7 +2,7 @@
 	"name": "CarharttDW",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "DBNSQLP01",
+			"referenceName": "DBNSQLPNET",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
