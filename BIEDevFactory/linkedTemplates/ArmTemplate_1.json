@@ -19,15 +19,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'biedev storage'"
 		},
-		"DBNSQLPNET_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'DBNSQLPNET'",
-			"defaultValue": "Integrated Security=True;Data Source=dbnsqlpnet.carhartt-nt.carhartt.com;Initial Catalog=CarharttDW"
-		},
-		"DBNSQLPNET_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'DBNSQLPNET'"
-		},
 		"DBNSQLP01_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'DBNSQLP01'",
@@ -36,6 +27,15 @@
 		"DBNSQLP01_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'DBNSQLP01'"
+		},
+		"DBNSQLPNET_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'DBNSQLPNET'",
+			"defaultValue": "Integrated Security=True;Data Source=dbnsqlpnet.carhartt-nt.carhartt.com;Initial Catalog=CarharttDW;multisubnetfailover=True"
+		},
+		"DBNSQLPNET_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'DBNSQLPNET'"
 		},
 		"Db21_connectionString": {
 			"type": "secureString",
@@ -53,13 +53,13 @@
 			"type": "string",
 			"defaultValue": "https://BIEDevKeyChain.vault.azure.net/"
 		},
-		"DBNSQLPNET_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "bobjservice@carhartt.com"
-		},
 		"DBNSQLP01_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "carhartt-nt\\bobjservice"
+		},
+		"DBNSQLPNET_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "BIServiceAdmin@carharttdev.com"
 		}
 	},
 	"variables": {
@@ -255,24 +255,6 @@
 				"type": "SelfHosted",
 				"description": "This IR works as Gateway for internal resources in Carhartt Production",
 				"typeProperties": {}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DBNSQLPNET')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"connectionString": "[parameters('DBNSQLPNET_connectionString')]",
-					"userName": "[parameters('DBNSQLPNET_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('DBNSQLPNET_password')]"
-					}
-				}
 			},
 			"dependsOn": []
 		},
@@ -994,6 +976,30 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/integrationRuntimes/GWP02IntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DBNSQLPNET')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('DBNSQLPNET_connectionString')]",
+					"userName": "[parameters('DBNSQLPNET_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('DBNSQLPNET_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "PNETIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/PNETIntegrationRuntime')]"
 			]
 		},
 		{

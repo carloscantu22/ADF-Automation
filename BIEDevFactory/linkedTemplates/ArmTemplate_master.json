@@ -24,6 +24,15 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'DBNSQLP01'"
 		},
+		"DBNSQLPNET_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'DBNSQLPNET'",
+			"defaultValue": "Integrated Security=True;Data Source=dbnsqlpnet.carhartt-nt.carhartt.com;Initial Catalog=CarharttDW;multisubnetfailover=True"
+		},
+		"DBNSQLPNET_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'DBNSQLPNET'"
+		},
 		"Db21_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Db21'"
@@ -31,15 +40,6 @@
 		"biedev storage_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'biedev storage'"
-		},
-		"DBNSQLPNET_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'DBNSQLPNET'",
-			"defaultValue": "Integrated Security=True;Data Source=dbnsqlpnet.carhartt-nt.carhartt.com;Initial Catalog=CarharttDW"
-		},
-		"DBNSQLPNET_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'DBNSQLPNET'"
 		},
 		"AzureBIDevelopment_properties_typeProperties_url": {
 			"type": "string",
@@ -59,7 +59,7 @@
 		},
 		"DBNSQLPNET_properties_typeProperties_userName": {
 			"type": "string",
-			"defaultValue": "bobjservice@carhartt.com"
+			"defaultValue": "BIServiceAdmin@carharttdev.com"
 		},
 		"containerUri": {
 			"type": "string",
@@ -115,17 +115,17 @@
 					"biedev storage_connectionString": {
 						"value": "[parameters('biedev storage_connectionString')]"
 					},
-					"DBNSQLPNET_connectionString": {
-						"value": "[parameters('DBNSQLPNET_connectionString')]"
-					},
-					"DBNSQLPNET_password": {
-						"value": "[parameters('DBNSQLPNET_password')]"
-					},
 					"DBNSQLP01_connectionString": {
 						"value": "[parameters('DBNSQLP01_connectionString')]"
 					},
 					"DBNSQLP01_password": {
 						"value": "[parameters('DBNSQLP01_password')]"
+					},
+					"DBNSQLPNET_connectionString": {
+						"value": "[parameters('DBNSQLPNET_connectionString')]"
+					},
+					"DBNSQLPNET_password": {
+						"value": "[parameters('DBNSQLPNET_password')]"
 					},
 					"Db21_connectionString": {
 						"value": "[parameters('Db21_connectionString')]"
@@ -139,11 +139,11 @@
 					"BIEKeyChain_properties_typeProperties_baseUrl": {
 						"value": "[parameters('BIEKeyChain_properties_typeProperties_baseUrl')]"
 					},
-					"DBNSQLPNET_properties_typeProperties_userName": {
-						"value": "[parameters('DBNSQLPNET_properties_typeProperties_userName')]"
-					},
 					"DBNSQLP01_properties_typeProperties_userName": {
 						"value": "[parameters('DBNSQLP01_properties_typeProperties_userName')]"
+					},
+					"DBNSQLPNET_properties_typeProperties_userName": {
+						"value": "[parameters('DBNSQLPNET_properties_typeProperties_userName')]"
 					}
 				}
 			},
