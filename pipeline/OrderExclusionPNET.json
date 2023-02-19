@@ -84,7 +84,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "CarharttDW",
+						"referenceName": "PNETSQL",
 						"type": "DatasetReference",
 						"parameters": {
 							"Schema": "Tabular_eCommAging",
