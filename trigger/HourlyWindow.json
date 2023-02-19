@@ -3,7 +3,14 @@
 	"properties": {
 		"annotations": [],
 		"runtimeState": "Started",
-		"pipelines": [],
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "OrderExclusionPNET",
+					"type": "PipelineReference"
+				}
+			}
+		],
 		"type": "ScheduleTrigger",
 		"typeProperties": {
 			"recurrence": {
@@ -13,7 +20,7 @@
 				"timeZone": "Eastern Standard Time",
 				"schedule": {
 					"minutes": [
-						10
+						50
 					],
 					"hours": [
 						8,
