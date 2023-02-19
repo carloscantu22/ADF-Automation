@@ -5,9 +5,9 @@
 		"annotations": [],
 		"type": "SqlServer",
 		"typeProperties": {
-			"connectionString": "integrated security=True;data source=dbnsqlpnet.carhartt-nt.carhartt.com;initial catalog=CarharttDW;multisubnetfailover=True;applicationintent=ReadOnly",
+			"connectionString": "integrated security=True;data source=dbnsqlpnet.carhartt-nt.carhartt.com;initial catalog=CarharttDW;multisubnetfailover=True",
 			"userName": "BIServiceAdmin@carharttdev.com",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI2M2QzOGE0Ni0wMDE1LTQ1M2UtOGE2Ni04YTYyOWM0NDliNWQiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI3NDRmOTNiNy00Mjk0LTQ2ZGEtOGJkNC0xYTNmZmM4YWQ0MTEiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "PNETIntegrationRuntime",
