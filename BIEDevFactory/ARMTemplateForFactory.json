@@ -15373,7 +15373,7 @@
 							"waitOnCompletion": true,
 							"parameters": {
 								"Message": {
-									"value": "@concat('Queries runnin on: ',activity('ServerName').output.firstRow.ServerName)",
+									"value": "@concat('Node Running: ',activity('ServerName').output.firstRow.ServerName)",
 									"type": "Expression"
 								}
 							}
@@ -15429,6 +15429,49 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/DBNSQLPNET_RO')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/StatusCheck120')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "RunningNodePNET",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2023-03-01T00:00:00",
+						"timeZone": "Eastern Standard Time",
+						"schedule": {
+							"minutes": [
+								1
+							],
+							"hours": [
+								7,
+								9,
+								11,
+								13,
+								15,
+								17
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/RunningNodePNET')]"
 			]
 		}
 	]
