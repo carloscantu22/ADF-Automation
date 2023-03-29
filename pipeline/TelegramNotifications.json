@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"url": {
-						"value": "@concat('https://api.telegram.org/bot5375063738:AAEW9zo8N5Ij2DdVrOJWWtpecK70xK83oGw/sendMessage?chat_id=-528140690&disable_web_page_preview=1&parse_mode=Markdown&text=',pipeline().parameters.Message)",
+						"value": "@concat('https://api.telegram.org/bot5375063738:AAEW9zo8N5Ij2DdVrOJWWtpecK70xK83oGw/sendMessage?chat_id=-1001702093962&disable_web_page_preview=1&parse_mode=Markdown&text=',pipeline().parameters.Message)",
 						"type": "Expression"
 					},
 					"method": "GET"
