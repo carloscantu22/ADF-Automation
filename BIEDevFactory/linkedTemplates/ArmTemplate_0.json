@@ -1329,7 +1329,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Web1",
+						"name": "SendMessage",
 						"type": "WebActivity",
 						"dependsOn": [],
 						"policy": {
@@ -1341,7 +1341,10 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://api.telegram.org/bot5375063738:AAEW9zo8N5Ij2DdVrOJWWtpecK70xK83oGw/sendMessage?chat_id=-528140690&disable_web_page_preview=1&parse_mode=Markdown&text=AM%20Maintenance%0AOrders:%20Complete%0ASupply:%20Complete%0AWarehouse:%20Complete%0ACanvas:%20Complete",
+							"url": {
+								"value": "@concat('https://api.telegram.org/bot5375063738:AAEW9zo8N5Ij2DdVrOJWWtpecK70xK83oGw/sendMessage?chat_id=-1001702093962&disable_web_page_preview=1&parse_mode=Markdown&text=',pipeline().parameters.Message)",
+								"type": "Expression"
+							},
 							"method": "GET",
 							"headers": {}
 						}
@@ -1351,8 +1354,13 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
+				"parameters": {
+					"Message": {
+						"type": "string"
+					}
+				},
 				"folder": {
-					"name": "WIP"
+					"name": "General"
 				},
 				"annotations": []
 			},

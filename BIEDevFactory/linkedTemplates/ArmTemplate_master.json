@@ -41,6 +41,15 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'biedev storage'"
 		},
+		"DBNSQLPNET_RO_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'DBNSQLPNET_RO'",
+			"defaultValue": "Integrated Security=True;Data Source=dbnsqlpnet.carhartt-nt.carhartt.com;Initial Catalog=CarharttDW;multisubnetfailover=True;applicationintent=ReadOnly"
+		},
+		"DBNSQLPNET_RO_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'DBNSQLPNET_RO'"
+		},
 		"AzureBIDevelopment_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://management.azure.com/"
@@ -58,6 +67,10 @@
 			"defaultValue": "carhartt-nt\\bobjservice"
 		},
 		"DBNSQLPNET_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "BIServiceAdmin@carharttdev.com"
+		},
+		"DBNSQLPNET_RO_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "BIServiceAdmin@carharttdev.com"
 		},
@@ -130,6 +143,12 @@
 					"Db21_connectionString": {
 						"value": "[parameters('Db21_connectionString')]"
 					},
+					"DBNSQLPNET_RO_connectionString": {
+						"value": "[parameters('DBNSQLPNET_RO_connectionString')]"
+					},
+					"DBNSQLPNET_RO_password": {
+						"value": "[parameters('DBNSQLPNET_RO_password')]"
+					},
 					"AzureBIDevelopment_properties_typeProperties_url": {
 						"value": "[parameters('AzureBIDevelopment_properties_typeProperties_url')]"
 					},
@@ -144,6 +163,9 @@
 					},
 					"DBNSQLPNET_properties_typeProperties_userName": {
 						"value": "[parameters('DBNSQLPNET_properties_typeProperties_userName')]"
+					},
+					"DBNSQLPNET_RO_properties_typeProperties_userName": {
+						"value": "[parameters('DBNSQLPNET_RO_properties_typeProperties_userName')]"
 					}
 				}
 			},

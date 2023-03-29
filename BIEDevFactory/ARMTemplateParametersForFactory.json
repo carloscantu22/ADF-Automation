@@ -29,6 +29,12 @@
 		"biedev storage_connectionString": {
 			"value": ""
 		},
+		"DBNSQLPNET_RO_connectionString": {
+			"value": "Integrated Security=True;Data Source=dbnsqlpnet.carhartt-nt.carhartt.com;Initial Catalog=CarharttDW;multisubnetfailover=True;applicationintent=ReadOnly"
+		},
+		"DBNSQLPNET_RO_password": {
+			"value": ""
+		},
 		"AzureBIDevelopment_properties_typeProperties_url": {
 			"value": "https://management.azure.com/"
 		},
@@ -42,6 +48,9 @@
 			"value": "carhartt-nt\\bobjservice"
 		},
 		"DBNSQLPNET_properties_typeProperties_userName": {
+			"value": "BIServiceAdmin@carharttdev.com"
+		},
+		"DBNSQLPNET_RO_properties_typeProperties_userName": {
 			"value": "BIServiceAdmin@carharttdev.com"
 		}
 	}

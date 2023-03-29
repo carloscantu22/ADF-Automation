@@ -41,6 +41,15 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'biedev storage'"
 		},
+		"DBNSQLPNET_RO_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'DBNSQLPNET_RO'",
+			"defaultValue": "Integrated Security=True;Data Source=dbnsqlpnet.carhartt-nt.carhartt.com;Initial Catalog=CarharttDW;multisubnetfailover=True;applicationintent=ReadOnly"
+		},
+		"DBNSQLPNET_RO_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'DBNSQLPNET_RO'"
+		},
 		"AzureBIDevelopment_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://management.azure.com/"
@@ -58,6 +67,10 @@
 			"defaultValue": "carhartt-nt\\bobjservice"
 		},
 		"DBNSQLPNET_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "BIServiceAdmin@carharttdev.com"
+		},
+		"DBNSQLPNET_RO_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "BIServiceAdmin@carharttdev.com"
 		}
@@ -10378,7 +10391,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Web1",
+						"name": "SendMessage",
 						"type": "WebActivity",
 						"dependsOn": [],
 						"policy": {
@@ -10390,7 +10403,10 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://api.telegram.org/bot5375063738:AAEW9zo8N5Ij2DdVrOJWWtpecK70xK83oGw/sendMessage?chat_id=-528140690&disable_web_page_preview=1&parse_mode=Markdown&text=AM%20Maintenance%0AOrders:%20Complete%0ASupply:%20Complete%0AWarehouse:%20Complete%0ACanvas:%20Complete",
+							"url": {
+								"value": "@concat('https://api.telegram.org/bot5375063738:AAEW9zo8N5Ij2DdVrOJWWtpecK70xK83oGw/sendMessage?chat_id=-1001702093962&disable_web_page_preview=1&parse_mode=Markdown&text=',pipeline().parameters.Message)",
+								"type": "Expression"
+							},
 							"method": "GET",
 							"headers": {}
 						}
@@ -10400,8 +10416,13 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
+				"parameters": {
+					"Message": {
+						"type": "string"
+					}
+				},
 				"folder": {
-					"name": "WIP"
+					"name": "General"
 				},
 				"annotations": []
 			},
@@ -15064,7 +15085,7 @@
 				"pipelines": [
 					{
 						"pipelineReference": {
-							"referenceName": "OrderExclusion",
+							"referenceName": "OrderExclusionPNET",
 							"type": "PipelineReference"
 						},
 						"parameters": {}
@@ -15079,7 +15100,7 @@
 						"timeZone": "Eastern Standard Time",
 						"schedule": {
 							"minutes": [
-								10
+								50
 							],
 							"hours": [
 								8,
@@ -15096,7 +15117,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/OrderExclusion')]"
+				"[concat(variables('factoryId'), '/pipelines/OrderExclusionPNET')]"
 			]
 		},
 		{
@@ -15272,6 +15293,143 @@
 				"typeProperties": {}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DBNSQLPNET_RO')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('DBNSQLPNET_RO_connectionString')]",
+					"userName": "[parameters('DBNSQLPNET_RO_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('DBNSQLPNET_RO_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "PNETIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/PNETIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RunningNodePNET')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ServerName",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderQuery": "SELECT @@SERVERNAME AS 'ServerName'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "PNET_ReadOnly",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Dapibus",
+									"Table": "Faucibus"
+								}
+							}
+						}
+					},
+					{
+						"name": "TelegramNotifications",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "ServerName",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "TelegramNotifications",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"Message": {
+									"value": "@concat('Queries runnin on: ',activity('ServerName').output.firstRow.ServerName)",
+									"type": "Expression"
+								}
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "General"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/PNET_ReadOnly')]",
+				"[concat(variables('factoryId'), '/pipelines/TelegramNotifications')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PNET_ReadOnly')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DBNSQLPNET_RO",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Schema": {
+						"type": "string",
+						"defaultValue": "Dapibus"
+					},
+					"Table": {
+						"type": "string",
+						"defaultValue": "Faucibus"
+					}
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().Schema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().Table",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DBNSQLPNET_RO')]"
+			]
 		}
 	]
 }
