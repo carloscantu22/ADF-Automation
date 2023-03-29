@@ -1,0 +1,32 @@
+{
+	"name": "PNET_ReadOnly",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DBNSQLPNET_RO",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"Schema": {
+				"type": "string",
+				"defaultValue": "Dapibus"
+			},
+			"Table": {
+				"type": "string",
+				"defaultValue": "Faucibus"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().Schema",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().Table",
+				"type": "Expression"
+			}
+		}
+	}
+}
