@@ -51,7 +51,7 @@
 					"waitOnCompletion": true,
 					"parameters": {
 						"Message": {
-							"value": "@concat('Queries runnin on: ',activity('ServerName').output.firstRow.ServerName)",
+							"value": "@concat('Queries running on: ',activity('ServerName').output.firstRow.ServerName)",
 							"type": "Expression"
 						}
 					}
