@@ -1,0 +1,66 @@
+{
+	"name": "RunningNodePNET",
+	"properties": {
+		"activities": [
+			{
+				"name": "ServerName",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": "SELECT @@SERVERNAME AS 'ServerName'",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "PNET_ReadOnly",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Dapibus",
+							"Table": "Faucibus"
+						}
+					}
+				}
+			},
+			{
+				"name": "TelegramNotifications",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ServerName",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "TelegramNotifications",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"Message": {
+							"value": "@concat('Queries runnin on: ',activity('ServerName').output.firstRow.ServerName)",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "General"
+		},
+		"annotations": []
+	}
+}
