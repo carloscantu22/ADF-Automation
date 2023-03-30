@@ -409,7 +409,7 @@
 										}
 									},
 									"linkedServiceName": {
-										"referenceName": "DBNSQLP01",
+										"referenceName": "DBNSQLPNET",
 										"type": "LinkedServiceReference"
 									}
 								},

@@ -190,7 +190,7 @@
 								"source": {
 									"name": "IsEmployeeSale",
 									"type": "String",
-									"physicalType": "char"
+									"physicalType": "varchar"
 								},
 								"sink": {
 									"name": "IsEmployeeSale",
@@ -220,7 +220,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "CarharttDW",
+						"referenceName": "PNETSQL",
 						"type": "DatasetReference",
 						"parameters": {
 							"Schema": "Tabular_Warehouse2",
@@ -230,7 +230,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "CarharttDW",
+						"referenceName": "PNETSQL",
 						"type": "DatasetReference",
 						"parameters": {
 							"Schema": "Tabular_Warehouse2",
