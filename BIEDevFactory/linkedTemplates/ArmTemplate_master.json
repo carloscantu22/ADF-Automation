@@ -33,14 +33,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'DBNSQLPNET'"
 		},
-		"Db21_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'Db21'"
-		},
-		"biedev storage_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'biedev storage'"
-		},
 		"DBNSQLPNET_RO_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'DBNSQLPNET_RO'",
@@ -49,6 +41,14 @@
 		"DBNSQLPNET_RO_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'DBNSQLPNET_RO'"
+		},
+		"Db21_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Db21'"
+		},
+		"biedev storage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'biedev storage'"
 		},
 		"AzureBIDevelopment_properties_typeProperties_url": {
 			"type": "string",
@@ -140,14 +140,14 @@
 					"DBNSQLPNET_password": {
 						"value": "[parameters('DBNSQLPNET_password')]"
 					},
-					"Db21_connectionString": {
-						"value": "[parameters('Db21_connectionString')]"
-					},
 					"DBNSQLPNET_RO_connectionString": {
 						"value": "[parameters('DBNSQLPNET_RO_connectionString')]"
 					},
 					"DBNSQLPNET_RO_password": {
 						"value": "[parameters('DBNSQLPNET_RO_password')]"
+					},
+					"Db21_connectionString": {
+						"value": "[parameters('Db21_connectionString')]"
 					},
 					"AzureBIDevelopment_properties_typeProperties_url": {
 						"value": "[parameters('AzureBIDevelopment_properties_typeProperties_url')]"

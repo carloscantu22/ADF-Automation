@@ -33,14 +33,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'DBNSQLPNET'"
 		},
-		"Db21_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'Db21'"
-		},
-		"biedev storage_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'biedev storage'"
-		},
 		"DBNSQLPNET_RO_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'DBNSQLPNET_RO'",
@@ -49,6 +41,14 @@
 		"DBNSQLPNET_RO_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'DBNSQLPNET_RO'"
+		},
+		"Db21_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Db21'"
+		},
+		"biedev storage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'biedev storage'"
 		},
 		"AzureBIDevelopment_properties_typeProperties_url": {
 			"type": "string",
@@ -8124,6 +8124,82 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/RunningNodePNET')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ServerName",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderQuery": "SELECT @@SERVERNAME AS 'ServerName'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "PNET_ReadOnly",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Dapibus",
+									"Table": "Faucibus"
+								}
+							}
+						}
+					},
+					{
+						"name": "TelegramNotifications",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "ServerName",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "TelegramNotifications",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"Message": {
+									"value": "@concat('Node Running: ',activity('ServerName').output.firstRow.ServerName)",
+									"type": "Expression"
+								}
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "General"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/PNET_ReadOnly')]",
+				"[concat(variables('factoryId'), '/pipelines/TelegramNotifications')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/SLACalculation')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -8317,7 +8393,7 @@
 										"source": {
 											"name": "IsEmployeeSale",
 											"type": "String",
-											"physicalType": "char"
+											"physicalType": "varchar"
 										},
 										"sink": {
 											"name": "IsEmployeeSale",
@@ -8347,7 +8423,7 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "CarharttDW",
+								"referenceName": "PNETSQL",
 								"type": "DatasetReference",
 								"parameters": {
 									"Schema": "Tabular_Warehouse2",
@@ -8357,7 +8433,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "CarharttDW",
+								"referenceName": "PNETSQL",
 								"type": "DatasetReference",
 								"parameters": {
 									"Schema": "Tabular_Warehouse2",
@@ -8377,7 +8453,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CarharttDW')]"
+				"[concat(variables('factoryId'), '/datasets/PNETSQL')]"
 			]
 		},
 		{
@@ -13316,7 +13392,7 @@
 												}
 											},
 											"linkedServiceName": {
-												"referenceName": "DBNSQLP01",
+												"referenceName": "DBNSQLPNET",
 												"type": "LinkedServiceReference"
 											}
 										},
@@ -13792,7 +13868,7 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/AzureSQLQueue')]",
 				"[concat(variables('factoryId'), '/linkedServices/BIP01')]",
-				"[concat(variables('factoryId'), '/linkedServices/DBNSQLP01')]",
+				"[concat(variables('factoryId'), '/linkedServices/DBNSQLPNET')]",
 				"[concat(variables('factoryId'), '/pipelines/SLACalculation')]",
 				"[concat(variables('factoryId'), '/pipelines/WarehouseNightlyRun')]"
 			]
@@ -14657,6 +14733,43 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/PNET_ReadOnly')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DBNSQLPNET_RO",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Schema": {
+						"type": "string",
+						"defaultValue": "Dapibus"
+					},
+					"Table": {
+						"type": "string",
+						"defaultValue": "Faucibus"
+					}
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().Schema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().Table",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DBNSQLPNET_RO')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/WMIPROD')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -14776,6 +14889,30 @@
 					"password": {
 						"type": "SecureString",
 						"value": "[parameters('DBNSQLPNET_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "PNETIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/PNETIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DBNSQLPNET_RO')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('DBNSQLPNET_RO_connectionString')]",
+					"userName": "[parameters('DBNSQLPNET_RO_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('DBNSQLPNET_RO_password')]"
 					}
 				},
 				"connectVia": {
@@ -15219,165 +15356,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/GWP02IntegrationRuntime')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "SelfHosted",
-				"description": "OnPrem Integration Service running on DBNPBIEGWP05 and DBNPBIEGWP06",
-				"typeProperties": {}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/PNETIntegrationRuntime')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "SelfHosted",
-				"description": "This IR works as Gateway for internal resources in Carhartt Production",
-				"typeProperties": {}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DBNSQLPNET_RO')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"connectionString": "[parameters('DBNSQLPNET_RO_connectionString')]",
-					"userName": "[parameters('DBNSQLPNET_RO_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('DBNSQLPNET_RO_password')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "PNETIntegrationRuntime",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/PNETIntegrationRuntime')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/RunningNodePNET')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "ServerName",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlServerSource",
-								"sqlReaderQuery": "SELECT @@SERVERNAME AS 'ServerName'",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "PNET_ReadOnly",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Dapibus",
-									"Table": "Faucibus"
-								}
-							}
-						}
-					},
-					{
-						"name": "TelegramNotifications",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "ServerName",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "TelegramNotifications",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {
-								"Message": {
-									"value": "@concat('Node Running: ',activity('ServerName').output.firstRow.ServerName)",
-									"type": "Expression"
-								}
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "General"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/PNET_ReadOnly')]",
-				"[concat(variables('factoryId'), '/pipelines/TelegramNotifications')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/PNET_ReadOnly')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "DBNSQLPNET_RO",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Schema": {
-						"type": "string",
-						"defaultValue": "Dapibus"
-					},
-					"Table": {
-						"type": "string",
-						"defaultValue": "Faucibus"
-					}
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": {
-						"value": "@dataset().Schema",
-						"type": "Expression"
-					},
-					"table": {
-						"value": "@dataset().Table",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/DBNSQLPNET_RO')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/StatusCheck120')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -15418,6 +15396,28 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/RunningNodePNET')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/GWP02IntegrationRuntime')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"description": "OnPrem Integration Service running on DBNPBIEGWP05 and DBNPBIEGWP06",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PNETIntegrationRuntime')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"description": "This IR works as Gateway for internal resources in Carhartt Production",
+				"typeProperties": {}
+			},
+			"dependsOn": []
 		}
 	]
 }

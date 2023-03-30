@@ -23,16 +23,16 @@
 		"DBNSQLPNET_password": {
 			"value": ""
 		},
-		"Db21_connectionString": {
-			"value": ""
-		},
-		"biedev storage_connectionString": {
-			"value": ""
-		},
 		"DBNSQLPNET_RO_connectionString": {
 			"value": "Integrated Security=True;Data Source=dbnsqlpnet.carhartt-nt.carhartt.com;Initial Catalog=CarharttDW;multisubnetfailover=True;applicationintent=ReadOnly"
 		},
 		"DBNSQLPNET_RO_password": {
+			"value": ""
+		},
+		"Db21_connectionString": {
+			"value": ""
+		},
+		"biedev storage_connectionString": {
 			"value": ""
 		},
 		"AzureBIDevelopment_properties_typeProperties_url": {

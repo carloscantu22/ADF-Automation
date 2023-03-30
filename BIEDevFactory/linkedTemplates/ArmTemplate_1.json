@@ -37,10 +37,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'DBNSQLPNET'"
 		},
-		"Db21_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'Db21'"
-		},
 		"DBNSQLPNET_RO_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'DBNSQLPNET_RO'",
@@ -49,6 +45,10 @@
 		"DBNSQLPNET_RO_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'DBNSQLPNET_RO'"
+		},
+		"Db21_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Db21'"
 		},
 		"AzureBIDevelopment_properties_typeProperties_url": {
 			"type": "string",
@@ -1000,25 +1000,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Db21')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "Db2",
-				"typeProperties": {
-					"connectionString": "[parameters('Db21_connectionString')]"
-				},
-				"connectVia": {
-					"referenceName": "GWP02IntegrationRuntime",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/GWP02IntegrationRuntime')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/DBNSQLPNET_RO')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -1040,6 +1021,25 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/integrationRuntimes/PNETIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Db21')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Db2",
+				"typeProperties": {
+					"connectionString": "[parameters('Db21_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "GWP02IntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/GWP02IntegrationRuntime')]"
 			]
 		},
 		{

@@ -617,6 +617,79 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/RunningNodePNET')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ServerName",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderQuery": "SELECT @@SERVERNAME AS 'ServerName'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "PNET_ReadOnly",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Dapibus",
+									"Table": "Faucibus"
+								}
+							}
+						}
+					},
+					{
+						"name": "TelegramNotifications",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "ServerName",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "TelegramNotifications",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"Message": {
+									"value": "@concat('Node Running: ',activity('ServerName').output.firstRow.ServerName)",
+									"type": "Expression"
+								}
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "General"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/SLACalculation')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -810,7 +883,7 @@
 										"source": {
 											"name": "IsEmployeeSale",
 											"type": "String",
-											"physicalType": "char"
+											"physicalType": "varchar"
 										},
 										"sink": {
 											"name": "IsEmployeeSale",
@@ -840,7 +913,7 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "CarharttDW",
+								"referenceName": "PNETSQL",
 								"type": "DatasetReference",
 								"parameters": {
 									"Schema": "Tabular_Warehouse2",
@@ -850,7 +923,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "CarharttDW",
+								"referenceName": "PNETSQL",
 								"type": "DatasetReference",
 								"parameters": {
 									"Schema": "Tabular_Warehouse2",
@@ -2790,79 +2863,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/RunningNodePNET')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "ServerName",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlServerSource",
-								"sqlReaderQuery": "SELECT @@SERVERNAME AS 'ServerName'",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "PNET_ReadOnly",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Dapibus",
-									"Table": "Faucibus"
-								}
-							}
-						}
-					},
-					{
-						"name": "TelegramNotifications",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "ServerName",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "TelegramNotifications",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {
-								"Message": {
-									"value": "@concat('Node Running: ',activity('ServerName').output.firstRow.ServerName)",
-									"type": "Expression"
-								}
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "General"
-				},
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/CanvasPBI_Queue')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -3695,7 +3695,7 @@
 												}
 											},
 											"linkedServiceName": {
-												"referenceName": "DBNSQLP01",
+												"referenceName": "DBNSQLPNET",
 												"type": "LinkedServiceReference"
 											}
 										},
