@@ -1034,12 +1034,12 @@
 					"connectionString": "[parameters('Db21_connectionString')]"
 				},
 				"connectVia": {
-					"referenceName": "GWP02IntegrationRuntime",
+					"referenceName": "PNETIntegrationRuntime",
 					"type": "IntegrationRuntimeReference"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/GWP02IntegrationRuntime')]"
+				"[concat(variables('factoryId'), '/integrationRuntimes/PNETIntegrationRuntime')]"
 			]
 		},
 		{
