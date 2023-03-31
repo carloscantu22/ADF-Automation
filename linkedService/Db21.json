@@ -6,10 +6,10 @@
 		"type": "Db2",
 		"typeProperties": {
 			"connectionString": "server=10.17.82.54:446;database=WMIPROD;username=bidbuser;packagecollection=NULLID;authenticationtype=Basic",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI5MTI2MWM5OC1iNDRmLTQ5YjUtYjk3YS03Y2QyNjFkODA3MTciLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiIzYmU3ODFlNS0zYjQzLTQ4ZmYtYjUzZS01OGI4NzNkZGY3MzUiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
-			"referenceName": "GWP02IntegrationRuntime",
+			"referenceName": "PNETIntegrationRuntime",
 			"type": "IntegrationRuntimeReference"
 		}
 	}
