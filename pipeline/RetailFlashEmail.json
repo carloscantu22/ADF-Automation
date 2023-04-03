@@ -1,5 +1,5 @@
 {
-	"name": "POS",
+	"name": "RetailFlashEmail",
 	"properties": {
 		"activities": [
 			{
@@ -47,9 +47,47 @@
 						"dependencyConditions": [
 							"Succeeded"
 						]
+					},
+					{
+						"activity": "D2CEmail",
+						"dependencyConditions": [
+							"Succeeded"
+						]
 					}
 				],
-				"userProperties": []
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@and(equals(activity('D2CEmail').output.firstRow.D2CEmail,0),and(equals(activity('CheckForHourly').output.firstRow.HourlyRun,1),equals(activity('CheckForShopperTrak').output.firstRow.ShopperTrakTraffic,1)))",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "Send D2C Notification",
+							"type": "WebActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": "https://prod-74.eastus.logic.azure.com:443/workflows/d0fe5215184f44a19ac8c8ed5292ca88/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=UXOcGWvfeZYR2ia3rzPQkXEmTRAJxv_qTyNQjslGUeQ",
+								"method": "POST",
+								"headers": {
+									"Content-Type": "application/json"
+								},
+								"body": {
+									"SendEmail": "Yes",
+									"EmailType": "D2CEmail"
+								}
+							}
+						}
+					]
+				}
 			},
 			{
 				"name": "CheckForShopperTrak",
