@@ -115,7 +115,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "@concat('SELECT ''PBI Refresh'' AS ''EventType''\n\t  ,''Orders'' AS ''ModelName''\n\t  ,''D2CDashboardsReady'' AS ''EventName''\n\t  ,NULL AS ''RefreshId''\n\t  ,''',activity('StartTime').output.firstRow.TimeNow,''' AS ''CreateDateTime''\n\t  ,''C'' AS ''EventStatus''\n\t  ,''',convertFromUtc(utcnow(),'Eastern Standard Time'),''' AS ''ProcessEnd''\n\t  ,NULL AS ''RequestID''\n\t  ,''',pipeline().RunId,''' AS ''PipelineRunID''')",
+										"value": "@concat('SELECT ''PBI Refresh'' AS ''EventType''\n\t  ,''Orders'' AS ''ModelName''\n\t  ,''D2CDashboardsReady'' AS ''EventName''\n\t  ,''C'' AS ''EventStatus''\n\t  ,NULL AS ''RefreshId''\n\t  ,''',activity('StartTime').output.firstRow.TimeNow,''' AS ''CreateDateTime''\n\t  ,''',activity('StartTime').output.firstRow.TimeNow,''' AS ''ProcessStart''\n\t  ,''',convertFromUtc(utcnow(),'Eastern Standard Time'),''' AS ''ProcessEnd''\n\t  ,NULL AS ''RequestID''\n\t  ,''',pipeline().RunId,''' AS ''PipelineRunID''')",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
@@ -204,7 +204,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE EventName = 'D2C Dashboards are Ready'\n\t  AND [ModelName] = 'Orders'\n\t  AND [EventStatus] IN ('R')\n\t  AND CAST([CreateDateTime] AS date) = CAST(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' AS date)\n)\nTHEN 1\nELSE 0 END AS 'D2CEmail'",
+						"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE EventName = 'D2CDashboardsReady'\n\t  AND [ModelName] = 'Orders'\n\t  AND [EventStatus] IN ('C')\n\t  AND CAST([CreateDateTime] AS date) = CAST(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' AS date)\n)\nTHEN 1\nELSE 0 END AS 'D2CEmail'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
