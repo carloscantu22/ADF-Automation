@@ -115,7 +115,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "@concat('SELECT [EventType]\n\t  ,[ModelName]\n\t  ,[EventName]\n\t  ,[RefreshId]\n\t  ,''',activity('StartTime').output.firstRow.TimeNow,''' AS ''CreateDateTime''\n\t  ,[EventStatus]\n\t  ,[ProcessEnd]\n\t  ,NULL AS ''RequestID''\n\t  ,''',pipeline().RunId,''' AS ''PipelineRunID''\nFROM \n(\nVALUES (''PBI Refresh'',''Orders'',''D2CDashboardsReady'',NULL,''C'',''',convertFromUtc(utcnow(),'Eastern Standard Time'),''')) \n) AS PR (EventType,ModelName,EventName,RefreshId,EventStatus,ProcessEnd)')",
+										"value": "@concat('SELECT ''PBI Refresh'' AS ''EventType''\n\t  ,''Orders'' AS ''ModelName''\n\t  ,''D2CDashboardsReady'' AS ''EventName''\n\t  ,NULL AS ''RefreshId''\n\t  ,''',activity('StartTime').output.firstRow.TimeNow,''' AS ''CreateDateTime''\n\t  ,''C'' AS ''EventStatus''\n\t  ,''',convertFromUtc(utcnow(),'Eastern Standard Time'),''' AS ''ProcessEnd''\n\t  ,NULL AS ''RequestID''\n\t  ,''',pipeline().RunId,''' AS ''PipelineRunID''')",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
