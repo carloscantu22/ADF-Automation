@@ -17,23 +17,23 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE EventName = 'Hourly'\n\t  AND [ModelName] = 'Orders'\n\t  AND [EventStatus] IN ('C','R')\n\t  AND CAST([CreateDateTime] AS date) = CAST(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' AS date)\n)\nTHEN 1\nELSE 0 END AS 'HourlyRun'",
+						"type": "SqlServerSource",
+						"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT [SL].[SupportLogNumber],[SL].[PackageStatus],[SL].[EndOfProcess],[EQ].*\n\tFROM [Controls].[SupportLogs] SL\n\tINNER JOIN [Dimensions].[Days] DT ON [DT].[ActualDate] = CAST([EndOfProcess] AS date)\n\tLEFT JOIN [AZUREDB].[DB01].[Controls].[ADFRefreshQueue] EQ ON [EQ].[CreateDateTime] > [SL].[EndOfProcess]\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   AND [EQ].[EventName] = 'Hourly'\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   AND [EQ].[ModelName] = 'Orders'\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   AND [EQ].[EventStatus] = 'C'\n\tWHERE [SL].[ChildPackageName] = 'ImportShopperTrakTraffic'\n\t  AND [SL].[PackageStatus] = 'C'\n\t  AND [DT].[CurrentDayOffset] = 0\n)\nTHEN 1\nELSE 0 END AS 'HourlyRun'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
 					"dataset": {
-						"referenceName": "AzureSQLQueue",
+						"referenceName": "PNET_ReadOnly",
 						"type": "DatasetReference",
 						"parameters": {
-							"Schema": "Lorem",
-							"Table": "Ipsum"
+							"Schema": "Dapibus",
+							"Table": "Faucibus"
 						}
 					}
 				}
 			},
 			{
-				"name": "SendEmailCondition",
+				"name": "SendD2CEmail",
 				"type": "IfCondition",
 				"dependsOn": [
 					{
@@ -58,7 +58,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@and(equals(activity('D2CEmail').output.firstRow.D2CEmail,0),and(equals(activity('CheckForHourly').output.firstRow.HourlyRun,1),equals(activity('CheckForShopperTrak').output.firstRow.ShopperTrakTraffic,1)))",
+						"value": "@and(equals(int(activity('D2CEmail').output.firstRow.D2CEmail),0),and(equals(int(activity('CheckForHourly').output.firstRow.HourlyRun),1),equals(int(activity('CheckForShopperTrak').output.firstRow.ShopperTrakTraffic),1)))",
 						"type": "Expression"
 					},
 					"ifTrueActivities": [
@@ -133,7 +133,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT [SL].[SupportLogNumber],[SL].[PackageStatus],[SL].[EndOfProcess]\n\tFROM [Controls].[SupportLogs] SL\n\tINNER JOIN [Dimensions].[Days] DT ON [DT].[ActualDate] = CAST([EndOfProcess] AS date)\n\tWHERE [SL].[ChildPackageName] = 'D2C Dashboards are Ready'\n\t  AND [SL].[PackageStatus] = 'C'\n\t  AND [DT].[CurrentDayOffset] = 0)\nTHEN 1\nELSE 0 END AS 'D2CEmail'",
+						"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE EventName = 'D2C Dashboards are Ready'\n\t  AND [ModelName] = 'Orders'\n\t  AND [EventStatus] IN ('R')\n\t  AND CAST([CreateDateTime] AS date) = CAST(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' AS date)\n)\nTHEN 1\nELSE 0 END AS 'HourlyRun'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -145,6 +145,96 @@
 							"Table": "Ipsum"
 						}
 					}
+				}
+			},
+			{
+				"name": "SendHourlyAlert",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "SendD2CEmail",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@and(equals(int(activity('D2CEmail').output.firstRow.D2CEmail),0),and(equals(int(activity('CheckForHourly').output.firstRow.HourlyRun),0),equals(int(activity('CheckForShopperTrak').output.firstRow.ShopperTrakTraffic),1)))",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "Send Hourly Alert",
+							"type": "WebActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": "https://prod-74.eastus.logic.azure.com:443/workflows/d0fe5215184f44a19ac8c8ed5292ca88/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=UXOcGWvfeZYR2ia3rzPQkXEmTRAJxv_qTyNQjslGUeQ",
+								"method": "POST",
+								"headers": {
+									"Content-Type": "application/json"
+								},
+								"body": {
+									"SendEmail": "No",
+									"EmailType": "OrdersHourly"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "SendShopperTrakAlert",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "SendHourlyAlert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@and(equals(int(activity('D2CEmail').output.firstRow.D2CEmail),0),and(equals(int(activity('CheckForHourly').output.firstRow.HourlyRun),0),equals(int(activity('CheckForShopperTrak').output.firstRow.ShopperTrakTraffic),0)))",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "Send D2C Notification_copy1_copy1",
+							"type": "WebActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": "https://prod-74.eastus.logic.azure.com:443/workflows/d0fe5215184f44a19ac8c8ed5292ca88/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=UXOcGWvfeZYR2ia3rzPQkXEmTRAJxv_qTyNQjslGUeQ",
+								"method": "POST",
+								"headers": {
+									"Content-Type": "application/json"
+								},
+								"body": {
+									"SendEmail": "Yes",
+									"EmailType": "D2CEmail"
+								}
+							}
+						}
+					]
 				}
 			}
 		],
