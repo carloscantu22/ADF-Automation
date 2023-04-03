@@ -204,7 +204,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE EventName = 'D2C Dashboards are Ready'\n\t  AND [ModelName] = 'Orders'\n\t  AND [EventStatus] IN ('R')\n\t  AND CAST([CreateDateTime] AS date) = CAST(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' AS date)\n)\nTHEN 1\nELSE 0 END AS 'HourlyRun'",
+						"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE EventName = 'D2C Dashboards are Ready'\n\t  AND [ModelName] = 'Orders'\n\t  AND [EventStatus] IN ('R')\n\t  AND CAST([CreateDateTime] AS date) = CAST(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' AS date)\n)\nTHEN 1\nELSE 0 END AS 'D2CEmail'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
