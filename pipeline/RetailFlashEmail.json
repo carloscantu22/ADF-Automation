@@ -53,6 +53,12 @@
 						"dependencyConditions": [
 							"Succeeded"
 						]
+					},
+					{
+						"activity": "StartTime",
+						"dependencyConditions": [
+							"Succeeded"
+						]
 					}
 				],
 				"userProperties": [],
@@ -85,6 +91,71 @@
 									"EmailType": "D2CEmail"
 								}
 							}
+						},
+						{
+							"name": "InsertQueue",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Send D2C Notification",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@concat('SELECT [EventType]\n\t  ,[ModelName]\n\t  ,[EventName]\n\t  ,[RefreshId]\n\t  ,''',activity('StartTime').output.firstRow.TimeNow,''' AS ''CreateDateTime''\n\t  ,[EventStatus]\n\t  ,[ProcessEnd]\n\t  ,NULL AS ''RequestID''\n\t  ,''',pipeline().RunId,''' AS ''PipelineRunID''\nFROM \n(\nVALUES (''PBI Refresh'',''Orders'',''D2CDashboardsReady'',NULL,''C'',''',convertFromUtc(utcnow(),'Eastern Standard Time'),''')) \n) AS PR (EventType,ModelName,EventName,RefreshId,EventStatus,ProcessEnd)')",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "AzureSQLQueue",
+									"type": "DatasetReference",
+									"parameters": {
+										"Schema": "Lorem",
+										"Table": "Ipsum"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "AzureSQLQueue",
+									"type": "DatasetReference",
+									"parameters": {
+										"Schema": "Controls",
+										"Table": "ADFRefreshQueue"
+									}
+								}
+							]
 						}
 					]
 				}
@@ -235,6 +306,35 @@
 							}
 						}
 					]
+				}
+			},
+			{
+				"name": "StartTime",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' AS 'TimeNow'",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "AzureSQLQueue",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Lorem",
+							"Table": "Ipsum"
+						}
+					}
 				}
 			}
 		],
