@@ -1,0 +1,115 @@
+{
+	"name": "POS",
+	"properties": {
+		"activities": [
+			{
+				"name": "CheckForHourly",
+				"description": "Query to return TRUE if the first hourly in Orders is Complete.",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE EventName = 'Hourly'\n\t  AND [ModelName] = 'Orders'\n\t  AND [EventStatus] IN ('C','R')\n\t  AND CAST([CreateDateTime] AS date) = CAST(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' AS date)\n)\nTHEN 1\nELSE 0 END AS 'HourlyRun'",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "AzureSQLQueue",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Lorem",
+							"Table": "Ipsum"
+						}
+					}
+				}
+			},
+			{
+				"name": "SendEmailCondition",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "CheckForHourly",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "CheckForShopperTrak",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": []
+			},
+			{
+				"name": "CheckForShopperTrak",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT [SL].[SupportLogNumber],[SL].[PackageStatus],[SL].[EndOfProcess]\n\tFROM [Controls].[SupportLogs] SL\n\tINNER JOIN [Dimensions].[Days] DT ON [DT].[ActualDate] = CAST([EndOfProcess] AS date)\n\tWHERE [SL].[ChildPackageName] = 'ImportShopperTrakTraffic'\n\t  AND [SL].[PackageStatus] = 'C'\n\t  AND [DT].[CurrentDayOffset] = 0)\nTHEN 1\nELSE 0 END AS 'ShopperTrakTraffic'",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "PNET_ReadOnly",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Dapibus",
+							"Table": "Faucibus"
+						}
+					}
+				}
+			},
+			{
+				"name": "D2CEmail",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT [SL].[SupportLogNumber],[SL].[PackageStatus],[SL].[EndOfProcess]\n\tFROM [Controls].[SupportLogs] SL\n\tINNER JOIN [Dimensions].[Days] DT ON [DT].[ActualDate] = CAST([EndOfProcess] AS date)\n\tWHERE [SL].[ChildPackageName] = 'D2C Dashboards are Ready'\n\t  AND [SL].[PackageStatus] = 'C'\n\t  AND [DT].[CurrentDayOffset] = 0)\nTHEN 1\nELSE 0 END AS 'D2CEmail'",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "AzureSQLQueue",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Lorem",
+							"Table": "Ipsum"
+						}
+					}
+				}
+			}
+		],
+		"annotations": []
+	}
+}
