@@ -211,7 +211,7 @@
 					},
 					"ifTrueActivities": [
 						{
-							"name": "Send D2C Notification_copy1_copy1",
+							"name": "Send Shopper Trac Alert",
 							"type": "WebActivity",
 							"dependsOn": [],
 							"policy": {
@@ -229,8 +229,8 @@
 									"Content-Type": "application/json"
 								},
 								"body": {
-									"SendEmail": "Yes",
-									"EmailType": "D2CEmail"
+									"SendEmail": "No",
+									"EmailType": "ShopperTrak"
 								}
 							}
 						}
