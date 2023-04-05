@@ -18,7 +18,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlServerSource",
-						"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT [SL].[SupportLogNumber],[SL].[PackageStatus],[SL].[EndOfProcess],[EQ].*\n\tFROM [Controls].[SupportLogs] SL\n\tINNER JOIN [Dimensions].[Days] DT ON [DT].[ActualDate] = CAST([EndOfProcess] AS date)\n\tLEFT JOIN [AZUREDB].[DB01].[Controls].[ADFRefreshQueue] EQ ON [EQ].[CreateDateTime] > [SL].[EndOfProcess]\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   AND [EQ].[EventName] = 'Hourly'\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   AND [EQ].[ModelName] = 'Orders'\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   AND [EQ].[EventStatus] = 'C'\n\tWHERE [SL].[ChildPackageName] = 'ImportShopperTrakTraffic'\n\t  AND [SL].[PackageStatus] = 'C'\n\t  AND [DT].[CurrentDayOffset] = 0\n)\nTHEN 1\nELSE 0 END AS 'HourlyRun'",
+						"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT [SL].[SupportLogNumber],[SL].[PackageStatus],[SL].[EndOfProcess],[EQ].*\n\tFROM [Controls].[SupportLogs] SL\n\tINNER JOIN [Dimensions].[Days] DT ON [DT].[ActualDate] = CAST([EndOfProcess] AS date)\n\tINNER JOIN [AZUREDB].[DB01].[Controls].[ADFRefreshQueue] EQ ON [EQ].[CreateDateTime] > [SL].[EndOfProcess]\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   AND [EQ].[EventName] = 'Hourly'\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   AND [EQ].[ModelName] = 'Orders'\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   AND [EQ].[EventStatus] = 'C'\n\tWHERE [SL].[ChildPackageName] = 'ImportShopperTrakTraffic'\n\t  AND [SL].[PackageStatus] = 'C'\n\t  AND [DT].[CurrentDayOffset] = 0\n)\nTHEN 1\nELSE 0 END AS 'HourlyRun'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
