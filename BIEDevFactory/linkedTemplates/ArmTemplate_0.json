@@ -1341,7 +1341,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1e04c36c-aa71-43a4-bd7b-843e24169196/refreshes/08780b3c-6b85-48a4-8997-153924e8c4d8",
+							"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1e04c36c-aa71-43a4-bd7b-843e24169196/refreshes/993e7029-3375-4305-b468-7f7c11d7cedb",
 							"method": "GET",
 							"headers": {},
 							"body": {
