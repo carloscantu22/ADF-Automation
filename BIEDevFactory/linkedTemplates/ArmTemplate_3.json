@@ -13,6 +13,41 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/WMIPROD')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Db21",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Schema": {
+						"type": "string",
+						"defaultValue": "Veniam"
+					},
+					"Table": {
+						"type": "string",
+						"defaultValue": "Minim"
+					}
+				},
+				"annotations": [],
+				"type": "Db2Table",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().Schema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().Table",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/CanvasPBI_Running')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1002,8 +1037,8 @@
 						}
 					},
 					{
-						"name": "TelegramNotifications",
-						"type": "ExecutePipeline",
+						"name": "Check Running",
+						"type": "IfCondition",
 						"dependsOn": [
 							{
 								"activity": "ServerName",
@@ -1014,17 +1049,31 @@
 						],
 						"userProperties": [],
 						"typeProperties": {
-							"pipeline": {
-								"referenceName": "TelegramNotifications",
-								"type": "PipelineReference"
+							"expression": {
+								"value": "@equals(activity('ServerName').output.firstRow.ServerName,'EU2PRDBISQL02')",
+								"type": "Expression"
 							},
-							"waitOnCompletion": true,
-							"parameters": {
-								"Message": {
-									"value": "@concat('Node Running: ',activity('ServerName').output.firstRow.ServerName)",
-									"type": "Expression"
+							"ifFalseActivities": [
+								{
+									"name": "TelegramNotifications",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "TelegramNotifications",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {
+											"Message": {
+												"value": "@concat('Node Running: ',activity('ServerName').output.firstRow.ServerName)",
+												"type": "Expression"
+											}
+										}
+									}
 								}
-							}
+							]
 						}
 					}
 				],
@@ -2023,7 +2072,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/WMIPROD')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/WMi_Plants_Hourly')]",
@@ -2577,7 +2628,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/WMIPROD')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/WMi_Plants_Refresh')]",
@@ -3131,7 +3184,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/WMIPROD')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/2300HoursNightly')]",
@@ -3546,90 +3601,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/ProcessSupply_Running')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SupplyPBI_Queue')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "If Condition1",
-						"type": "IfCondition",
-						"dependsOn": [
-							{
-								"activity": "ReadQueue",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"expression": {
-								"value": "@equals(activity('ReadQueue').output.firstRow.Idle,0)",
-								"type": "Expression"
-							},
-							"ifTrueActivities": [
-								{
-									"name": "ProcessSupply_RunningPBI",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "SupplyPBI_Running",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {}
-									}
-								}
-							]
-						}
-					},
-					{
-						"name": "ReadQueue",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE [ModelName] = 'Supply'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND ([EventStatus] = 'R' OR [EventStatus] IS NULL)\n)\nTHEN 0\nELSE 1 END AS 'Idle'",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "AzureSQLQueue",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Lorem",
-									"Table": "Ipsum"
-								}
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Supply_PBI"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/SupplyPBI_Running')]"
 			]
 		}
 	]

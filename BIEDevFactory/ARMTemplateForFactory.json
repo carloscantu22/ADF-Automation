@@ -8512,8 +8512,8 @@
 						}
 					},
 					{
-						"name": "TelegramNotifications",
-						"type": "ExecutePipeline",
+						"name": "Check Running",
+						"type": "IfCondition",
 						"dependsOn": [
 							{
 								"activity": "ServerName",
@@ -8524,17 +8524,31 @@
 						],
 						"userProperties": [],
 						"typeProperties": {
-							"pipeline": {
-								"referenceName": "TelegramNotifications",
-								"type": "PipelineReference"
+							"expression": {
+								"value": "@equals(activity('ServerName').output.firstRow.ServerName,'EU2PRDBISQL02')",
+								"type": "Expression"
 							},
-							"waitOnCompletion": true,
-							"parameters": {
-								"Message": {
-									"value": "@concat('Node Running: ',activity('ServerName').output.firstRow.ServerName)",
-									"type": "Expression"
+							"ifFalseActivities": [
+								{
+									"name": "TelegramNotifications",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "TelegramNotifications",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {
+											"Message": {
+												"value": "@concat('Node Running: ',activity('ServerName').output.firstRow.ServerName)",
+												"type": "Expression"
+											}
+										}
+									}
 								}
-							}
+							]
 						}
 					}
 				],
@@ -15717,6 +15731,13 @@
 							"type": "PipelineReference"
 						},
 						"parameters": {}
+					},
+					{
+						"pipelineReference": {
+							"referenceName": "RunningNodePNET",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
 					}
 				],
 				"type": "ScheduleTrigger",
@@ -15754,7 +15775,8 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/WMi_Plants_Refresh')]"
+				"[concat(variables('factoryId'), '/pipelines/WMi_Plants_Refresh')]",
+				"[concat(variables('factoryId'), '/pipelines/RunningNodePNET')]"
 			]
 		},
 		{
@@ -15763,16 +15785,8 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "RunningNodePNET",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
+				"runtimeState": "Stopped",
+				"pipelines": [],
 				"type": "ScheduleTrigger",
 				"typeProperties": {
 					"recurrence": {
@@ -15795,9 +15809,7 @@
 					}
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/RunningNodePNET')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/GWP02IntegrationRuntime')]",
