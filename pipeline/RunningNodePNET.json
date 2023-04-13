@@ -32,8 +32,8 @@
 				}
 			},
 			{
-				"name": "TelegramNotifications",
-				"type": "ExecutePipeline",
+				"name": "Check Running",
+				"type": "IfCondition",
 				"dependsOn": [
 					{
 						"activity": "ServerName",
@@ -44,17 +44,31 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"pipeline": {
-						"referenceName": "TelegramNotifications",
-						"type": "PipelineReference"
+					"expression": {
+						"value": "@equals(activity('ServerName').output.firstRow.ServerName,'EU2PRDBISQL02')",
+						"type": "Expression"
 					},
-					"waitOnCompletion": true,
-					"parameters": {
-						"Message": {
-							"value": "@concat('Node Running: ',activity('ServerName').output.firstRow.ServerName)",
-							"type": "Expression"
+					"ifFalseActivities": [
+						{
+							"name": "TelegramNotifications",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "TelegramNotifications",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"Message": {
+										"value": "@concat('Node Running: ',activity('ServerName').output.firstRow.ServerName)",
+										"type": "Expression"
+									}
+								}
+							}
 						}
-					}
+					]
 				}
 			}
 		],
