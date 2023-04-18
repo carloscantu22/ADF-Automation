@@ -8915,7 +8915,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Switch1",
+						"name": "EventProcess",
 						"type": "Switch",
 						"dependsOn": [
 							{
@@ -8933,75 +8933,14 @@
 							},
 							"cases": [
 								{
-									"value": "Nightly_Begin",
-									"activities": [
-										{
-											"name": "SetNoRefresh_01",
-											"type": "SetVariable",
-											"dependsOn": [],
-											"userProperties": [],
-											"typeProperties": {
-												"variableName": "ProcessingConditional",
-												"value": "0"
-											}
-										}
-									]
-								},
-								{
-									"value": "Nightly_End",
-									"activities": [
-										{
-											"name": "SetNoRefresh_02",
-											"type": "SetVariable",
-											"dependsOn": [],
-											"userProperties": [],
-											"typeProperties": {
-												"variableName": "ProcessingConditional",
-												"value": "0"
-											}
-										},
-										{
-											"name": "SendCompletionEmail",
-											"type": "WebActivity",
-											"dependsOn": [
-												{
-													"activity": "SetNoRefresh_02",
-													"dependencyConditions": [
-														"Succeeded"
-													]
-												}
-											],
-											"policy": {
-												"timeout": "7.00:00:00",
-												"retry": 0,
-												"retryIntervalInSeconds": 30,
-												"secureOutput": false,
-												"secureInput": false
-											},
-											"userProperties": [],
-											"typeProperties": {
-												"url": "https://prod-13.northcentralus.logic.azure.com:443/workflows/edec3768a21d4a618a89c7ccf8c4ad0b/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Om-PN4tQZfPmI_KeEBQTkW7qGjSwrgbMrvF8RSqCfQ8",
-												"method": "POST",
-												"headers": {
-													"Content-Type": "application/json"
-												},
-												"body": {
-													"value": "@concat('{\"ModelName\" : \"','Supply','\" , \"StartDateTime\" : \"',utcnow(),'\"}')",
-													"type": "Expression"
-												}
-											}
-										}
-									]
-								},
-								{
 									"value": "Nightly_Dimensions",
 									"activities": [
 										{
-											"name": "Set_Tables_04",
+											"name": "Set_Tables_Hourly_copy1",
 											"type": "SetVariable",
 											"dependsOn": [
 												{
-													"activity": "TableRefreshQueue",
+													"activity": "RefreshQueue_NightlyDimensions",
 													"dependencyConditions": [
 														"Succeeded"
 													]
@@ -9011,22 +8950,15 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 6,\n    \"RetryCount\": 0,\n    \"Objects\": ',activity('TableRefreshQueue').output.firstRow.Refresh,'\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 6,\n    \"RetryCount\": 0,\n    \"Objects\": ',activity('RefreshQueue_NightlyDimensions').output.firstRow.Refresh,'\n}')",
 													"type": "Expression"
 												}
 											}
 										},
 										{
-											"name": "TableRefreshQueue",
+											"name": "RefreshQueue_NightlyDimensions",
 											"type": "Lookup",
-											"dependsOn": [
-												{
-													"activity": "SetForRefresh_04",
-													"dependencyConditions": [
-														"Succeeded"
-													]
-												}
-											],
+											"dependsOn": [],
 											"policy": {
 												"timeout": "7.00:00:00",
 												"retry": 0,
@@ -9039,7 +8971,7 @@
 												"source": {
 													"type": "AzureSqlSource",
 													"sqlReaderQuery": {
-														"value": "@concat('SELECT CAST(\n(\n\tSELECT TRIM([Tablename]) AS ''table''\n\tFROM [Controls].[ADFEventRefreshCatalog]\n\t\tWHERE [EventName] = ''',activity('ReadRefresh').output.firstRow.EventName,'''\n\t\tAND [ModelName] = ''Supply''\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
+														"value": "@concat('SELECT CAST(\n(\n\tSELECT TRIM([Tablename]) AS ''table''\n\tFROM [Controls].[ADFEventRefreshCatalog]\n\t\tWHERE [EventName] = ''',activity('ReadRefresh').output.firstRow.EventName,'''\n\t\tAND [ModelName] = ''Supply''\n\t\tAND [ValidFlag] = ''Y''\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
 														"type": "Expression"
 													},
 													"queryTimeout": "02:00:00",
@@ -9053,16 +8985,6 @@
 														"Table": "Ipsum"
 													}
 												}
-											}
-										},
-										{
-											"name": "SetForRefresh_04",
-											"type": "SetVariable",
-											"dependsOn": [],
-											"userProperties": [],
-											"typeProperties": {
-												"variableName": "ProcessingConditional",
-												"value": "1"
 											}
 										}
 									]
@@ -9093,14 +9015,7 @@
 										{
 											"name": "Tables_Nightly_Facts",
 											"type": "Lookup",
-											"dependsOn": [
-												{
-													"activity": "SetRefreshFlag05",
-													"dependencyConditions": [
-														"Succeeded"
-													]
-												}
-											],
+											"dependsOn": [],
 											"policy": {
 												"timeout": "7.00:00:00",
 												"retry": 0,
@@ -9128,16 +9043,6 @@
 													}
 												}
 											}
-										},
-										{
-											"name": "SetRefreshFlag05",
-											"type": "SetVariable",
-											"dependsOn": [],
-											"userProperties": [],
-											"typeProperties": {
-												"variableName": "ProcessingConditional",
-												"value": "1"
-											}
 										}
 									]
 								},
@@ -9147,14 +9052,7 @@
 										{
 											"name": "Set_Tables_06",
 											"type": "SetVariable",
-											"dependsOn": [
-												{
-													"activity": "SetRefreshFlag06",
-													"dependencyConditions": [
-														"Succeeded"
-													]
-												}
-											],
+											"dependsOn": [],
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -9162,16 +9060,6 @@
 													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 1,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"Draft Partition\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
-											}
-										},
-										{
-											"name": "SetRefreshFlag06",
-											"type": "SetVariable",
-											"dependsOn": [],
-											"userProperties": [],
-											"typeProperties": {
-												"variableName": "ProcessingConditional",
-												"value": "1"
 											}
 										}
 									]
@@ -9182,14 +9070,7 @@
 										{
 											"name": "Set_Tables_07",
 											"type": "SetVariable",
-											"dependsOn": [
-												{
-													"activity": "SetRefreshFlag07",
-													"dependencyConditions": [
-														"Succeeded"
-													]
-												}
-											],
+											"dependsOn": [],
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -9197,90 +9078,6 @@
 													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Inventory Plans\",\n            \"partition\": \"Nightly Partition ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'dddd'),'\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
-											}
-										},
-										{
-											"name": "SetRefreshFlag07",
-											"type": "SetVariable",
-											"dependsOn": [],
-											"userProperties": [],
-											"typeProperties": {
-												"variableName": "ProcessingConditional",
-												"value": "1"
-											}
-										}
-									]
-								},
-								{
-									"value": "Facts_Partitions",
-									"activities": [
-										{
-											"name": "Set_Tables_08",
-											"type": "SetVariable",
-											"dependsOn": [
-												{
-													"activity": "Tables_Facts_Partition",
-													"dependencyConditions": [
-														"Succeeded"
-													]
-												}
-											],
-											"userProperties": [],
-											"typeProperties": {
-												"variableName": "RefreshParameters",
-												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 6,\n    \"RetryCount\": 0,\n    \"Objects\": ',activity('Tables_Facts_Partition').output.firstRow.Refresh,'\n}')",
-													"type": "Expression"
-												}
-											}
-										},
-										{
-											"name": "Tables_Facts_Partition",
-											"type": "Lookup",
-											"dependsOn": [
-												{
-													"activity": "SetRefreshFlag08",
-													"dependencyConditions": [
-														"Succeeded"
-													]
-												}
-											],
-											"policy": {
-												"timeout": "7.00:00:00",
-												"retry": 0,
-												"retryIntervalInSeconds": 30,
-												"secureOutput": false,
-												"secureInput": false
-											},
-											"userProperties": [],
-											"typeProperties": {
-												"source": {
-													"type": "AzureSqlSource",
-													"sqlReaderQuery": {
-														"value": "@concat('SELECT CAST(\n(\n\tSELECT TRIM([Tablename]) AS ''table''\n\tFROM [Controls].[ADFEventRefreshCatalog]\n\t\tWHERE [EventName] = ''',activity('ReadRefresh').output.firstRow.EventName,'''\n\t\tAND [ModelName] = ''Canvas''\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
-														"type": "Expression"
-													},
-													"queryTimeout": "02:00:00",
-													"partitionOption": "None"
-												},
-												"dataset": {
-													"referenceName": "AzureSQLQueue",
-													"type": "DatasetReference",
-													"parameters": {
-														"Schema": "Lorem",
-														"Table": "Ipsum"
-													}
-												}
-											}
-										},
-										{
-											"name": "SetRefreshFlag08",
-											"type": "SetVariable",
-											"dependsOn": [],
-											"userProperties": [],
-											"typeProperties": {
-												"variableName": "ProcessingConditional",
-												"value": "1"
 											}
 										}
 									]
@@ -9291,14 +9088,7 @@
 										{
 											"name": "Set_Tables_09",
 											"type": "SetVariable",
-											"dependsOn": [
-												{
-													"activity": "SetRefreshFlag09",
-													"dependencyConditions": [
-														"Succeeded"
-													]
-												}
-											],
+											"dependsOn": [],
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -9306,16 +9096,6 @@
 													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"Nightly Partition ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'dddd'),'\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
-											}
-										},
-										{
-											"name": "SetRefreshFlag09",
-											"type": "SetVariable",
-											"dependsOn": [],
-											"userProperties": [],
-											"typeProperties": {
-												"variableName": "ProcessingConditional",
-												"value": "1"
 											}
 										}
 									]
@@ -9326,14 +9106,7 @@
 										{
 											"name": "Set_Tables_10",
 											"type": "SetVariable",
-											"dependsOn": [
-												{
-													"activity": "SetRefreshFlag10",
-													"dependencyConditions": [
-														"Succeeded"
-													]
-												}
-											],
+											"dependsOn": [],
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -9341,60 +9114,6 @@
 													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Available to Promise\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
-											}
-										},
-										{
-											"name": "SetRefreshFlag10",
-											"type": "SetVariable",
-											"dependsOn": [],
-											"userProperties": [],
-											"typeProperties": {
-												"variableName": "ProcessingConditional",
-												"value": "1"
-											}
-										}
-									]
-								},
-								{
-									"value": "MSODraftNotification",
-									"activities": [
-										{
-											"name": "SendDraftEmail",
-											"type": "WebActivity",
-											"dependsOn": [
-												{
-													"activity": "SetNoRefresh_11",
-													"dependencyConditions": [
-														"Succeeded"
-													]
-												}
-											],
-											"policy": {
-												"timeout": "7.00:00:00",
-												"retry": 0,
-												"retryIntervalInSeconds": 30,
-												"secureOutput": false,
-												"secureInput": false
-											},
-											"userProperties": [],
-											"typeProperties": {
-												"url": "https://prod-16.northcentralus.logic.azure.com:443/workflows/2fe1f2ecb460441ab439d52dc4376fa9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=jImsHlpPczPE6nGyWS0zsMwolhW7x3qwnHdBaoIJYY0",
-												"method": "POST",
-												"headers": {},
-												"body": {
-													"value": "@concat('{','}')",
-													"type": "Expression"
-												}
-											}
-										},
-										{
-											"name": "SetNoRefresh_11",
-											"type": "SetVariable",
-											"dependsOn": [],
-											"userProperties": [],
-											"typeProperties": {
-												"variableName": "ProcessingConditional",
-												"value": "0"
 											}
 										}
 									]
@@ -9425,14 +9144,7 @@
 										{
 											"name": "TableRefreshQueue_Hourly",
 											"type": "Lookup",
-											"dependsOn": [
-												{
-													"activity": "SetForRefresh_Hourly",
-													"dependencyConditions": [
-														"Succeeded"
-													]
-												}
-											],
+											"dependsOn": [],
 											"policy": {
 												"timeout": "7.00:00:00",
 												"retry": 0,
@@ -9460,16 +9172,6 @@
 													}
 												}
 											}
-										},
-										{
-											"name": "SetForRefresh_Hourly",
-											"type": "SetVariable",
-											"dependsOn": [],
-											"userProperties": [],
-											"typeProperties": {
-												"variableName": "ProcessingConditional",
-												"value": "1"
-											}
 										}
 									]
 								},
@@ -9479,14 +9181,7 @@
 										{
 											"name": "Set_Tables_InvPlansDraft",
 											"type": "SetVariable",
-											"dependsOn": [
-												{
-													"activity": "SetRefreshFlag_InvPlansDraft",
-													"dependencyConditions": [
-														"Succeeded"
-													]
-												}
-											],
+											"dependsOn": [],
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -9495,76 +9190,44 @@
 													"type": "Expression"
 												}
 											}
-										},
+										}
+									]
+								},
+								{
+									"value": "InventoryPlans_Approval",
+									"activities": [
 										{
-											"name": "SetRefreshFlag_InvPlansDraft",
+											"name": "Tables_InvPlansApproved",
 											"type": "SetVariable",
 											"dependsOn": [],
 											"userProperties": [],
 											"typeProperties": {
-												"variableName": "ProcessingConditional",
-												"value": "1"
+												"variableName": "RefreshParameters",
+												"value": {
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 1,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Inventory Plans\",\n            \"partition\": \"ApprovalPartition ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'yyyy-MM'),'\"\n        }\n    ]\n}')",
+													"type": "Expression"
+												}
 											}
 										}
 									]
-								}
-							],
-							"defaultActivities": [
+								},
 								{
-									"name": "UpdateQueue_UnknowEvent",
-									"type": "SqlServerStoredProcedure",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"storedProcedureName": "[[Controls].[UpdateADFQueueRefresh]",
-										"storedProcedureParameters": {
-											"endTime": {
-												"value": null,
-												"type": "DateTime"
-											},
-											"eventId": {
+									"value": "ProductionPlans_Approval",
+									"activities": [
+										{
+											"name": "Tables_ProdPlansApproved",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@int(activity('ReadRefresh').output.firstRow.EventId)",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 1,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Inventory Plans\",\n            \"partition\": \"Production Plans Approved ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'yyyy-MM'),'\"\n        }\n    ]\n}')",
 													"type": "Expression"
-												},
-												"type": "Int32"
-											},
-											"pipelineRunId": {
-												"value": {
-													"value": "@pipeline().RunId",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"requestId": {
-												"value": null,
-												"type": "String"
-											},
-											"startTime": {
-												"value": null,
-												"type": "DateTime"
-											},
-											"status": {
-												"value": "F",
-												"type": "String"
-											},
-											"statusMessage": {
-												"value": "ERROR: Unknown Event Name",
-												"type": "String"
+												}
 											}
 										}
-									},
-									"linkedServiceName": {
-										"referenceName": "BIP01",
-										"type": "LinkedServiceReference"
-									}
+									]
 								}
 							]
 						}
@@ -9603,7 +9266,13 @@
 						"type": "IfCondition",
 						"dependsOn": [
 							{
-								"activity": "Switch1",
+								"activity": "EventProcess",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "EventFlagProccess",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -9815,6 +9484,384 @@
 											},
 											"statusMessage": {
 												"value": "Just Started",
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "BIP01",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "EventFlagProccess",
+						"type": "Switch",
+						"dependsOn": [
+							{
+								"activity": "ReadRefresh",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"on": {
+								"value": "@activity('ReadRefresh').output.firstRow.EventName",
+								"type": "Expression"
+							},
+							"cases": [
+								{
+									"value": "Nightly_Begin",
+									"activities": [
+										{
+											"name": "SetNoRefresh_01_copy1",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "ProcessingConditional",
+												"value": "0"
+											}
+										}
+									]
+								},
+								{
+									"value": "Nightly_End",
+									"activities": [
+										{
+											"name": "SetNoRefresh_02_copy1",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "ProcessingConditional",
+												"value": "0"
+											}
+										},
+										{
+											"name": "SendCompletionEmail_copy1",
+											"type": "WebActivity",
+											"dependsOn": [
+												{
+													"activity": "SetNoRefresh_02_copy1",
+													"dependencyConditions": [
+														"Succeeded"
+													]
+												}
+											],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"url": "https://prod-13.northcentralus.logic.azure.com:443/workflows/edec3768a21d4a618a89c7ccf8c4ad0b/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Om-PN4tQZfPmI_KeEBQTkW7qGjSwrgbMrvF8RSqCfQ8",
+												"method": "POST",
+												"headers": {
+													"Content-Type": "application/json"
+												},
+												"body": {
+													"value": "@concat('{\"ModelName\" : \"','Supply','\" , \"StartDateTime\" : \"',utcnow(),'\"}')",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "Nightly_Dimensions",
+									"activities": [
+										{
+											"name": "SetForRefresh_04_copy1",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "ProcessingConditional",
+												"value": "1"
+											}
+										}
+									]
+								},
+								{
+									"value": "Nightly_Facts",
+									"activities": [
+										{
+											"name": "SetRefreshFlag05_copy1",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "ProcessingConditional",
+												"value": "1"
+											}
+										}
+									]
+								},
+								{
+									"value": "ProductionPlans_Draft",
+									"activities": [
+										{
+											"name": "SetRefreshFlag06_copy1",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "ProcessingConditional",
+												"value": "1"
+											}
+										}
+									]
+								},
+								{
+									"value": "InventoryPlans_Nightly",
+									"activities": [
+										{
+											"name": "SetRefreshFlag07_copy1",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "ProcessingConditional",
+												"value": "1"
+											}
+										}
+									]
+								},
+								{
+									"value": "ProductionPlans_Nightly",
+									"activities": [
+										{
+											"name": "SetRefreshFlag09_copy1",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "ProcessingConditional",
+												"value": "1"
+											}
+										}
+									]
+								},
+								{
+									"value": "ATP_Facts",
+									"activities": [
+										{
+											"name": "SetRefreshFlag10_copy1",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "ProcessingConditional",
+												"value": "1"
+											}
+										}
+									]
+								},
+								{
+									"value": "MSODraftNotification",
+									"activities": [
+										{
+											"name": "SendDraftEmail_copy1",
+											"type": "WebActivity",
+											"dependsOn": [
+												{
+													"activity": "SetNoRefresh_11_copy1",
+													"dependencyConditions": [
+														"Succeeded"
+													]
+												}
+											],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"url": "https://prod-16.northcentralus.logic.azure.com:443/workflows/2fe1f2ecb460441ab439d52dc4376fa9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=jImsHlpPczPE6nGyWS0zsMwolhW7x3qwnHdBaoIJYY0",
+												"method": "POST",
+												"headers": {},
+												"body": {
+													"value": "@concat('{','}')",
+													"type": "Expression"
+												}
+											}
+										},
+										{
+											"name": "SetNoRefresh_11_copy1",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "ProcessingConditional",
+												"value": "0"
+											}
+										}
+									]
+								},
+								{
+									"value": "Hourly",
+									"activities": [
+										{
+											"name": "SetForRefresh_Hourly_copy1",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "ProcessingConditional",
+												"value": "1"
+											}
+										}
+									]
+								},
+								{
+									"value": "InventoryPlans_Draft",
+									"activities": [
+										{
+											"name": "SetRefreshFlag_InvPlansDraft_copy1",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "ProcessingConditional",
+												"value": "1"
+											}
+										}
+									]
+								},
+								{
+									"value": "MSO_DraftApproved",
+									"activities": [
+										{
+											"name": "SendDraftApprovedEmail",
+											"type": "WebActivity",
+											"dependsOn": [
+												{
+													"activity": "NoRefresh_DraftApproved",
+													"dependencyConditions": [
+														"Succeeded"
+													]
+												}
+											],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"url": "https://prod-29.northcentralus.logic.azure.com:443/workflows/7c6e0b550366480181ceebc02c0ce319/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=QOEpbIKJ72zB2U9vZYdc0T-yasXVGGECgEpCp-ebKSg",
+												"method": "POST",
+												"headers": {},
+												"body": {
+													"value": "@concat('{','}')",
+													"type": "Expression"
+												}
+											}
+										},
+										{
+											"name": "NoRefresh_DraftApproved",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "ProcessingConditional",
+												"value": "0"
+											}
+										}
+									]
+								},
+								{
+									"value": "InventoryPlans_Approval",
+									"activities": [
+										{
+											"name": "RefreshFlag_InvPlansApproved_copy1",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "ProcessingConditional",
+												"value": "1"
+											}
+										}
+									]
+								},
+								{
+									"value": "ProductionPlans_Approval",
+									"activities": [
+										{
+											"name": "RefreshFlag_ProdPlansApproved_copy1",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "ProcessingConditional",
+												"value": "1"
+											}
+										}
+									]
+								}
+							],
+							"defaultActivities": [
+								{
+									"name": "UpdateQueue_UnknowEvent_copy1",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[Controls].[UpdateADFQueueRefresh]",
+										"storedProcedureParameters": {
+											"endTime": {
+												"value": null,
+												"type": "DateTime"
+											},
+											"eventId": {
+												"value": {
+													"value": "@int(activity('ReadRefresh').output.firstRow.EventId)",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"pipelineRunId": {
+												"value": {
+													"value": "@pipeline().RunId",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"requestId": {
+												"value": null,
+												"type": "String"
+											},
+											"startTime": {
+												"value": null,
+												"type": "DateTime"
+											},
+											"status": {
+												"value": "F",
+												"type": "String"
+											},
+											"statusMessage": {
+												"value": "ERROR: Unknown Event Name",
 												"type": "String"
 											}
 										}
