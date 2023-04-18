@@ -321,7 +321,7 @@
 									"typeProperties": {
 										"variableName": "RefreshParameters",
 										"value": {
-											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 6,\n    \"RetryCount\": 0,\n    \"Objects\": \n    [\n\t{\n\t    \"table\": \"EMEA Orders\",\n\t    \"partition\":\"EMEA Orders Hourly\"\n\t},\n\t{\n\t    \"table\": \"Carhartt Retail Traffic\"\n\t},\n\t{\n\t    \"table\": \"Daily Goals\"\n\t},\n\t{\n\t    \"table\": \"Contracts\"\n\t},\n\t{\n\t    \"table\": \"RefreshDateTime\"\n\t},\n\t{\n\t    \"table\": \"Carhartt Retail Stores\"\n\t},\n\t{\n\t    \"table\": \"Carhartt Retail Transactions\",\n\t    \"partition\": \"Retail Transactions Hourly\"\n\t},\n\t{\n\t    \"table\": \"Reporting Notification Messages\"\n\t},\n\t{\n\t    \"table\": \"Delta Maintenance\"\n\t}\n]\n}')",
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 6,\n    \"RetryCount\": 0,\n    \"Objects\": \n    [\n\t{\n\t    \"table\": \"EMEA Orders\",\n\t    \"partition\":\"EMEA Orders Hourly\"\n\t},\n\t{\n\t    \"table\": \"Carhartt Retail Traffic\"\n\t},\n\t{\n\t    \"table\": \"Daily Goals\"\n\t},\n\t{\n\t    \"table\": \"Contracts\"\n\t},\n\t{\n\t    \"table\": \"RefreshDateTime\"\n\t},\n\t{\n\t    \"table\": \"Carhartt Retail Stores\"\n\t},\n\t{\n\t    \"table\": \"Carhartt Retail Transactions\",\n\t    \"partition\": \"Retail Transactions Hourly\"\n\t},\n\t{\n\t    \"table\": \"Reporting Notification Messages\"\n\t},\n\t{\n\t    \"table\": \"Delta Maintenance\"\n\t},\n\t{\n\t    \"table\": \"Revenue Pacing\"\n\t}\n]\n}')",
 											"type": "Expression"
 										}
 									}
