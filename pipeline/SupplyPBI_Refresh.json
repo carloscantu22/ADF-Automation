@@ -24,13 +24,55 @@
 							"value": "Nightly_Dimensions",
 							"activities": [
 								{
-									"name": "SetForRefresh_04",
+									"name": "Set_Tables_Hourly_copy1",
 									"type": "SetVariable",
-									"dependsOn": [],
+									"dependsOn": [
+										{
+											"activity": "RefreshQueue_NightlyDimensions",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
 									"userProperties": [],
 									"typeProperties": {
-										"variableName": "ProcessingConditional",
-										"value": "1"
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 6,\n    \"RetryCount\": 0,\n    \"Objects\": ',activity('RefreshQueue_NightlyDimensions').output.firstRow.Refresh,'\n}')",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "RefreshQueue_NightlyDimensions",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "@concat('SELECT CAST(\n(\n\tSELECT TRIM([Tablename]) AS ''table''\n\tFROM [Controls].[ADFEventRefreshCatalog]\n\t\tWHERE [EventName] = ''',activity('ReadRefresh').output.firstRow.EventName,'''\n\t\tAND [ModelName] = ''Supply''\n\t\tAND [ValidFlag] = ''Y''\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
+												"type": "Expression"
+											},
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"dataset": {
+											"referenceName": "AzureSQLQueue",
+											"type": "DatasetReference",
+											"parameters": {
+												"Schema": "Lorem",
+												"Table": "Ipsum"
+											}
+										}
 									}
 								}
 							]
@@ -123,63 +165,6 @@
 										"value": {
 											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Inventory Plans\",\n            \"partition\": \"Nightly Partition ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'dddd'),'\"\n        }\n    ]\n}')",
 											"type": "Expression"
-										}
-									}
-								}
-							]
-						},
-						{
-							"value": "Facts_Partitions",
-							"activities": [
-								{
-									"name": "Set_Tables_08",
-									"type": "SetVariable",
-									"dependsOn": [
-										{
-											"activity": "Tables_Facts_Partition",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"userProperties": [],
-									"typeProperties": {
-										"variableName": "RefreshParameters",
-										"value": {
-											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 6,\n    \"RetryCount\": 0,\n    \"Objects\": ',activity('Tables_Facts_Partition').output.firstRow.Refresh,'\n}')",
-											"type": "Expression"
-										}
-									}
-								},
-								{
-									"name": "Tables_Facts_Partition",
-									"type": "Lookup",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "AzureSqlSource",
-											"sqlReaderQuery": {
-												"value": "@concat('SELECT CAST(\n(\n\tSELECT TRIM([Tablename]) AS ''table''\n\tFROM [Controls].[ADFEventRefreshCatalog]\n\t\tWHERE [EventName] = ''',activity('ReadRefresh').output.firstRow.EventName,'''\n\t\tAND [ModelName] = ''Canvas''\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
-												"type": "Expression"
-											},
-											"queryTimeout": "02:00:00",
-											"partitionOption": "None"
-										},
-										"dataset": {
-											"referenceName": "AzureSQLQueue",
-											"type": "DatasetReference",
-											"parameters": {
-												"Schema": "Lorem",
-												"Table": "Ipsum"
-											}
 										}
 									}
 								}
@@ -726,21 +711,6 @@
 							"activities": [
 								{
 									"name": "SetRefreshFlag07_copy1",
-									"type": "SetVariable",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"variableName": "ProcessingConditional",
-										"value": "1"
-									}
-								}
-							]
-						},
-						{
-							"value": "Facts_Partitions",
-							"activities": [
-								{
-									"name": "SetRefreshFlag08_copy1",
 									"type": "SetVariable",
 									"dependsOn": [],
 									"userProperties": [],
