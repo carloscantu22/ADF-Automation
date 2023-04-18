@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Switch1",
+				"name": "EventProcess",
 				"type": "Switch",
 				"dependsOn": [
 					{
@@ -594,6 +594,102 @@
 									}
 								}
 							]
+						},
+						{
+							"value": "MSO_DraftApproved",
+							"activities": [
+								{
+									"name": "SendDraftApprovedEmail",
+									"type": "WebActivity",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"url": "https://prod-29.northcentralus.logic.azure.com:443/workflows/7c6e0b550366480181ceebc02c0ce319/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=QOEpbIKJ72zB2U9vZYdc0T-yasXVGGECgEpCp-ebKSg",
+										"method": "POST",
+										"body": {
+											"value": "@concat('{','}')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"value": "InventoryPlans_Approval",
+							"activities": [
+								{
+									"name": "Tables_InvPlansApproved",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "RefreshFlag_InvPlansApproved",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 1,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Inventory Plans\",\n            \"partition\": \"ApprovalPartition ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'yyyy-MM'),'\"\n        }\n    ]\n}')",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "RefreshFlag_InvPlansApproved",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "ProcessingConditional",
+										"value": "1"
+									}
+								}
+							]
+						},
+						{
+							"value": "ProductionPlans_Approval",
+							"activities": [
+								{
+									"name": "Tables_ProdPlansApproved",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "RefreshFlag_ProdPlansApproved",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 1,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Inventory Plans\",\n            \"partition\": \"Production Plans Approved ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'yyyy-MM'),'\"\n        }\n    ]\n}')",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "RefreshFlag_ProdPlansApproved",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "ProcessingConditional",
+										"value": "1"
+									}
+								}
+							]
 						}
 					],
 					"defaultActivities": [
@@ -690,7 +786,7 @@
 				"type": "IfCondition",
 				"dependsOn": [
 					{
-						"activity": "Switch1",
+						"activity": "EventProcess",
 						"dependencyConditions": [
 							"Succeeded"
 						]
