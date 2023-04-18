@@ -858,9 +858,16 @@
 							"value": "MSO_DraftApproved",
 							"activities": [
 								{
-									"name": "SendDraftApprovedEmail_copy1",
+									"name": "SendDraftApprovedEmail",
 									"type": "WebActivity",
-									"dependsOn": [],
+									"dependsOn": [
+										{
+											"activity": "NoRefresh_DraftApproved",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
 									"policy": {
 										"timeout": "7.00:00:00",
 										"retry": 0,
@@ -876,6 +883,16 @@
 											"value": "@concat('{','}')",
 											"type": "Expression"
 										}
+									}
+								},
+								{
+									"name": "NoRefresh_DraftApproved",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "ProcessingConditional",
+										"value": "0"
 									}
 								}
 							]
