@@ -704,51 +704,6 @@
 							]
 						},
 						{
-							"value": "Nightly_Dimensions",
-							"activities": [
-								{
-									"name": "SetForRefresh_04_copy1",
-									"type": "SetVariable",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"variableName": "ProcessingConditional",
-										"value": "1"
-									}
-								}
-							]
-						},
-						{
-							"value": "Nightly_Facts",
-							"activities": [
-								{
-									"name": "SetRefreshFlag05_copy1",
-									"type": "SetVariable",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"variableName": "ProcessingConditional",
-										"value": "1"
-									}
-								}
-							]
-						},
-						{
-							"value": "ProductionPlans_Draft",
-							"activities": [
-								{
-									"name": "SetRefreshFlag06_copy1",
-									"type": "SetVariable",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"variableName": "ProcessingConditional",
-										"value": "1"
-									}
-								}
-							]
-						},
-						{
 							"value": "InventoryPlans_Nightly",
 							"activities": [
 								{
@@ -768,21 +723,6 @@
 							"activities": [
 								{
 									"name": "SetRefreshFlag09_copy1",
-									"type": "SetVariable",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"variableName": "ProcessingConditional",
-										"value": "1"
-									}
-								}
-							]
-						},
-						{
-							"value": "ATP_Facts",
-							"activities": [
-								{
-									"name": "SetRefreshFlag10_copy1",
 									"type": "SetVariable",
 									"dependsOn": [],
 									"userProperties": [],
@@ -910,46 +850,16 @@
 							]
 						},
 						{
-							"value": "InventoryPlans_Approval",
+							"value": "Nightly_Begin",
 							"activities": [
 								{
-									"name": "RefreshFlag_InvPlansApproved_copy1",
+									"name": "NoRefresh_NightlyBegin",
 									"type": "SetVariable",
 									"dependsOn": [],
 									"userProperties": [],
 									"typeProperties": {
 										"variableName": "ProcessingConditional",
-										"value": "1"
-									}
-								}
-							]
-						},
-						{
-							"value": "ProductionPlans_Approval",
-							"activities": [
-								{
-									"name": "RefreshFlag_ProdPlansApproved_copy1",
-									"type": "SetVariable",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"variableName": "ProcessingConditional",
-										"value": "1"
-									}
-								}
-							]
-						},
-						{
-							"value": "Dates_Dimensions",
-							"activities": [
-								{
-									"name": "SetRefreshFlag_DatesDimensions",
-									"type": "SetVariable",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"variableName": "ProcessingConditional",
-										"value": "1"
+										"value": "0"
 									}
 								}
 							]
