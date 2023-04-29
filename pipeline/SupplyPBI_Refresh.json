@@ -896,6 +896,21 @@
 									}
 								}
 							]
+						},
+						{
+							"value": "Dates_Dimensions",
+							"activities": [
+								{
+									"name": "SetRefreshFlag_DatesDimensions",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "ProcessingConditional",
+										"value": "1"
+									}
+								}
+							]
 						}
 					],
 					"defaultActivities": [
