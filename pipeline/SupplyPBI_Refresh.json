@@ -658,21 +658,6 @@
 					},
 					"cases": [
 						{
-							"value": "Nightly_Begin",
-							"activities": [
-								{
-									"name": "SetNoRefresh_01_copy1",
-									"type": "SetVariable",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"variableName": "ProcessingConditional",
-										"value": "0"
-									}
-								}
-							]
-						},
-						{
 							"value": "Nightly_End",
 							"activities": [
 								{
@@ -972,13 +957,13 @@
 					],
 					"defaultActivities": [
 						{
-							"name": "SetNoRefresh_Flag",
+							"name": "SetForRefresh_Default",
 							"type": "SetVariable",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
 								"variableName": "ProcessingConditional",
-								"value": "0"
+								"value": "1"
 							}
 						}
 					]
