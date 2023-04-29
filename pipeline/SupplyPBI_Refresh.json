@@ -316,6 +316,63 @@
 									}
 								}
 							]
+						},
+						{
+							"value": "Dates_Dimensions",
+							"activities": [
+								{
+									"name": "Set_Tables_DatesDimensions",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "Tables_DatesDimensions",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 6,\n    \"RetryCount\": 0,\n    \"Objects\": ',activity('Tables_DatesDimensions').output.firstRow.Refresh,'\n}')",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "Tables_DatesDimensions",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "@concat('SELECT CAST(\n(\n\tSELECT TRIM([Tablename]) AS ''table''\n\tFROM [Controls].[ADFEventRefreshCatalog]\n\t\tWHERE [EventName] = ''',activity('ReadRefresh').output.firstRow.EventName,'''\n\t\tAND [ModelName] = ''Supply''\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
+												"type": "Expression"
+											},
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"dataset": {
+											"referenceName": "AzureSQLQueue",
+											"type": "DatasetReference",
+											"parameters": {
+												"Schema": "Lorem",
+												"Table": "Ipsum"
+											}
+										}
+									}
+								}
+							]
 						}
 					]
 				}
