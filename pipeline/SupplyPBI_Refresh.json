@@ -969,6 +969,18 @@
 								}
 							]
 						}
+					],
+					"defaultActivities": [
+						{
+							"name": "SetNoRefresh_Flag",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "ProcessingConditional",
+								"value": "0"
+							}
+						}
 					]
 				}
 			}
