@@ -533,6 +533,80 @@
 									}
 								}
 							]
+						},
+						{
+							"value": "Dates_Dimensions",
+							"activities": [
+								{
+									"name": "Set_Table_DatesDimensions",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "TableRefresh_DatesDimensions",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "RefreshParameters",
+										"value": {
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 6,\n    \"RetryCount\": 0,\n    \"Objects\": ',activity('TableRefresh_DatesDimensions').output.firstRow.Refresh,'\n}')",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "TableRefresh_DatesDimensions",
+									"type": "Lookup",
+									"dependsOn": [
+										{
+											"activity": "SetForRefresh_DatesDimensions",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "@concat('SELECT CAST(\n(\n\tSELECT TRIM([Tablename]) AS ''table''\n\tFROM [Controls].[ADFEventRefreshCatalog]\n\t\tWHERE [EventName] = ''',activity('ReadRefresh').output.firstRow.EventName,'''\n\t\tAND [ModelName] = ''Warehouse''\n\t\tAND [ValidFlag] = ''Y''\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
+												"type": "Expression"
+											},
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"dataset": {
+											"referenceName": "AzureSQLQueue",
+											"type": "DatasetReference",
+											"parameters": {
+												"Schema": "Lorem",
+												"Table": "Ipsum"
+											}
+										}
+									}
+								},
+								{
+									"name": "SetForRefresh_DatesDimensions",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "ProcessingConditional",
+										"value": "1"
+									}
+								}
+							]
 						}
 					],
 					"defaultActivities": [
