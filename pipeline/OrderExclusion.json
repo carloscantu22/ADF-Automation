@@ -24,74 +24,8 @@
 						"type": "SqlServerSink",
 						"preCopyScript": "TRUNCATE TABLE [Tabular_eCommAging].[OrderExclusion]"
 					},
-					"enableStaging": false,
-					"translator": {
-						"type": "TabularTranslator",
-						"mappings": [
-							{
-								"source": {
-									"name": "ActualDate",
-									"type": "DateTime",
-									"physicalType": "date"
-								},
-								"sink": {
-									"name": "ActualDate",
-									"type": "DateTime",
-									"physicalType": "DateTime"
-								}
-							},
-							{
-								"source": {
-									"name": "OrderNumber",
-									"type": "String",
-									"physicalType": "char"
-								},
-								"sink": {
-									"name": "OrderNumber",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "OrderLineNumber",
-									"type": "String",
-									"physicalType": "char"
-								},
-								"sink": {
-									"name": "OrderLineNumber",
-									"type": "String",
-									"physicalType": "String"
-								}
-							}
-						],
-						"typeConversion": true,
-						"typeConversionSettings": {
-							"allowDataTruncation": true,
-							"treatBooleanAsNumber": false
-						}
-					}
-				},
-				"inputs": [
-					{
-						"referenceName": "CarharttDW",
-						"type": "DatasetReference",
-						"parameters": {
-							"Schema": "Tabular_eCommAging",
-							"Table": "OrderExclusionQuery"
-						}
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "CarharttDW",
-						"type": "DatasetReference",
-						"parameters": {
-							"Schema": "Tabular_eCommAging",
-							"Table": "OrderExclusion"
-						}
-					}
-				]
+					"enableStaging": false
+				}
 			}
 		],
 		"annotations": []

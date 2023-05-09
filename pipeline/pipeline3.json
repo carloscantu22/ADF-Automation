@@ -1,0 +1,37 @@
+{
+	"name": "pipeline3",
+	"properties": {
+		"activities": [
+			{
+				"name": "CheckOrdersNightly",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT [EventId]\n      ,[ModelName]\n      ,[EventName]\n      ,[RefreshId]\n      ,[EventStatus]\n\tFROM [AZUREDB].[DB01].[Controls].[ADFRefreshQueue] EQ\n\tINNER JOIN [Dimensions].[Days] DT ON [DT].[ActualDate] = CAST([EQ].[CreateDateTime] AS date)\n\tWHERE [EQ].[EventName] = 'Nightly_End'\n\t  AND [EQ].[EventStatus] = 'C'\n\t  AND [EQ].[ModelName] = 'Orders'\n\t  AND [DT].[CurrentDayOffset] = 0\n)\nTHEN 1\nELSE 0 END AS 'OrdersNightlyRun'",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "PNET_ReadOnly",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Dapibus",
+							"Table": "Faucibus"
+						}
+					}
+				}
+			}
+		],
+		"annotations": []
+	}
+}
