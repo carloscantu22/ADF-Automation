@@ -2625,114 +2625,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/OrderExclusion')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Pupulate Table",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlServerSource",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"sink": {
-								"type": "SqlServerSink",
-								"preCopyScript": "TRUNCATE TABLE [Tabular_eCommAging].[OrderExclusion]"
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "ActualDate",
-											"type": "DateTime",
-											"physicalType": "date"
-										},
-										"sink": {
-											"name": "ActualDate",
-											"type": "DateTime",
-											"physicalType": "DateTime"
-										}
-									},
-									{
-										"source": {
-											"name": "OrderNumber",
-											"type": "String",
-											"physicalType": "char"
-										},
-										"sink": {
-											"name": "OrderNumber",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "OrderLineNumber",
-											"type": "String",
-											"physicalType": "char"
-										},
-										"sink": {
-											"name": "OrderLineNumber",
-											"type": "String",
-											"physicalType": "String"
-										}
-									}
-								],
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "CarharttDW",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Tabular_eCommAging",
-									"Table": "OrderExclusionQuery"
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "CarharttDW",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Tabular_eCommAging",
-									"Table": "OrderExclusion"
-								}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CarharttDW')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/OrderExclusionPNET')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -7668,52 +7560,6 @@
 				"[concat(variables('factoryId'), '/datasets/AzureSQLQueue')]",
 				"[concat(variables('factoryId'), '/linkedServices/BIP01')]",
 				"[concat(variables('factoryId'), '/pipelines/Teams Notification')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ProductivityModel')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Stored procedure1",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[WMS].[UpdateProductivityModelInputs]",
-							"storedProcedureParameters": {
-								"ResetConfiguration": {
-									"value": "1",
-									"type": "Byte"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "DBNSQLP01",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "OXG-Sandbox"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/DBNSQLP01')]"
 			]
 		},
 		{
@@ -15146,41 +14992,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/CarharttDW')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "DBNSQLP01",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Schema": {
-						"type": "string"
-					},
-					"Table": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": {
-						"value": "@dataset().Schema",
-						"type": "Expression"
-					},
-					"table": {
-						"value": "@dataset().Table",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/DBNSQLP01')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/PNETSQL')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -15948,6 +15759,52 @@
 				"typeProperties": {}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline3')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CheckOrdersNightly",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT [EventId]\n      ,[ModelName]\n      ,[EventName]\n      ,[RefreshId]\n      ,[EventStatus]\n\tFROM [AZUREDB].[DB01].[Controls].[ADFRefreshQueue] EQ\n\tINNER JOIN [Dimensions].[Days] DT ON [DT].[ActualDate] = CAST([EQ].[CreateDateTime] AS date)\n\tWHERE [EQ].[EventName] = 'Nightly_End'\n\t  AND [EQ].[EventStatus] = 'C'\n\t  AND [EQ].[ModelName] = 'Orders'\n\t  AND [DT].[CurrentDayOffset] = 0\n)\nTHEN 1\nELSE 0 END AS 'OrdersNightlyRun'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "PNET_ReadOnly",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Dapibus",
+									"Table": "Faucibus"
+								}
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/PNET_ReadOnly')]"
+			]
 		}
 	]
 }
