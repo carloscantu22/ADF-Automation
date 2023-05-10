@@ -30,6 +30,35 @@
 						}
 					}
 				}
+			},
+			{
+				"name": "DatasetsCompletion",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": "SELECT COUNT([EventId]) AS 'CompletedDatasets'\nFROM (\n\tSELECT MAX([EventId]) AS 'EventId'\n\t\t,[ModelName]\n\t\t,[EventName]\n\t\t,[EventStatus]\n\tFROM [AZUREDB].[DB01].[Controls].[ADFRefreshQueue] EQ\n\tINNER JOIN [Dimensions].[Days] DT ON [DT].[ActualDate] = CAST([EQ].[CreateDateTime] AS date)\n\tWHERE [EQ].[EventName] = 'Nightly_End'\n\t\tAND [EQ].[EventStatus] = 'C'\n\t\tAND [EQ].[ModelName] IN ('Orders','Supply','MasterData','Warehouse')\n\t\tAND [DT].[CurrentDayOffset] = 0\n\tGROUP BY [ModelName],[EventName],[EventStatus]\n) DTE",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "PNET_ReadOnly",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Dapibus",
+							"Table": "Faucibus"
+						}
+					}
+				}
 			}
 		],
 		"annotations": []
