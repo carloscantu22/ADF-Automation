@@ -338,6 +338,9 @@
 				}
 			}
 		],
+		"folder": {
+			"name": "General"
+		},
 		"annotations": []
 	}
 }
