@@ -7921,7 +7921,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),equals(activity('CompletionEmail').output.firstRow.CompletedDatasets,4)),equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0))",
+								"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,4)),equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0))",
 								"type": "Expression"
 							},
 							"ifTrueActivities": [
@@ -8089,7 +8089,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),less(activity('CompletionEmail').output.firstRow.CompletedDatasets,4)),equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0))",
+								"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),less(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,4)),equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0))",
 								"type": "Expression"
 							},
 							"ifTrueActivities": [
