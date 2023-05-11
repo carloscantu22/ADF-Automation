@@ -5,7 +5,14 @@
 			{
 				"name": "SendCompletionEmail",
 				"type": "WebActivity",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "InsertQueuePending",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -23,6 +30,167 @@
 					"body": {
 						"value": "@concat('{\"ModelName\" : \"','Plants PBI','\" , \"StartDateTime\" : \"',utcnow(),'\"}')",
 						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "EmaiDelay",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "PendingModels",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-92.eastus.logic.azure.com:443/workflows/0e1ee5abbe4e49c59cce628f6c6303a7/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=OUK99jqSXOQVlsyyHQoqkiqXuXfedyAGBVSHThDzn7Y",
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"body": {
+						"value": "@concat('{\n   \"EmailSubject\": \"PowerBI Delay\",\n   \"EmailStatus\": \"Pending\",\n   \"EmailOptions\": \"',activity('PendingModels').output.firstRow.Models,'\"\n }')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "InsertQueuePending",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "EmaiDelay",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "@concat('SELECT ''PBI Refresh'' AS ''EventType''\n\t  ,''Orders'' AS ''ModelName''\n\t  ,''DashboardsPendingEmail'' AS ''EventName''\n\t  ,''C'' AS ''EventStatus''\n\t  ,NULL AS ''RefreshId''\n\t  ,''',activity('StartTime').output.firstRow.TimeNow,''' AS ''CreateDateTime''\n\t  ,''',activity('StartTime').output.firstRow.TimeNow,''' AS ''ProcessStart''\n\t  ,''',convertFromUtc(utcnow(),'Eastern Standard Time'),''' AS ''ProcessEnd''\n\t  ,NULL AS ''RequestID''\n\t  ,''',pipeline().RunId,''' AS ''PipelineRunID''')",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "AzureSQLQueue",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Lorem",
+							"Table": "Ipsum"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AzureSQLQueue",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Controls",
+							"Table": "ADFRefreshQueue"
+						}
+					}
+				]
+			},
+			{
+				"name": "PendingModels",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "StartTime",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": "SELECT COALESCE(SUBSTRING(\n        (\n           SELECT DISTINCT ', ' + [M1].[ModelName]\n\t\t\tFROM\n\t\t\t\t(\n\t\t\t\t\tVALUES \n\t\t\t\t\t ('Orders',1)\n\t\t\t\t\t,('Supply',2)\n\t\t\t\t\t,('MasterData',4)\n\t\t\t\t\t,('Warehouse',3)\n\t\t\t\t) AS M1(ModelName, PriorityNumber)\n\t\t\tLEFT JOIN [AZUREDB].[DB01].[Controls].[ADFRefreshQueue] EQ ON [EQ].[ModelName] = [M1].[ModelName] AND [EQ].[EventName] = 'Nightly_End'\n\t\t\tAND CAST([EQ].[CreateDateTime] AS date) = (SELECT [ActualDate] FROM [Dimensions].[Days] WHERE [CurrentDayOffset] = 0)\n\t\t\tAND [EQ].[EventName] = 'Nightly_End'\n\t\t\tAND [EQ].[EventStatus] = 'C'\n\t\t\tAND [EQ].[ModelName] IN ('Orders','Supply','MasterData','Warehouse')\n\t\t\tWHERE [EQ].[ModelName] IS NULL\n            FOR XML PATH (''), TYPE\n        ).value('text()[1]','nvarchar(max)'), 2, 1000),'') AS 'Models'",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "PNET_ReadOnly",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Dapibus",
+							"Table": "Faucibus"
+						}
+					}
+				}
+			},
+			{
+				"name": "StartTime",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' AS 'TimeNow'",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "AzureSQLQueue",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "Lorem",
+							"Table": "Ipsum"
+						}
 					}
 				}
 			}
