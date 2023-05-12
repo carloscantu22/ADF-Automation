@@ -99,7 +99,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,3)),equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0))",
+						"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0))",
 						"type": "Expression"
 					},
 					"ifTrueActivities": [
@@ -267,7 +267,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),less(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,3)),equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0))",
+						"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),less(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0))",
 						"type": "Expression"
 					},
 					"ifTrueActivities": [
@@ -442,7 +442,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@and(and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,3)),equals(activity('PendingEmail').output.firstRow.DashboardsPendingEmail,1))",
+						"value": "@and(and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),equals(activity('PendingEmail').output.firstRow.DashboardsPendingEmail,1))",
 						"type": "Expression"
 					},
 					"ifTrueActivities": [
@@ -542,6 +542,10 @@
 		"parameters": {
 			"PriorityOneDatasets": {
 				"type": "string"
+			},
+			"DatasetCount": {
+				"type": "int",
+				"defaultValue": 3
 			}
 		},
 		"folder": {
