@@ -7875,7 +7875,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlServerSource",
-								"sqlReaderQuery": "SELECT COUNT([EventId]) AS 'CompletedDatasets'\nFROM (\n\tSELECT MAX([EventId]) AS 'EventId'\n\t\t,[ModelName]\n\t\t,[EventName]\n\t\t,[EventStatus]\n\tFROM [AZUREDB].[DB01].[Controls].[ADFRefreshQueue] EQ\n\tINNER JOIN [Dimensions].[Days] DT ON [DT].[ActualDate] = CAST([EQ].[CreateDateTime] AS date)\n\tWHERE [EQ].[EventName] = 'Nightly_End'\n\t\tAND [EQ].[EventStatus] = 'C'\n\t\tAND [EQ].[ModelName] IN ('Orders','Supply','MasterData','Warehouse')\n\t\tAND [DT].[CurrentDayOffset] = 0\n\tGROUP BY [ModelName],[EventName],[EventStatus]\n) DTE",
+								"sqlReaderQuery": "SELECT COUNT([EventId]) AS 'CompletedDatasets'\nFROM (\n\tSELECT MAX([EventId]) AS 'EventId'\n\t\t,[ModelName]\n\t\t,[EventName]\n\t\t,[EventStatus]\n\tFROM [AZUREDB].[DB01].[Controls].[ADFRefreshQueue] EQ\n\tINNER JOIN [Dimensions].[Days] DT ON [DT].[ActualDate] = CAST([EQ].[CreateDateTime] AS date)\n\tWHERE [EQ].[EventName] = 'Nightly_End'\n\t\tAND [EQ].[EventStatus] = 'C'\n\t\tAND [EQ].[ModelName] IN ('Orders','Supply','Warehouse')\n\t\tAND [DT].[CurrentDayOffset] = 0\n\tGROUP BY [ModelName],[EventName],[EventStatus]\n) DTE",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -7921,7 +7921,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,4)),equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0))",
+								"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0))",
 								"type": "Expression"
 							},
 							"ifTrueActivities": [
@@ -8089,7 +8089,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),less(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,4)),equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0))",
+								"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),less(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0))",
 								"type": "Expression"
 							},
 							"ifTrueActivities": [
@@ -8204,7 +8204,7 @@
 									"typeProperties": {
 										"source": {
 											"type": "SqlServerSource",
-											"sqlReaderQuery": "SELECT COALESCE(SUBSTRING(\n        (\n           SELECT DISTINCT ', ' + [M1].[ModelName]\n\t\t\tFROM\n\t\t\t\t(\n\t\t\t\t\tVALUES \n\t\t\t\t\t ('Orders',1)\n\t\t\t\t\t,('Supply',2)\n\t\t\t\t\t,('MasterData',4)\n\t\t\t\t\t,('Warehouse',3)\n\t\t\t\t) AS M1(ModelName, PriorityNumber)\n\t\t\tLEFT JOIN [AZUREDB].[DB01].[Controls].[ADFRefreshQueue] EQ ON [EQ].[ModelName] = [M1].[ModelName] AND [EQ].[EventName] = 'Nightly_End'\n\t\t\tAND CAST([EQ].[CreateDateTime] AS date) = (SELECT [ActualDate] FROM [Dimensions].[Days] WHERE [CurrentDayOffset] = 0)\n\t\t\tAND [EQ].[EventName] = 'Nightly_End'\n\t\t\tAND [EQ].[EventStatus] = 'C'\n\t\t\tAND [EQ].[ModelName] IN ('Orders','Supply','MasterData','Warehouse')\n\t\t\tWHERE [EQ].[ModelName] IS NULL\n            FOR XML PATH (''), TYPE\n        ).value('text()[1]','nvarchar(max)'), 2, 1000),'') AS 'Models'",
+											"sqlReaderQuery": "SELECT COALESCE(SUBSTRING(\n        (\n           SELECT DISTINCT ', ' + [M1].[ModelName]\n\t\t\tFROM\n\t\t\t\t(\n\t\t\t\t\tVALUES \n\t\t\t\t\t ('Orders',1)\n\t\t\t\t\t,('Supply',2)\n\t\t\t\t\t--,('MasterData',4)\n\t\t\t\t\t,('Warehouse',3)\n\t\t\t\t) AS M1(ModelName, PriorityNumber)\n\t\t\tLEFT JOIN [AZUREDB].[DB01].[Controls].[ADFRefreshQueue] EQ ON [EQ].[ModelName] = [M1].[ModelName] AND [EQ].[EventName] = 'Nightly_End'\n\t\t\tAND CAST([EQ].[CreateDateTime] AS date) = (SELECT [ActualDate] FROM [Dimensions].[Days] WHERE [CurrentDayOffset] = 0)\n\t\t\tAND [EQ].[EventName] = 'Nightly_End'\n\t\t\tAND [EQ].[EventStatus] = 'C'\n\t\t\tAND [EQ].[ModelName] IN ('Orders','Supply','Warehouse')\n\t\t\tWHERE [EQ].[ModelName] IS NULL\n            FOR XML PATH (''), TYPE\n        ).value('text()[1]','nvarchar(max)'), 2, 1000),'') AS 'Models'",
 											"queryTimeout": "02:00:00",
 											"partitionOption": "None"
 										},
@@ -8264,7 +8264,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@and(and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,4)),equals(activity('PendingEmail').output.firstRow.DashboardsPendingEmail,1))",
+								"value": "@and(and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),equals(activity('PendingEmail').output.firstRow.DashboardsPendingEmail,1))",
 								"type": "Expression"
 							},
 							"ifTrueActivities": [
@@ -8364,6 +8364,15 @@
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
+				},
+				"parameters": {
+					"PriorityOneDatasets": {
+						"type": "string"
+					},
+					"DatasetCount": {
+						"type": "int",
+						"defaultValue": 3
+					}
 				},
 				"folder": {
 					"name": "General"
