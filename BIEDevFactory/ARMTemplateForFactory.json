@@ -1677,7 +1677,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"url": {
-								"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/d2584f83-3b80-414f-a5c5-2f3035983c85/datasets/5f7a2fe6-b9bd-4c35-91e2-ce420255bc6c/refreshes/',string(activity('GetRefreshId').output.firstRow.RequestId))",
+								"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/d2b53e35-ee1f-4444-9aa8-fe0b91a98c7f/refreshes/',string(activity('GetRefreshId').output.firstRow.RequestId))",
 								"type": "Expression"
 							},
 							"method": "GET",
