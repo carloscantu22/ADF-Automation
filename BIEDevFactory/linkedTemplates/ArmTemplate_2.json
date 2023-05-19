@@ -13,6 +13,296 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/AASSupplyRefresh_UpdateEvent')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetRefresh",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "GetRefreshId",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": {
+								"value": "@concat('https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes/',string(activity('GetRefreshId').output.firstRow.RefreshId))",
+								"type": "Expression"
+							},
+							"method": "GET",
+							"headers": {},
+							"body": {
+								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://*.asazure.windows.net  "
+							}
+						}
+					},
+					{
+						"name": "GetRefreshId",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT TOP 10 [EventId],[RefreshId] FROM [Controls].[AzureSharedEventQueue]\nWHERE [EventType] = 'Supply' AND [EventStatus] = 'R'\nORDER BY [EventId]",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						}
+					},
+					{
+						"name": "UpdateQueue",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "GetRefresh",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[Controls].[ADFQueueUpdate]",
+							"storedProcedureParameters": {
+								"endTime": {
+									"value": {
+										"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.endTime),'Eastern Standard Time')",
+										"type": "Expression"
+									},
+									"type": "DateTime"
+								},
+								"eventId": {
+									"value": {
+										"value": "@int(activity('GetRefreshId').output.firstRow.EventId)",
+										"type": "Expression"
+									},
+									"type": "Int32"
+								},
+								"refreshId": {
+									"value": {
+										"value": "@string(activity('GetRefreshId').output.firstRow.RefreshId)",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"startTime": {
+									"value": {
+										"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.startTime),'Eastern Standard Time')",
+										"type": "Expression"
+									},
+									"type": "DateTime"
+								},
+								"status": {
+									"value": "C",
+									"type": "String"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "BIP01",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"variables": {
+					"Response": {
+						"type": "Array"
+					},
+					"RefreshId": {
+						"type": "String"
+					},
+					"EventId": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "WIP"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CanvasNightlyRun')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "InsertCanvasNightly",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT [EventType]\n\t  ,[ModelName]\n\t  ,[EventName]\n\t  ,[RefreshId]\n\t  ,(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time') AS 'CreateDateTime'\nFROM \n(\nVALUES ('PBI Refresh','Canvas','Nightly_Begin',NULL) \n\t  ,('PBI Refresh','Canvas','Nightly_Dimensions','815210b8-e644-4b91-a326-115b1344d7e7') \n\t  ,('PBI Refresh','Canvas','Nightly_Facts','e5847484-b8b3-408d-ada6-b2d59c53b6ee') \n\t  ,('PBI Refresh','Canvas','Facts_Partitions','a4e27111-c905-4143-8ec7-d4540cc99856') \n\t--  ,('PBI Refresh','Canvas','Nightly_End',NULL) \n) AS CR (EventType,ModelName,EventName,RefreshId)",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "EventType",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "EventType",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "ModelName",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "ModelName",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "EventName",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "EventName",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "RefreshId",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "RefreshId",
+											"type": "String",
+											"physicalType": "char"
+										}
+									},
+									{
+										"source": {
+											"name": "CreateDateTime",
+											"type": "DateTimeOffset",
+											"physicalType": "datetimeoffset"
+										},
+										"sink": {
+											"name": "CreateDateTime",
+											"type": "DateTime",
+											"physicalType": "datetime"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Controls",
+									"Table": "ADFRefreshQueue"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Canvas"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/CanvasPBI_Refresh')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -7716,672 +8006,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CanvasPBI_Running')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "RunningValidation",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "  SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE [ModelName] = 'Canvas'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND [EventStatus] = 'R'\n)\nTHEN 1\nELSE 0 END AS 'Running'",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "AzureSQLQueue",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Lorem",
-									"Table": "Ipsum"
-								}
-							}
-						}
-					},
-					{
-						"name": "If Condition1",
-						"type": "IfCondition",
-						"dependsOn": [
-							{
-								"activity": "RunningValidation",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"expression": {
-								"value": "@equals(activity('RunningValidation').output.firstRow.Running,1)",
-								"type": "Expression"
-							},
-							"ifFalseActivities": [
-								{
-									"name": "ProcessCanvas_RefreshPBI",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "CanvasPBI_Refresh",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {}
-									}
-								}
-							],
-							"ifTrueActivities": [
-								{
-									"name": "ProcessSCanvas_UpdateQueuePBI",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "CanvasPBI_Update",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {}
-									}
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Canvas"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/CanvasPBI_Refresh')]",
-				"[concat(variables('factoryId'), '/pipelines/CanvasPBI_Update')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DashboardsReadyEmail')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "CheckOrdersNightly",
-						"type": "Lookup",
-						"dependsOn": [
-							{
-								"activity": "StartTime",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlServerSource",
-								"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT [EventId]\n      ,[ModelName]\n      ,[EventName]\n      ,[RefreshId]\n      ,[EventStatus]\n\tFROM [AZUREDB].[DB01].[Controls].[ADFRefreshQueue] EQ\n\tINNER JOIN [Dimensions].[Days] DT ON [DT].[ActualDate] = CAST([EQ].[CreateDateTime] AS date)\n\tWHERE [EQ].[EventName] = 'Nightly_End'\n\t  AND [EQ].[EventStatus] = 'C'\n\t  AND [EQ].[ModelName] = 'Orders'\n\t  AND [DT].[CurrentDayOffset] = 0\n)\nTHEN 1\nELSE 0 END AS 'OrdersNightlyRun'",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "PNET_ReadOnly",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Dapibus",
-									"Table": "Faucibus"
-								}
-							}
-						}
-					},
-					{
-						"name": "DatasetsCompletion",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlServerSource",
-								"sqlReaderQuery": "SELECT COUNT([EventId]) AS 'CompletedDatasets'\nFROM (\n\tSELECT MAX([EventId]) AS 'EventId'\n\t\t,[ModelName]\n\t\t,[EventName]\n\t\t,[EventStatus]\n\tFROM [AZUREDB].[DB01].[Controls].[ADFRefreshQueue] EQ\n\tINNER JOIN [Dimensions].[Days] DT ON [DT].[ActualDate] = CAST([EQ].[CreateDateTime] AS date)\n\tWHERE [EQ].[EventName] = 'Nightly_End'\n\t\tAND [EQ].[EventStatus] = 'C'\n\t\tAND [EQ].[ModelName] IN ('Orders','Supply','Warehouse')\n\t\tAND [DT].[CurrentDayOffset] = 0\n\tGROUP BY [ModelName],[EventName],[EventStatus]\n) DTE",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "PNET_ReadOnly",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Dapibus",
-									"Table": "Faucibus"
-								}
-							}
-						}
-					},
-					{
-						"name": "If Completion",
-						"type": "IfCondition",
-						"dependsOn": [
-							{
-								"activity": "DatasetsCompletion",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							},
-							{
-								"activity": "CheckOrdersNightly",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							},
-							{
-								"activity": "CompletionEmail",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							},
-							{
-								"activity": "PendingEmail",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"expression": {
-								"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0))",
-								"type": "Expression"
-							},
-							"ifTrueActivities": [
-								{
-									"name": "EmailCompletion",
-									"type": "WebActivity",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"url": "https://prod-92.eastus.logic.azure.com:443/workflows/0e1ee5abbe4e49c59cce628f6c6303a7/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=OUK99jqSXOQVlsyyHQoqkiqXuXfedyAGBVSHThDzn7Y",
-										"method": "POST",
-										"headers": {
-											"Content-Type": "application/json"
-										},
-										"body": {
-											"value": "@concat('{\n   \"EmailSubject\": \"Dashboards Are Ready\",\n   \"EmailStatus\": \"Complete\",\n   \"EmailOptions\": \"\"\n }')",
-											"type": "Expression"
-										}
-									}
-								},
-								{
-									"name": "InsertQueueCompletion",
-									"type": "Copy",
-									"dependsOn": [
-										{
-											"activity": "EmailCompletion",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "AzureSqlSource",
-											"sqlReaderQuery": {
-												"value": "@concat('SELECT ''PBI Refresh'' AS ''EventType''\n\t  ,''Orders'' AS ''ModelName''\n\t  ,''DashboardsReadyEmail'' AS ''EventName''\n\t  ,''C'' AS ''EventStatus''\n\t  ,NULL AS ''RefreshId''\n\t  ,''',activity('StartTime').output.firstRow.TimeNow,''' AS ''CreateDateTime''\n\t  ,''',activity('StartTime').output.firstRow.TimeNow,''' AS ''ProcessStart''\n\t  ,''',convertFromUtc(utcnow(),'Eastern Standard Time'),''' AS ''ProcessEnd''\n\t  ,NULL AS ''RequestID''\n\t  ,''',pipeline().RunId,''' AS ''PipelineRunID''')",
-												"type": "Expression"
-											},
-											"queryTimeout": "02:00:00",
-											"partitionOption": "None"
-										},
-										"sink": {
-											"type": "AzureSqlSink",
-											"writeBehavior": "insert",
-											"sqlWriterUseTableLock": false
-										},
-										"enableStaging": false,
-										"translator": {
-											"type": "TabularTranslator",
-											"typeConversion": true,
-											"typeConversionSettings": {
-												"allowDataTruncation": true,
-												"treatBooleanAsNumber": false
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "AzureSQLQueue",
-											"type": "DatasetReference",
-											"parameters": {
-												"Schema": "Lorem",
-												"Table": "Ipsum"
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "AzureSQLQueue",
-											"type": "DatasetReference",
-											"parameters": {
-												"Schema": "Controls",
-												"Table": "ADFRefreshQueue"
-											}
-										}
-									]
-								}
-							]
-						}
-					},
-					{
-						"name": "StartTime",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' AS 'TimeNow'",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "AzureSQLQueue",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Lorem",
-									"Table": "Ipsum"
-								}
-							}
-						}
-					},
-					{
-						"name": "CompletionEmail",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE EventName IN ('DashboardsReadyEmail','DashboardsPendingEmail')\n\t  AND [ModelName] = 'Orders'\n\t  AND [EventStatus] IN ('C')\n\t  AND CAST([CreateDateTime] AS date) = CAST(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' AS date)\n)\nTHEN 1\nELSE 0 END AS 'DashboardsReadyEmail'",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "AzureSQLQueue",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Lorem",
-									"Table": "Ipsum"
-								}
-							}
-						}
-					},
-					{
-						"name": "If Pending",
-						"type": "IfCondition",
-						"dependsOn": [
-							{
-								"activity": "If Completion",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"expression": {
-								"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),less(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0))",
-								"type": "Expression"
-							},
-							"ifTrueActivities": [
-								{
-									"name": "EmaiDelay",
-									"type": "WebActivity",
-									"dependsOn": [
-										{
-											"activity": "PendingModels",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"url": "https://prod-92.eastus.logic.azure.com:443/workflows/0e1ee5abbe4e49c59cce628f6c6303a7/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=OUK99jqSXOQVlsyyHQoqkiqXuXfedyAGBVSHThDzn7Y",
-										"method": "POST",
-										"headers": {
-											"Content-Type": "application/json"
-										},
-										"body": {
-											"value": "@concat('{\n   \"EmailSubject\": \"PowerBI Delay\",\n   \"EmailStatus\": \"Pending\",\n   \"EmailOptions\": \"',activity('PendingModels').output.firstRow.Models,'\"\n }')",
-											"type": "Expression"
-										}
-									}
-								},
-								{
-									"name": "InsertQueuePending",
-									"type": "Copy",
-									"dependsOn": [
-										{
-											"activity": "EmaiDelay",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "AzureSqlSource",
-											"sqlReaderQuery": {
-												"value": "@concat('SELECT ''PBI Refresh'' AS ''EventType''\n\t  ,''Orders'' AS ''ModelName''\n\t  ,''DashboardsPendingEmail'' AS ''EventName''\n\t  ,''C'' AS ''EventStatus''\n\t  ,NULL AS ''RefreshId''\n\t  ,''',activity('StartTime').output.firstRow.TimeNow,''' AS ''CreateDateTime''\n\t  ,''',activity('StartTime').output.firstRow.TimeNow,''' AS ''ProcessStart''\n\t  ,''',convertFromUtc(utcnow(),'Eastern Standard Time'),''' AS ''ProcessEnd''\n\t  ,NULL AS ''RequestID''\n\t  ,''',pipeline().RunId,''' AS ''PipelineRunID''')",
-												"type": "Expression"
-											},
-											"queryTimeout": "02:00:00",
-											"partitionOption": "None"
-										},
-										"sink": {
-											"type": "AzureSqlSink",
-											"writeBehavior": "insert",
-											"sqlWriterUseTableLock": false
-										},
-										"enableStaging": false,
-										"translator": {
-											"type": "TabularTranslator",
-											"typeConversion": true,
-											"typeConversionSettings": {
-												"allowDataTruncation": true,
-												"treatBooleanAsNumber": false
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "AzureSQLQueue",
-											"type": "DatasetReference",
-											"parameters": {
-												"Schema": "Lorem",
-												"Table": "Ipsum"
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "AzureSQLQueue",
-											"type": "DatasetReference",
-											"parameters": {
-												"Schema": "Controls",
-												"Table": "ADFRefreshQueue"
-											}
-										}
-									]
-								},
-								{
-									"name": "PendingModels",
-									"type": "Lookup",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "SqlServerSource",
-											"sqlReaderQuery": "SELECT COALESCE(SUBSTRING(\n        (\n           SELECT DISTINCT ', ' + [M1].[ModelName]\n\t\t\tFROM\n\t\t\t\t(\n\t\t\t\t\tVALUES \n\t\t\t\t\t ('Orders',1)\n\t\t\t\t\t,('Supply',2)\n\t\t\t\t\t--,('MasterData',4)\n\t\t\t\t\t,('Warehouse',3)\n\t\t\t\t) AS M1(ModelName, PriorityNumber)\n\t\t\tLEFT JOIN [AZUREDB].[DB01].[Controls].[ADFRefreshQueue] EQ ON [EQ].[ModelName] = [M1].[ModelName] AND [EQ].[EventName] = 'Nightly_End'\n\t\t\tAND CAST([EQ].[CreateDateTime] AS date) = (SELECT [ActualDate] FROM [Dimensions].[Days] WHERE [CurrentDayOffset] = 0)\n\t\t\tAND [EQ].[EventName] = 'Nightly_End'\n\t\t\tAND [EQ].[EventStatus] = 'C'\n\t\t\tAND [EQ].[ModelName] IN ('Orders','Supply','Warehouse')\n\t\t\tWHERE [EQ].[ModelName] IS NULL\n            FOR XML PATH (''), TYPE\n        ).value('text()[1]','nvarchar(max)'), 2, 1000),'') AS 'Models'",
-											"queryTimeout": "02:00:00",
-											"partitionOption": "None"
-										},
-										"dataset": {
-											"referenceName": "PNET_ReadOnly",
-											"type": "DatasetReference",
-											"parameters": {
-												"Schema": "Dapibus",
-												"Table": "Faucibus"
-											}
-										}
-									}
-								}
-							]
-						}
-					},
-					{
-						"name": "PendingEmail",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE EventName = 'DashboardsPendingEmail'\n\t  AND [ModelName] = 'Orders'\n\t  AND [EventStatus] IN ('C')\n\t  AND CAST([CreateDateTime] AS date) = CAST(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' AS date)\n)\nTHEN 1\nELSE 0 END AS 'DashboardsPendingEmail'",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "AzureSQLQueue",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Lorem",
-									"Table": "Ipsum"
-								}
-							}
-						}
-					},
-					{
-						"name": "If ComplePending",
-						"type": "IfCondition",
-						"dependsOn": [
-							{
-								"activity": "If Pending",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"expression": {
-								"value": "@and(and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),equals(activity('PendingEmail').output.firstRow.DashboardsPendingEmail,1))",
-								"type": "Expression"
-							},
-							"ifTrueActivities": [
-								{
-									"name": "EmailCompletionPending",
-									"type": "WebActivity",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"url": "https://prod-92.eastus.logic.azure.com:443/workflows/0e1ee5abbe4e49c59cce628f6c6303a7/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=OUK99jqSXOQVlsyyHQoqkiqXuXfedyAGBVSHThDzn7Y",
-										"method": "POST",
-										"headers": {
-											"Content-Type": "application/json"
-										},
-										"body": {
-											"value": "@concat('{\n   \"EmailSubject\": \"Dashboards Are Ready\",\n   \"EmailStatus\": \"CompletePending\",\n   \"EmailOptions\": \"\"\n }')",
-											"type": "Expression"
-										}
-									}
-								},
-								{
-									"name": "InsertQueueCompletion_Pending",
-									"type": "Copy",
-									"dependsOn": [
-										{
-											"activity": "EmailCompletionPending",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "AzureSqlSource",
-											"sqlReaderQuery": {
-												"value": "@concat('SELECT ''PBI Refresh'' AS ''EventType''\n\t  ,''Orders'' AS ''ModelName''\n\t  ,''DashboardsReadyEmail'' AS ''EventName''\n\t  ,''C'' AS ''EventStatus''\n\t  ,NULL AS ''RefreshId''\n\t  ,''',activity('StartTime').output.firstRow.TimeNow,''' AS ''CreateDateTime''\n\t  ,''',activity('StartTime').output.firstRow.TimeNow,''' AS ''ProcessStart''\n\t  ,''',convertFromUtc(utcnow(),'Eastern Standard Time'),''' AS ''ProcessEnd''\n\t  ,NULL AS ''RequestID''\n\t  ,''',pipeline().RunId,''' AS ''PipelineRunID''')",
-												"type": "Expression"
-											},
-											"queryTimeout": "02:00:00",
-											"partitionOption": "None"
-										},
-										"sink": {
-											"type": "AzureSqlSink",
-											"writeBehavior": "insert",
-											"sqlWriterUseTableLock": false
-										},
-										"enableStaging": false,
-										"translator": {
-											"type": "TabularTranslator",
-											"typeConversion": true,
-											"typeConversionSettings": {
-												"allowDataTruncation": true,
-												"treatBooleanAsNumber": false
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "AzureSQLQueue",
-											"type": "DatasetReference",
-											"parameters": {
-												"Schema": "Lorem",
-												"Table": "Ipsum"
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "AzureSQLQueue",
-											"type": "DatasetReference",
-											"parameters": {
-												"Schema": "Controls",
-												"Table": "ADFRefreshQueue"
-											}
-										}
-									]
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"parameters": {
-					"PriorityOneDatasets": {
-						"type": "string"
-					},
-					"DatasetCount": {
-						"type": "int",
-						"defaultValue": 3
-					}
-				},
-				"folder": {
-					"name": "General"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/PNET_ReadOnly')]"
-			]
 		}
 	]
 }

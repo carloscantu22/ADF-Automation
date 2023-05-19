@@ -139,6 +139,34 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/4AM Process')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2021-07-07T03:57:00",
+						"timeZone": "Eastern Standard Time",
+						"schedule": {
+							"minutes": [
+								1
+							],
+							"hours": [
+								4
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/EndOfDay')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -159,6 +187,49 @@
 							],
 							"hours": [
 								20
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/HourlyRun')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2021-08-24T23:05:00",
+						"timeZone": "Eastern Standard Time",
+						"schedule": {
+							"minutes": [
+								15
+							],
+							"hours": [
+								4,
+								5,
+								6,
+								7,
+								8,
+								9,
+								10,
+								11,
+								12,
+								13,
+								14,
+								15,
+								16,
+								17,
+								18,
+								19
 							]
 						}
 					}
@@ -1205,301 +1276,6 @@
 				},
 				"folder": {
 					"name": "WIP"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/AzureSQLQueue')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AASSupplyRefresh_UpdateEvent')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "GetRefresh",
-						"type": "WebActivity",
-						"dependsOn": [
-							{
-								"activity": "GetRefreshId",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"url": {
-								"value": "@concat('https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes/',string(activity('GetRefreshId').output.firstRow.RefreshId))",
-								"type": "Expression"
-							},
-							"method": "GET",
-							"headers": {},
-							"body": {
-								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
-								"type": "Expression"
-							},
-							"authentication": {
-								"type": "MSI",
-								"resource": "https://*.asazure.windows.net  "
-							}
-						}
-					},
-					{
-						"name": "GetRefreshId",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT TOP 10 [EventId],[RefreshId] FROM [Controls].[AzureSharedEventQueue]\nWHERE [EventType] = 'Supply' AND [EventStatus] = 'R'\nORDER BY [EventId]",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "AzureSQLQueue",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Lorem",
-									"Table": "Ipsum"
-								}
-							}
-						}
-					},
-					{
-						"name": "UpdateQueue",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [
-							{
-								"activity": "GetRefresh",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[Controls].[ADFQueueUpdate]",
-							"storedProcedureParameters": {
-								"endTime": {
-									"value": {
-										"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.endTime),'Eastern Standard Time')",
-										"type": "Expression"
-									},
-									"type": "DateTime"
-								},
-								"eventId": {
-									"value": {
-										"value": "@int(activity('GetRefreshId').output.firstRow.EventId)",
-										"type": "Expression"
-									},
-									"type": "Int32"
-								},
-								"refreshId": {
-									"value": {
-										"value": "@string(activity('GetRefreshId').output.firstRow.RefreshId)",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"startTime": {
-									"value": {
-										"value": "@convertFromUtc(formatDateTime(activity('GetRefresh').output.startTime),'Eastern Standard Time')",
-										"type": "Expression"
-									},
-									"type": "DateTime"
-								},
-								"status": {
-									"value": "C",
-									"type": "String"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "BIP01",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"variables": {
-					"Response": {
-						"type": "Array"
-					},
-					"RefreshId": {
-						"type": "String"
-					},
-					"EventId": {
-						"type": "String"
-					}
-				},
-				"folder": {
-					"name": "WIP"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/AzureSQLQueue')]",
-				"[concat(variables('factoryId'), '/linkedServices/BIP01')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CanvasNightlyRun')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "InsertCanvasNightly",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT [EventType]\n\t  ,[ModelName]\n\t  ,[EventName]\n\t  ,[RefreshId]\n\t  ,(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time') AS 'CreateDateTime'\nFROM \n(\nVALUES ('PBI Refresh','Canvas','Nightly_Begin',NULL) \n\t  ,('PBI Refresh','Canvas','Nightly_Dimensions','815210b8-e644-4b91-a326-115b1344d7e7') \n\t  ,('PBI Refresh','Canvas','Nightly_Facts','e5847484-b8b3-408d-ada6-b2d59c53b6ee') \n\t  ,('PBI Refresh','Canvas','Facts_Partitions','a4e27111-c905-4143-8ec7-d4540cc99856') \n\t  ,('PBI Refresh','Canvas','Nightly_End',NULL) \n) AS CR (EventType,ModelName,EventName,RefreshId)",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"sink": {
-								"type": "AzureSqlSink",
-								"writeBehavior": "insert",
-								"sqlWriterUseTableLock": false
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "EventType",
-											"type": "String",
-											"physicalType": "varchar"
-										},
-										"sink": {
-											"name": "EventType",
-											"type": "String",
-											"physicalType": "varchar"
-										}
-									},
-									{
-										"source": {
-											"name": "ModelName",
-											"type": "String",
-											"physicalType": "varchar"
-										},
-										"sink": {
-											"name": "ModelName",
-											"type": "String",
-											"physicalType": "varchar"
-										}
-									},
-									{
-										"source": {
-											"name": "EventName",
-											"type": "String",
-											"physicalType": "varchar"
-										},
-										"sink": {
-											"name": "EventName",
-											"type": "String",
-											"physicalType": "varchar"
-										}
-									},
-									{
-										"source": {
-											"name": "RefreshId",
-											"type": "String",
-											"physicalType": "varchar"
-										},
-										"sink": {
-											"name": "RefreshId",
-											"type": "String",
-											"physicalType": "char"
-										}
-									},
-									{
-										"source": {
-											"name": "CreateDateTime",
-											"type": "DateTimeOffset",
-											"physicalType": "datetimeoffset"
-										},
-										"sink": {
-											"name": "CreateDateTime",
-											"type": "DateTime",
-											"physicalType": "datetime"
-										}
-									}
-								],
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "AzureSQLQueue",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Lorem",
-									"Table": "Ipsum"
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "AzureSQLQueue",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Controls",
-									"Table": "ADFRefreshQueue"
-								}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Canvas"
 				},
 				"annotations": []
 			},

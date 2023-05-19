@@ -611,7 +611,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT [EventType]\n\t  ,[ModelName]\n\t  ,[EventName]\n\t  ,[RefreshId]\n\t  ,(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time') AS 'CreateDateTime'\nFROM \n(\nVALUES ('PBI Refresh','Canvas','Nightly_Begin',NULL) \n\t  ,('PBI Refresh','Canvas','Nightly_Dimensions','815210b8-e644-4b91-a326-115b1344d7e7') \n\t  ,('PBI Refresh','Canvas','Nightly_Facts','e5847484-b8b3-408d-ada6-b2d59c53b6ee') \n\t  ,('PBI Refresh','Canvas','Facts_Partitions','a4e27111-c905-4143-8ec7-d4540cc99856') \n\t  ,('PBI Refresh','Canvas','Nightly_End',NULL) \n) AS CR (EventType,ModelName,EventName,RefreshId)",
+								"sqlReaderQuery": "SELECT [EventType]\n\t  ,[ModelName]\n\t  ,[EventName]\n\t  ,[RefreshId]\n\t  ,(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time') AS 'CreateDateTime'\nFROM \n(\nVALUES ('PBI Refresh','Canvas','Nightly_Begin',NULL) \n\t  ,('PBI Refresh','Canvas','Nightly_Dimensions','815210b8-e644-4b91-a326-115b1344d7e7') \n\t  ,('PBI Refresh','Canvas','Nightly_Facts','e5847484-b8b3-408d-ada6-b2d59c53b6ee') \n\t  ,('PBI Refresh','Canvas','Facts_Partitions','a4e27111-c905-4143-8ec7-d4540cc99856') \n\t--  ,('PBI Refresh','Canvas','Nightly_End',NULL) \n) AS CR (EventType,ModelName,EventName,RefreshId)",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -16138,16 +16138,8 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "WMi_Plants_Full",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
+				"runtimeState": "Stopped",
+				"pipelines": [],
 				"type": "ScheduleTrigger",
 				"typeProperties": {
 					"recurrence": {
@@ -16166,9 +16158,7 @@
 					}
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/WMi_Plants_Full')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/6AM_Datasets')]",
@@ -16242,16 +16232,8 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "WMi_Plants_Hourly",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
+				"runtimeState": "Stopped",
+				"pipelines": [],
 				"type": "ScheduleTrigger",
 				"typeProperties": {
 					"recurrence": {
@@ -16285,9 +16267,7 @@
 					}
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/WMi_Plants_Hourly')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/HourlyWindow')]",
@@ -16442,13 +16422,6 @@
 				"pipelines": [
 					{
 						"pipelineReference": {
-							"referenceName": "WMi_Plants_Refresh",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					},
-					{
-						"pipelineReference": {
 							"referenceName": "RunningNodePNET",
 							"type": "PipelineReference"
 						},
@@ -16490,7 +16463,6 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/WMi_Plants_Refresh')]",
 				"[concat(variables('factoryId'), '/pipelines/RunningNodePNET')]"
 			]
 		},
