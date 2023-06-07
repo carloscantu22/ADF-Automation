@@ -213,7 +213,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0))",
+								"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('PendingEmail').output.firstRow.DashboardsReadyEmail,0)))",
 								"type": "Expression"
 							},
 							"ifTrueActivities": [
@@ -353,7 +353,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE EventName IN ('DashboardsReadyEmail','DashboardsPendingEmail')\n\t  AND [ModelName] = 'Orders'\n\t  AND [EventStatus] IN ('C')\n\t  AND CAST([CreateDateTime] AS date) = CAST(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' AS date)\n)\nTHEN 1\nELSE 0 END AS 'DashboardsReadyEmail'",
+								"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE EventName IN ('DashboardsReadyEmail')\n\t  AND [ModelName] = 'Orders'\n\t  AND [EventStatus] IN ('C')\n\t  AND CAST([CreateDateTime] AS date) = CAST(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' AS date)\n)\nTHEN 1\nELSE 0 END AS 'DashboardsReadyEmail'",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -381,7 +381,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),less(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0))",
+								"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),less(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('PendingEmail').output.firstRow.DashboardsReadyEmail,0)))",
 								"type": "Expression"
 							},
 							"ifTrueActivities": [
@@ -556,7 +556,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@and(and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),equals(activity('PendingEmail').output.firstRow.DashboardsPendingEmail,1))",
+								"value": "@and(and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('PendingEmail').output.firstRow.DashboardsReadyEmail,1)))",
 								"type": "Expression"
 							},
 							"ifTrueActivities": [

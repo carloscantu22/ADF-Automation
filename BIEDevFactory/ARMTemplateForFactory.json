@@ -2316,7 +2316,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0))",
+								"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('PendingEmail').output.firstRow.DashboardsReadyEmail,0)))",
 								"type": "Expression"
 							},
 							"ifTrueActivities": [
@@ -2456,7 +2456,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE EventName IN ('DashboardsReadyEmail','DashboardsPendingEmail')\n\t  AND [ModelName] = 'Orders'\n\t  AND [EventStatus] IN ('C')\n\t  AND CAST([CreateDateTime] AS date) = CAST(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' AS date)\n)\nTHEN 1\nELSE 0 END AS 'DashboardsReadyEmail'",
+								"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE EventName IN ('DashboardsReadyEmail')\n\t  AND [ModelName] = 'Orders'\n\t  AND [EventStatus] IN ('C')\n\t  AND CAST([CreateDateTime] AS date) = CAST(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time' AS date)\n)\nTHEN 1\nELSE 0 END AS 'DashboardsReadyEmail'",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -2484,7 +2484,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),less(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0))",
+								"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),less(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('PendingEmail').output.firstRow.DashboardsReadyEmail,0)))",
 								"type": "Expression"
 							},
 							"ifTrueActivities": [
@@ -2659,7 +2659,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@and(and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),equals(activity('PendingEmail').output.firstRow.DashboardsPendingEmail,1))",
+								"value": "@and(and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('PendingEmail').output.firstRow.DashboardsReadyEmail,1)))",
 								"type": "Expression"
 							},
 							"ifTrueActivities": [
@@ -14780,7 +14780,14 @@
 					{
 						"name": "Get RefreshData",
 						"type": "WebActivity",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Set variable1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "00:00:20",
 							"retry": 0,
@@ -14790,7 +14797,10 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1e04c36c-aa71-43a4-bd7b-843e24169196/refreshes/993e7029-3375-4305-b468-7f7c11d7cedb",
+							"url": {
+								"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1e04c36c-aa71-43a4-bd7b-843e24169196/refreshes/',variables('RefreshId'))",
+								"type": "Expression"
+							},
 							"method": "GET",
 							"headers": {},
 							"body": {
@@ -14802,11 +14812,62 @@
 								"resource": "https://analysis.windows.net/powerbi/api"
 							}
 						}
+					},
+					{
+						"name": "Delete",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Get RefreshData",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "00:00:20",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": {
+								"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1e04c36c-aa71-43a4-bd7b-843e24169196/refreshes/',variables('RefreshId'))",
+								"type": "Expression"
+							},
+							"method": "GET",
+							"headers": {},
+							"body": {
+								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"Nightly Partition ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'dddd'),'\"\n        },\n        {\n            \"table\": \"Inventory Plans\",\n            \"partition\": \"Nightly Partition ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'dddd'),'\"\n        }\n    ]\n}')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://analysis.windows.net/powerbi/api"
+							}
+						}
+					},
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "RefreshId",
+							"value": "47aed740-8af3-4607-b516-89bb8526ff86"
+						}
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
+				},
+				"variables": {
+					"RefreshId": {
+						"type": "String"
+					}
 				},
 				"folder": {
 					"name": "Warehouse_PBI/Manual"

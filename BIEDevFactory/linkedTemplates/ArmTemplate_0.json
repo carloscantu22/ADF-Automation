@@ -1331,7 +1331,14 @@
 					{
 						"name": "Get RefreshData",
 						"type": "WebActivity",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Set variable1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "00:00:20",
 							"retry": 0,
@@ -1341,7 +1348,10 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1e04c36c-aa71-43a4-bd7b-843e24169196/refreshes/993e7029-3375-4305-b468-7f7c11d7cedb",
+							"url": {
+								"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1e04c36c-aa71-43a4-bd7b-843e24169196/refreshes/',variables('RefreshId'))",
+								"type": "Expression"
+							},
 							"method": "GET",
 							"headers": {},
 							"body": {
@@ -1353,11 +1363,62 @@
 								"resource": "https://analysis.windows.net/powerbi/api"
 							}
 						}
+					},
+					{
+						"name": "Delete",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Get RefreshData",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "00:00:20",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": {
+								"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1e04c36c-aa71-43a4-bd7b-843e24169196/refreshes/',variables('RefreshId'))",
+								"type": "Expression"
+							},
+							"method": "GET",
+							"headers": {},
+							"body": {
+								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"Nightly Partition ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'dddd'),'\"\n        },\n        {\n            \"table\": \"Inventory Plans\",\n            \"partition\": \"Nightly Partition ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'dddd'),'\"\n        }\n    ]\n}')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://analysis.windows.net/powerbi/api"
+							}
+						}
+					},
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "RefreshId",
+							"value": "47aed740-8af3-4607-b516-89bb8526ff86"
+						}
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
+				},
+				"variables": {
+					"RefreshId": {
+						"type": "String"
+					}
 				},
 				"folder": {
 					"name": "Warehouse_PBI/Manual"
