@@ -99,7 +99,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('PendingEmail').output.firstRow.DashboardsReadyEmail,0)))",
+						"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('PendingEmail').output.firstRow.DashboardsPendingEmail,0)))",
 						"type": "Expression"
 					},
 					"ifTrueActivities": [
@@ -267,7 +267,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),less(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('PendingEmail').output.firstRow.DashboardsReadyEmail,0)))",
+						"value": "@and(and(equals(activity('CheckOrdersNightly').output.firstRow.OrdersNightlyRun,1),less(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('PendingEmail').output.firstRow.DashboardsPendingEmail,0)))",
 						"type": "Expression"
 					},
 					"ifTrueActivities": [
@@ -442,7 +442,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@and(and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('PendingEmail').output.firstRow.DashboardsReadyEmail,1)))",
+						"value": "@and(and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('DatasetsCompletion').output.firstRow.CompletedDatasets,pipeline().parameters.DatasetCount)),and(equals(activity('CompletionEmail').output.firstRow.DashboardsReadyEmail,0),equals(activity('PendingEmail').output.firstRow.DashboardsPendingEmail,1)))",
 						"type": "Expression"
 					},
 					"ifTrueActivities": [
