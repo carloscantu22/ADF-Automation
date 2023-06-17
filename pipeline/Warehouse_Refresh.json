@@ -552,7 +552,7 @@
 									"typeProperties": {
 										"variableName": "RefreshParameters",
 										"value": {
-											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 6,\n    \"RetryCount\": 0,\n    \"Objects\": ',activity('Tables_Facts_Partition').output.firstRow.Refresh,'\n}')",
+											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 6,\n    \"RetryCount\": 0,\n    \"Objects\": ',activity('Hourly_Facts_Partition').output.firstRow.Refresh,'\n}')",
 											"type": "Expression"
 										}
 									}
