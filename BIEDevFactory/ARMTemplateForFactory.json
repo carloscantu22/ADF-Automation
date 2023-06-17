@@ -5051,7 +5051,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/ab4a9a2a-8b91-42ae-95aa-4d027c90c86f/refreshes/b75721a1-51d3-4d9e-adcb-e529886852b9",
+							"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/ab4a9a2a-8b91-42ae-95aa-4d027c90c86f/refreshes/5ed11151-9177-4e82-9f04-586a8d26f263",
 							"method": "GET",
 							"headers": {},
 							"body": {
@@ -14090,20 +14090,20 @@
 											"userProperties": [],
 											"typeProperties": {
 												"source": {
-													"type": "AzureSqlSource",
+													"type": "SqlServerSource",
 													"sqlReaderQuery": {
-														"value": "@concat('SELECT CAST(\n(\n\tSELECT TRIM([Tablename]) AS ''table''\n\tFROM [Controls].[ADFEventRefreshCatalog]\n\t\tWHERE [EventName] = ''',activity('ReadRefresh').output.firstRow.EventName,'''\n\t\tAND [ModelName] = ''Warehouse''\n\t\tAND [ValidFlag] = ''Y''\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
+														"value": "@concat('SELECT CAST(\n(\n\tSELECT [table]\n\t\t  ,[partition]\n\tFROM [CarharttDw].[Controls].[WarehousePartitionsNightly]\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
 														"type": "Expression"
 													},
 													"queryTimeout": "02:00:00",
 													"partitionOption": "None"
 												},
 												"dataset": {
-													"referenceName": "AzureSQLQueue",
+													"referenceName": "PNET_ReadOnly",
 													"type": "DatasetReference",
 													"parameters": {
-														"Schema": "Lorem",
-														"Table": "Ipsum"
+														"Schema": "Dapibus",
+														"Table": "Faucibus"
 													}
 												}
 											}
@@ -14344,14 +14344,14 @@
 									]
 								},
 								{
-									"value": "Dates_Dimensions",
+									"value": "Hourly_Partitions",
 									"activities": [
 										{
-											"name": "Set_Table_DatesDimensions",
+											"name": "Set_Tables_10",
 											"type": "SetVariable",
 											"dependsOn": [
 												{
-													"activity": "TableRefresh_DatesDimensions",
+													"activity": "Hourly_Facts_Partition",
 													"dependencyConditions": [
 														"Succeeded"
 													]
@@ -14361,17 +14361,27 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 6,\n    \"RetryCount\": 0,\n    \"Objects\": ',activity('TableRefresh_DatesDimensions').output.firstRow.Refresh,'\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 6,\n    \"RetryCount\": 0,\n    \"Objects\": ',activity('Hourly_Facts_Partition').output.firstRow.Refresh,'\n}')",
 													"type": "Expression"
 												}
 											}
 										},
 										{
-											"name": "TableRefresh_DatesDimensions",
+											"name": "SetRefreshFlag10",
+											"type": "SetVariable",
+											"dependsOn": [],
+											"userProperties": [],
+											"typeProperties": {
+												"variableName": "ProcessingConditional",
+												"value": "1"
+											}
+										},
+										{
+											"name": "Hourly_Facts_Partition",
 											"type": "Lookup",
 											"dependsOn": [
 												{
-													"activity": "SetForRefresh_DatesDimensions",
+													"activity": "SetRefreshFlag10",
 													"dependencyConditions": [
 														"Succeeded"
 													]
@@ -14387,32 +14397,22 @@
 											"userProperties": [],
 											"typeProperties": {
 												"source": {
-													"type": "AzureSqlSource",
+													"type": "SqlServerSource",
 													"sqlReaderQuery": {
-														"value": "@concat('SELECT CAST(\n(\n\tSELECT TRIM([Tablename]) AS ''table''\n\tFROM [Controls].[ADFEventRefreshCatalog]\n\t\tWHERE [EventName] = ''',activity('ReadRefresh').output.firstRow.EventName,'''\n\t\tAND [ModelName] = ''Warehouse''\n\t\tAND [ValidFlag] = ''Y''\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
+														"value": "@concat('SELECT CAST(\n(\n\tSELECT [table]\n\t\t  ,[partition]\n\tFROM [CarharttDw].[Controls].[WarehousePartitionsHourly]\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
 														"type": "Expression"
 													},
 													"queryTimeout": "02:00:00",
 													"partitionOption": "None"
 												},
 												"dataset": {
-													"referenceName": "AzureSQLQueue",
+													"referenceName": "PNET_ReadOnly",
 													"type": "DatasetReference",
 													"parameters": {
-														"Schema": "Lorem",
-														"Table": "Ipsum"
+														"Schema": "Dapibus",
+														"Table": "Faucibus"
 													}
 												}
-											}
-										},
-										{
-											"name": "SetForRefresh_DatesDimensions",
-											"type": "SetVariable",
-											"dependsOn": [],
-											"userProperties": [],
-											"typeProperties": {
-												"variableName": "ProcessingConditional",
-												"value": "1"
 											}
 										}
 									]
@@ -14766,6 +14766,7 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/AzureSQLQueue')]",
 				"[concat(variables('factoryId'), '/linkedServices/BIP01')]",
+				"[concat(variables('factoryId'), '/datasets/PNET_ReadOnly')]",
 				"[concat(variables('factoryId'), '/linkedServices/DBNSQLPNET')]",
 				"[concat(variables('factoryId'), '/pipelines/SLACalculation')]",
 				"[concat(variables('factoryId'), '/pipelines/WarehouseNightlyRun')]"
