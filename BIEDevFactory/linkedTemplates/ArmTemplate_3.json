@@ -236,7 +236,7 @@
 											"Content-Type": "application/json"
 										},
 										"body": {
-											"value": "@concat('{\n   \"EmailSubject\": \"Dashboards Are Ready\",\n   \"EmailStatus\": \"Complete\",\n   \"EmailOptions\": \"\"\n }')",
+											"value": "@concat('{\n   \"EmailSubject\": \"Power BI Content is Ready\",\n   \"EmailStatus\": \"Complete\",\n   \"EmailOptions\": \"\"\n }')",
 											"type": "Expression"
 										}
 									}
@@ -411,7 +411,7 @@
 											"Content-Type": "application/json"
 										},
 										"body": {
-											"value": "@concat('{\n   \"EmailSubject\": \"PowerBI Delay\",\n   \"EmailStatus\": \"Pending\",\n   \"EmailOptions\": \"',activity('PendingModels').output.firstRow.Models,'\"\n }')",
+											"value": "@concat('{\n   \"EmailSubject\": \"PowerBI content is delay\",\n   \"EmailStatus\": \"Pending\",\n   \"EmailOptions\": \"',activity('PendingModels').output.firstRow.Models,'\"\n }')",
 											"type": "Expression"
 										}
 									}
@@ -579,7 +579,7 @@
 											"Content-Type": "application/json"
 										},
 										"body": {
-											"value": "@concat('{\n   \"EmailSubject\": \"Dashboards Are Ready\",\n   \"EmailStatus\": \"CompletePending\",\n   \"EmailOptions\": \"\"\n }')",
+											"value": "@concat('{\n   \"EmailSubject\": \"Power BI Content is Ready\",\n   \"EmailStatus\": \"CompletePending\",\n   \"EmailOptions\": \"\"\n }')",
 											"type": "Expression"
 										}
 									}
@@ -2278,6 +2278,10 @@
 								]
 							}
 						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
 						"userProperties": [],
 						"typeProperties": {
 							"variableName": "StartTime",

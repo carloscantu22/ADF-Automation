@@ -125,6 +125,10 @@
 											"name": "SetNoRefresh_01",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -140,6 +144,10 @@
 											"name": "SetNoRefresh_02",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -193,6 +201,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -245,6 +257,10 @@
 											"name": "SetForRefresh_04",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -267,6 +283,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -319,6 +339,10 @@
 											"name": "SetRefreshFlag05",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -341,6 +365,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -354,6 +382,10 @@
 											"name": "SetRefreshFlag06",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -415,6 +447,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -467,6 +503,10 @@
 											"name": "SetForRefresh_Hourly",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -626,6 +666,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -648,6 +692,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -661,6 +709,10 @@
 											"name": "SetRefreshFlag10",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -946,6 +998,10 @@
 											]
 										}
 									],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
 									"userProperties": [],
 									"typeProperties": {
 										"variableName": "Response",
@@ -1439,13 +1495,6 @@
 					{
 						"pipelineReference": {
 							"referenceName": "ProcessSupply_Queue",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					},
-					{
-						"pipelineReference": {
-							"referenceName": "ProcessOrders_Queue",
 							"type": "PipelineReference"
 						},
 						"parameters": {}

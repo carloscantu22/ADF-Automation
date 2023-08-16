@@ -333,6 +333,10 @@
 											"name": "SetNoRefresh_01",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -348,6 +352,10 @@
 											"name": "SetNoRefresh_02",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -394,6 +402,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -446,6 +458,10 @@
 											"name": "SetForRefresh",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -468,6 +484,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -520,6 +540,10 @@
 											"name": "SetRefreshFlag02",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -542,6 +566,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -594,6 +622,10 @@
 											"name": "SetRefreshFlag03",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -609,6 +641,10 @@
 											"name": "Set_NightlyFacts",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -634,6 +670,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -686,6 +726,10 @@
 											"name": "SetRefreshFlag04",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -925,6 +969,10 @@
 											]
 										}
 									],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
 									"userProperties": [],
 									"typeProperties": {
 										"variableName": "Response",
@@ -1324,6 +1372,10 @@
 											"name": "SetMessage",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "Message",
@@ -1597,6 +1649,10 @@
 								]
 							}
 						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
 						"userProperties": [],
 						"typeProperties": {
 							"variableName": "Messages",
@@ -1896,6 +1952,10 @@
 											"name": "SetNoRefresh_01",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -1911,6 +1971,10 @@
 											"name": "SetNoRefresh_02",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -1964,6 +2028,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -2016,6 +2084,10 @@
 											"name": "SetForRefresh_04",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -2038,6 +2110,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -2090,6 +2166,10 @@
 											"name": "SetRefreshFlag05",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -2112,6 +2192,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -2164,6 +2248,10 @@
 											"name": "SetRefreshFlag08",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -2186,6 +2274,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -2199,6 +2291,10 @@
 											"name": "SetForRefresh_Hourly",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -2221,6 +2317,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -2273,6 +2373,10 @@
 											"name": "SetRefreshFlag06",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -2295,6 +2399,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -2347,6 +2455,10 @@
 											"name": "SetRefreshFlag07",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -2369,6 +2481,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -2421,6 +2537,10 @@
 											"name": "SetRefreshFlag09",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -2443,6 +2563,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -2456,6 +2580,10 @@
 											"name": "SetForRefresh_Retail",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -2478,6 +2606,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -2530,6 +2662,10 @@
 											"name": "SetForRefresh_DatesDimensions",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -2776,6 +2912,10 @@
 											]
 										}
 									],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
 									"userProperties": [],
 									"typeProperties": {
 										"variableName": "Response",
@@ -3175,6 +3315,10 @@
 											"name": "SetMessage",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "Message",
@@ -3443,6 +3587,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -3493,6 +3641,10 @@
 											"name": "Set_ReportingNotifications",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -3511,6 +3663,10 @@
 											"name": "Set_DailyGoals",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -3529,6 +3685,10 @@
 											"name": "Set_HourlyEMEA",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -3547,6 +3707,10 @@
 											"name": "Set_FullRetail",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -3565,6 +3729,10 @@
 											"name": "Set_FullDimensions",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -3578,6 +3746,10 @@
 											"name": "Set_FullDimensions_copy1",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -3596,6 +3768,10 @@
 											"name": "Set_HourlyRevenuePacing",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -3614,6 +3790,10 @@
 											"name": "Set_GenericFPS",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -3632,6 +3812,10 @@
 											"name": "Set_GenericFE",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -3650,6 +3834,10 @@
 											"name": "Set_GenericHE",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -3668,6 +3856,10 @@
 											"name": "Set_FullRevenuePacing",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -3686,6 +3878,10 @@
 											"name": "Set_FullEMEA",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -3704,6 +3900,10 @@
 											"name": "Set_HourlyDimensions",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -3722,6 +3922,10 @@
 											"name": "Set_HourlyRetailTransactions",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -3740,6 +3944,10 @@
 											"name": "Set_MonthlyGoals",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -3758,6 +3966,10 @@
 											"name": "Set_HourlyRetailTraffic",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -3776,6 +3988,10 @@
 											"name": "Set_GenericFS",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -3794,6 +4010,10 @@
 											"name": "Set_GenericHS",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -3812,6 +4032,10 @@
 											"name": "Set_GenericFPE",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -3830,6 +4054,10 @@
 											"name": "Set_HourlyRetail",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -3848,6 +4076,10 @@
 											"name": "Set_GenericFF",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -4022,6 +4254,10 @@
 								]
 							}
 						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
 						"userProperties": [],
 						"typeProperties": {
 							"variableName": "Response",
@@ -4400,6 +4636,10 @@
 											"name": "SetMessage",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "Message",
@@ -4741,6 +4981,10 @@
 											"name": "Set_Inventory",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -4759,6 +5003,10 @@
 											"name": "Set_Hourly",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -4777,6 +5025,10 @@
 											"name": "Set_NightlyDimensions",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -4795,6 +5047,10 @@
 											"name": "Set_Generic1",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -4844,6 +5100,10 @@
 											"name": "Set_Generic2",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -4862,6 +5122,10 @@
 											"name": "Set_NightlyFacts",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -4880,6 +5144,10 @@
 											"name": "Set_Demand",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -4898,6 +5166,10 @@
 											"name": "Supply_ProductionPlans",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -4916,6 +5188,10 @@
 											"name": "Supply_InventoryPlans",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -4963,6 +5239,10 @@
 											"name": "Set_Generic2_copy1",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -5010,6 +5290,10 @@
 											"name": "Set_Generic3",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -5028,6 +5312,10 @@
 											"name": "Set_ProductionPlans",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -5046,6 +5334,10 @@
 											"name": "Set_InventoryPlans",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -5217,6 +5509,10 @@
 								]
 							}
 						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
 						"userProperties": [],
 						"typeProperties": {
 							"variableName": "Response",
@@ -5592,6 +5888,10 @@
 											"name": "SetMessage",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "Message",
@@ -5853,6 +6153,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -5910,6 +6214,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -5960,6 +6268,10 @@
 											"name": "Set_Tables_06",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -5978,6 +6290,10 @@
 											"name": "Set_Tables_07",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -5996,6 +6312,10 @@
 											"name": "Set_Tables_09",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -6014,6 +6334,10 @@
 											"name": "Set_Tables_10",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -6039,6 +6363,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -6089,6 +6417,10 @@
 											"name": "Set_Tables_InvPlansDraft",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -6107,6 +6439,10 @@
 											"name": "Tables_InvPlansApproved",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -6125,6 +6461,10 @@
 											"name": "Tables_ProdPlansApproved",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -6150,6 +6490,10 @@
 													]
 												}
 											],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "RefreshParameters",
@@ -6379,6 +6723,10 @@
 											]
 										}
 									],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
 									"userProperties": [],
 									"typeProperties": {
 										"variableName": "Response",
@@ -6485,6 +6833,10 @@
 											"name": "SetNoRefresh_02_copy1",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -6531,6 +6883,10 @@
 											"name": "SetRefreshFlag07_copy1",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -6546,6 +6902,10 @@
 											"name": "SetRefreshFlag09_copy1",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -6590,6 +6950,10 @@
 											"name": "SetNoRefresh_11_copy1",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -6605,6 +6969,10 @@
 											"name": "SetForRefresh_Hourly_copy1",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -6620,6 +6988,10 @@
 											"name": "SetRefreshFlag_InvPlansDraft_copy1",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -6664,6 +7036,10 @@
 											"name": "NoRefresh_DraftApproved",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -6679,6 +7055,10 @@
 											"name": "NoRefresh_NightlyBegin",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
@@ -6693,6 +7073,10 @@
 									"name": "SetForRefresh_Default",
 									"type": "SetVariable",
 									"dependsOn": [],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
 									"userProperties": [],
 									"typeProperties": {
 										"variableName": "ProcessingConditional",
@@ -7020,6 +7404,10 @@
 											"name": "SetMessage",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "Message",
@@ -7674,6 +8062,10 @@
 											"name": "SetMessage",
 											"type": "SetVariable",
 											"dependsOn": [],
+											"policy": {
+												"secureOutput": false,
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"variableName": "Message",
