@@ -1,0 +1,36 @@
+{
+	"name": "PBIOrders_RefreshInfo",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get RefreshData",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "00:00:20",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1865273b-45f5-4639-b25f-5d8ca23358bc/refreshes/cef4df65-8f16-4632-a64d-638472b3f81c",
+					"method": "GET",
+					"body": {
+						"value": "@concat('{}')",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://analysis.windows.net/powerbi/api"
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "WIP"
+		},
+		"annotations": []
+	}
+}
