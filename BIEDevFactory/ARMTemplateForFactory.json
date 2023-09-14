@@ -4373,7 +4373,7 @@
 							],
 							"ifTrueActivities": [
 								{
-									"name": "RefreshSupplyPBI",
+									"name": "RefreshOrdersPBI",
 									"type": "WebActivity",
 									"dependsOn": [],
 									"policy": {
@@ -4385,7 +4385,7 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1865273b-45f5-4639-b25f-5d8ca23358bc/refreshes",
+										"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/38f83f8b-9eb7-4591-8bfc-9bf8612e0460/refreshes",
 										"method": "POST",
 										"headers": {},
 										"body": {
@@ -4403,7 +4403,7 @@
 									"type": "WebActivity",
 									"dependsOn": [
 										{
-											"activity": "RefreshSupplyPBI",
+											"activity": "RefreshOrdersPBI",
 											"dependencyConditions": [
 												"Completed"
 											]
@@ -4418,7 +4418,7 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1865273b-45f5-4639-b25f-5d8ca23358bc/refreshes?$top=2",
+										"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/38f83f8b-9eb7-4591-8bfc-9bf8612e0460/refreshes?$top=2",
 										"method": "GET",
 										"headers": {},
 										"authentication": {
@@ -4684,7 +4684,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"url": {
-								"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1865273b-45f5-4639-b25f-5d8ca23358bc/refreshes/',string(activity('GetRefreshId').output.firstRow.RequestId))",
+								"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/38f83f8b-9eb7-4591-8bfc-9bf8612e0460/refreshes/',string(activity('GetRefreshId').output.firstRow.RequestId))",
 								"type": "Expression"
 							},
 							"method": "GET",
@@ -5183,6 +5183,50 @@
 				"[concat(variables('factoryId'), '/linkedServices/BIP01')]",
 				"[concat(variables('factoryId'), '/pipelines/Teams Notification')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PBIOrders_RefreshInfo')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get RefreshData",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "00:00:20",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/38f83f8b-9eb7-4591-8bfc-9bf8612e0460/refreshes/85b1173d-2a82-4004-a220-c852fe476f11",
+							"method": "GET",
+							"headers": {},
+							"body": {
+								"value": "@concat('{','}')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://analysis.windows.net/powerbi/api"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "WIP"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/PBISupply_RefreshInfo')]",
