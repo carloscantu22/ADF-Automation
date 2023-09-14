@@ -23,7 +23,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"url": {
-						"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1865273b-45f5-4639-b25f-5d8ca23358bc/refreshes/',string(activity('GetRefreshId').output.firstRow.RequestId))",
+						"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/38f83f8b-9eb7-4591-8bfc-9bf8612e0460/refreshes/',string(activity('GetRefreshId').output.firstRow.RequestId))",
 						"type": "Expression"
 					},
 					"method": "GET",
@@ -284,6 +284,10 @@
 									"name": "SetMessage",
 									"type": "SetVariable",
 									"dependsOn": [],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
 									"userProperties": [],
 									"typeProperties": {
 										"variableName": "Message",
