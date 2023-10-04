@@ -167,8 +167,7 @@
 					}
 				],
 				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
+					"elapsedTimeMetric": {}
 				},
 				"parameters": {
 					"Refresh": {
@@ -325,8 +324,7 @@
 					}
 				],
 				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
+					"elapsedTimeMetric": {}
 				},
 				"variables": {
 					"Response": {
@@ -471,8 +469,7 @@
 					}
 				],
 				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
+					"elapsedTimeMetric": {}
 				},
 				"folder": {
 					"name": "Canvas"
@@ -1235,8 +1232,7 @@
 					}
 				],
 				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
+					"elapsedTimeMetric": {}
 				},
 				"variables": {
 					"RefreshParameters": {
@@ -1761,8 +1757,7 @@
 					}
 				],
 				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
+					"elapsedTimeMetric": {}
 				},
 				"variables": {
 					"Response": {
@@ -1906,8 +1901,7 @@
 					}
 				],
 				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
+					"elapsedTimeMetric": {}
 				},
 				"variables": {
 					"RefreshId": {
@@ -2090,8 +2084,7 @@
 					}
 				],
 				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
+					"elapsedTimeMetric": {}
 				},
 				"folder": {
 					"name": "MasterData"
@@ -3178,8 +3171,7 @@
 					}
 				],
 				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
+					"elapsedTimeMetric": {}
 				},
 				"variables": {
 					"RefreshParameters": {
@@ -3704,8 +3696,7 @@
 					}
 				],
 				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
+					"elapsedTimeMetric": {}
 				},
 				"variables": {
 					"Response": {
@@ -4513,8 +4504,7 @@
 					}
 				],
 				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
+					"elapsedTimeMetric": {}
 				},
 				"variables": {
 					"RefreshParameters": {
@@ -5018,8 +5008,7 @@
 					}
 				],
 				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
+					"elapsedTimeMetric": {}
 				},
 				"variables": {
 					"Response": {
@@ -5119,8 +5108,7 @@
 					}
 				],
 				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
+					"elapsedTimeMetric": {}
 				},
 				"folder": {
 					"name": "Supply"
@@ -5765,8 +5753,7 @@
 					}
 				],
 				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
+					"elapsedTimeMetric": {}
 				},
 				"variables": {
 					"RefreshParameters": {
@@ -6270,8 +6257,7 @@
 					}
 				],
 				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
+					"elapsedTimeMetric": {}
 				},
 				"variables": {
 					"Response": {
@@ -6477,7 +6463,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Inventory Plans\",\n            \"partition\": \"Nightly Partition ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'dddd'),'\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 1,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Inventory Plans\",\n            \"partition\": \"Nightly Partition ',formatDateTime(convertFromUtc(utcNow(),'Eastern Standard Time'),'dddd'),'\"\n        },\n        {\n            \"table\": \"Inventory Plans Active Inventory\",\n            \"partition\": \"Nightly Partition ',formatDateTime(convertFromUtc(utcNow(),'Eastern Standard Time'),'dddd'),'\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
@@ -7267,8 +7253,7 @@
 					}
 				],
 				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
+					"elapsedTimeMetric": {}
 				},
 				"variables": {
 					"RefreshParameters": {
@@ -7793,8 +7778,7 @@
 					}
 				],
 				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
+					"elapsedTimeMetric": {}
 				},
 				"variables": {
 					"Response": {
@@ -7942,8 +7926,7 @@
 					}
 				],
 				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
+					"elapsedTimeMetric": {}
 				},
 				"folder": {
 					"name": "Warehouse_PBI"
@@ -8451,8 +8434,7 @@
 					}
 				],
 				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
+					"elapsedTimeMetric": {}
 				},
 				"variables": {
 					"Response": {
