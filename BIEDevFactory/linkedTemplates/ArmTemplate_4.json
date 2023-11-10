@@ -1571,13 +1571,6 @@
 				"pipelines": [
 					{
 						"pipelineReference": {
-							"referenceName": "ProcessSupply_Queue",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					},
-					{
-						"pipelineReference": {
 							"referenceName": "CanvasPBI_Queue",
 							"type": "PipelineReference"
 						},
@@ -1616,7 +1609,6 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/ProcessSupply_Queue')]",
 				"[concat(variables('factoryId'), '/pipelines/SupplyPBI_Queue')]",
 				"[concat(variables('factoryId'), '/pipelines/Warehouse_Queue')]"
 			]
