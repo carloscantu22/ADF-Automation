@@ -55,37 +55,6 @@
 										"variableName": "ProcessingConditional",
 										"value": "0"
 									}
-								},
-								{
-									"name": "SendCompletionEmail",
-									"type": "WebActivity",
-									"dependsOn": [
-										{
-											"activity": "SetNoRefresh_02",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"url": "https://prod-13.northcentralus.logic.azure.com:443/workflows/edec3768a21d4a618a89c7ccf8c4ad0b/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Om-PN4tQZfPmI_KeEBQTkW7qGjSwrgbMrvF8RSqCfQ8",
-										"method": "POST",
-										"headers": {
-											"Content-Type": "application/json"
-										},
-										"body": {
-											"value": "@concat('{\"ModelName\" : \"','Orders','\" , \"StartDateTime\" : \"',utcNow(),'\"}')",
-											"type": "Expression"
-										}
-									}
 								}
 							]
 						},
