@@ -7264,7 +7264,7 @@
 									]
 								},
 								{
-									"value": "cancelled",
+									"value": "Cancelled",
 									"activities": [
 										{
 											"name": "UpdateQueue_Cancelled",
