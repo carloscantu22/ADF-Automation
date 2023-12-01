@@ -155,7 +155,7 @@
 							]
 						},
 						{
-							"value": "cancelled",
+							"value": "Cancelled",
 							"activities": [
 								{
 									"name": "UpdateQueue_Cancelled",
@@ -284,6 +284,10 @@
 									"name": "SetMessage",
 									"type": "SetVariable",
 									"dependsOn": [],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
 									"userProperties": [],
 									"typeProperties": {
 										"variableName": "Message",
