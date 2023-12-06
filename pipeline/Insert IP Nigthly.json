@@ -1,5 +1,5 @@
 {
-	"name": "pipeline3",
+	"name": "Insert IP Nigthly",
 	"properties": {
 		"activities": [
 			{
