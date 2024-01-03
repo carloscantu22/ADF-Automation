@@ -707,6 +707,140 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Insert IP Nigthly')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Insert Nightly",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderQuery": "SELECT * FROM\n (VALUES ('PBI Refresh','Supply','InventoryPlans_Nightly','e8d801e7-c179-4e27-9405-962c7192448a',GETDATE())) AS NSIP (EventType,ModelName,EventName,RefreshId,CreateDateTime)",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "EventType",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "EventType",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "ModelName",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "ModelName",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "EventName",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "EventName",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "RefreshId",
+											"type": "String",
+											"physicalType": "varchar"
+										},
+										"sink": {
+											"name": "RefreshId",
+											"type": "String",
+											"physicalType": "char"
+										}
+									},
+									{
+										"source": {
+											"name": "CreateDateTime",
+											"type": "DateTime",
+											"physicalType": "datetime"
+										},
+										"sink": {
+											"name": "CreateDateTime",
+											"type": "DateTime",
+											"physicalType": "datetime"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "PNET_ReadOnly",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Dapibus",
+									"Table": "Faucibus"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Controls",
+									"Table": "ADFRefreshQueue"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "Supply_PBI"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/OrderExclusionPNET')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -4669,140 +4803,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pipeline3')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Insert Nightly",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlServerSource",
-								"sqlReaderQuery": "SELECT * FROM\n (VALUES ('PBI Refresh','Supply','InventoryPlans_Nightly','e8d801e7-c179-4e27-9405-962c7192448a',GETDATE())) AS NSIP (EventType,ModelName,EventName,RefreshId,CreateDateTime)",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"sink": {
-								"type": "AzureSqlSink",
-								"writeBehavior": "insert",
-								"sqlWriterUseTableLock": false
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "EventType",
-											"type": "String",
-											"physicalType": "varchar"
-										},
-										"sink": {
-											"name": "EventType",
-											"type": "String",
-											"physicalType": "varchar"
-										}
-									},
-									{
-										"source": {
-											"name": "ModelName",
-											"type": "String",
-											"physicalType": "varchar"
-										},
-										"sink": {
-											"name": "ModelName",
-											"type": "String",
-											"physicalType": "varchar"
-										}
-									},
-									{
-										"source": {
-											"name": "EventName",
-											"type": "String",
-											"physicalType": "varchar"
-										},
-										"sink": {
-											"name": "EventName",
-											"type": "String",
-											"physicalType": "varchar"
-										}
-									},
-									{
-										"source": {
-											"name": "RefreshId",
-											"type": "String",
-											"physicalType": "varchar"
-										},
-										"sink": {
-											"name": "RefreshId",
-											"type": "String",
-											"physicalType": "char"
-										}
-									},
-									{
-										"source": {
-											"name": "CreateDateTime",
-											"type": "DateTime",
-											"physicalType": "datetime"
-										},
-										"sink": {
-											"name": "CreateDateTime",
-											"type": "DateTime",
-											"physicalType": "datetime"
-										}
-									}
-								],
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "PNET_ReadOnly",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Dapibus",
-									"Table": "Faucibus"
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "AzureSQLQueue",
-								"type": "DatasetReference",
-								"parameters": {
-									"Schema": "Controls",
-									"Table": "ADFRefreshQueue"
-								}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"folder": {
-					"name": "Supply_PBI"
-				},
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/2300HoursNightly')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -4948,6 +4948,37 @@
 									"Schema": "Lorem",
 									"Table": "Ipsum"
 								}
+							}
+						}
+					},
+					{
+						"name": "SendErrorMail",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "If Condition1",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod-05.northcentralus.logic.azure.com:443/workflows/a7ec1a338e8541f092c44178a0d0c201/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=co5WA5F6jucJvp2ui_nfHwjQ6ICRtwQ8NDiUCWi1998",
+							"method": "POST",
+							"headers": {
+								"Content-Type": "application/json"
+							},
+							"body": {
+								"value": "@concat('{\"Pipeline\" : \"',pipeline().Pipeline,'\" , \"RunId\" : \"',pipeline().RunId,' , \"Error\" : \"',string(activity('ProcessCanvas_RunningPBI').output),' , \"Message\" : \"Error running ',pipeline().Pipeline,'\"}')",
+								"type": "Expression"
 							}
 						}
 					}
