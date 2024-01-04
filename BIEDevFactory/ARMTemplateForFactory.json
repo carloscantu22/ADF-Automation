@@ -2084,7 +2084,7 @@
 											},
 											"userProperties": [],
 											"typeProperties": {
-												"url": "https://prod-05.northcentralus.logic.azure.com:443/workflows/a7ec1a338e8541f092c44178a0d0c201/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=co5WA5F6jucJvp2ui_nfHwjQ6ICRtwQ8NDiUCWi1998",
+												"url": "https://prod-41.eastus.logic.azure.com:443/workflows/08b4574d691b4ce08f3dc26df8b562ac/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=YjrzHlvX08-ifQA7FF0Wqd-vn5Q3z1sHFP2XiOX2aTg",
 												"method": "POST",
 												"headers": {
 													"Content-Type": "application/json"
@@ -5135,7 +5135,7 @@
 											},
 											"userProperties": [],
 											"typeProperties": {
-												"url": "https://prod-05.northcentralus.logic.azure.com:443/workflows/a7ec1a338e8541f092c44178a0d0c201/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=co5WA5F6jucJvp2ui_nfHwjQ6ICRtwQ8NDiUCWi1998",
+												"url": "https://prod-41.eastus.logic.azure.com:443/workflows/08b4574d691b4ce08f3dc26df8b562ac/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=YjrzHlvX08-ifQA7FF0Wqd-vn5Q3z1sHFP2XiOX2aTg",
 												"method": "POST",
 												"headers": {
 													"Content-Type": "application/json"
@@ -5338,8 +5338,8 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/ab4a9a2a-8b91-42ae-95aa-4d027c90c86f/refreshes/a86c5605-e60a-4f06-85f5-4f2bb914fa34",
-							"method": "DELETE",
+							"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/ab4a9a2a-8b91-42ae-95aa-4d027c90c86f/refreshes/a1b30f28-2150-49a1-b906-1537c52b2d55",
+							"method": "GET",
 							"headers": {},
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"Nightly Partition ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'dddd'),'\"\n        },\n        {\n            \"table\": \"Inventory Plans\",\n            \"partition\": \"Nightly Partition ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'dddd'),'\"\n        }\n    ]\n}')",
@@ -11256,7 +11256,7 @@
 											},
 											"userProperties": [],
 											"typeProperties": {
-												"url": "https://prod-05.northcentralus.logic.azure.com:443/workflows/a7ec1a338e8541f092c44178a0d0c201/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=co5WA5F6jucJvp2ui_nfHwjQ6ICRtwQ8NDiUCWi1998",
+												"url": "https://prod-41.eastus.logic.azure.com:443/workflows/08b4574d691b4ce08f3dc26df8b562ac/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=YjrzHlvX08-ifQA7FF0Wqd-vn5Q3z1sHFP2XiOX2aTg",
 												"method": "POST",
 												"headers": {
 													"Content-Type": "application/json"
@@ -15752,7 +15752,7 @@
 											},
 											"userProperties": [],
 											"typeProperties": {
-												"url": "https://prod-05.northcentralus.logic.azure.com:443/workflows/a7ec1a338e8541f092c44178a0d0c201/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=co5WA5F6jucJvp2ui_nfHwjQ6ICRtwQ8NDiUCWi1998",
+												"url": "https://prod-41.eastus.logic.azure.com:443/workflows/08b4574d691b4ce08f3dc26df8b562ac/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=YjrzHlvX08-ifQA7FF0Wqd-vn5Q3z1sHFP2XiOX2aTg",
 												"method": "POST",
 												"headers": {
 													"Content-Type": "application/json"
