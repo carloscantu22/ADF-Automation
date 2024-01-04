@@ -820,7 +820,7 @@
 								"Content-Type": "application/json"
 							},
 							"body": {
-								"value": "@concat('{\"Pipeline\" : \"',pipeline().Pipeline,'\" , \"RunId\" : \"',pipeline().RunId,' , \"Error\" : \"',string(activity('ProcessCanvas_RunningPBI').output),' , \"Message\" : \"Error running ',pipeline().Pipeline,'\"}')",
+								"value": "@concat('{\"Pipeline\" : \"',pipeline().Pipeline,'\" , \"RunId\" : \"',pipeline().RunId,'\" , \"Error\" : \"',string(activity('ProcessCanvas_RunningPBI').output),'\" , \"Message\" : \"Error running ',pipeline().Pipeline,'\"}')",
 								"type": "Expression"
 							}
 						}
@@ -3554,7 +3554,7 @@
 								"Content-Type": "application/json"
 							},
 							"body": {
-								"value": "@concat('{\"Pipeline\" : \"',pipeline().Pipeline,'\" , \"RunId\" : \"',pipeline().RunId,' , \"Error\" : \"',string(activity('ProcessOrders_RunningPBI').output),' , \"Message\" : \"Error running ',pipeline().Pipeline,'\"}')",
+								"value": "@concat('{\"Pipeline\" : \"',pipeline().Pipeline,'\" , \"RunId\" : \"',pipeline().RunId,'\" , \"Error\" : \"',string(activity('ProcessOrders_RunningPBI').output),'\" , \"Message\" : \"Error running ',pipeline().Pipeline,'\"}')",
 								"type": "Expression"
 							}
 						}
@@ -9838,7 +9838,7 @@
 								"Content-Type": "application/json"
 							},
 							"body": {
-								"value": "@concat('{\"Pipeline\" : \"',pipeline().Pipeline,'\" , \"RunId\" : \"',pipeline().RunId,' , \"Error\" : \"',string(activity('ProcessSupply_RunningPBI').output),' , \"Message\" : \"Error running ',pipeline().Pipeline,'\"}')",
+								"value": "@concat('{\"Pipeline\" : \"',pipeline().Pipeline,'\" , \"RunId\" : \"',pipeline().RunId,'\" , \"Error\" : \"',string(activity('ProcessSupply_RunningPBI').output),'\" , \"Message\" : \"Error running ',pipeline().Pipeline,'\"}')",
 								"type": "Expression"
 							}
 						}
@@ -14312,7 +14312,7 @@
 								"Content-Type": "application/json"
 							},
 							"body": {
-								"value": "@concat('{\"Pipeline\" : \"',pipeline().Pipeline,'\" , \"RunId\" : \"',pipeline().RunId,' , \"Error\" : \"',string(activity('Warehouse_RunningPBI').output),' , \"Message\" : \"Error running ',pipeline().Pipeline,'\"}')",
+								"value": "@concat('{\"Pipeline\" : \"',pipeline().Pipeline,'\" , \"RunId\" : \"',pipeline().RunId,'\" , \"Error\" : \"',string(activity('Warehouse_RunningPBI').output),'\" , \"Message\" : \"Error running ',pipeline().Pipeline,'\"}')",
 								"type": "Expression"
 							}
 						}
