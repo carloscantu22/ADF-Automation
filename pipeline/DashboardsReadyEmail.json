@@ -297,7 +297,7 @@
 									"Content-Type": "application/json"
 								},
 								"body": {
-									"value": "@concat('{\n   \"EmailSubject\": \"Power BI Reporting: DELAYED\",\n   \"EmailStatus\": \"Pending\",\n   \"EmailOptions\": \"',activity('PendingModels').output.firstRow.Models,'\"\n }')",
+									"value": "@concat('{\n   \"EmailSubject\": \"TEST: Power BI Reporting: DELAYED\",\n   \"EmailStatus\": \"Pending\",\n   \"EmailOptions\": \"',activity('PendingModels').output.firstRow.Models,'\"\n }')",
 									"type": "Expression"
 								}
 							}
@@ -465,7 +465,7 @@
 									"Content-Type": "application/json"
 								},
 								"body": {
-									"value": "@concat('{\n   \"EmailSubject\": \"Power BI Reporting: Ready\",\n   \"EmailStatus\": \"CompletePending\",\n   \"EmailOptions\": \"\"\n }')",
+									"value": "@concat('{\n   \"EmailSubject\": \"TEST: Power BI Reporting: Ready\",\n   \"EmailStatus\": \"CompletePending\",\n   \"EmailOptions\": \"\"\n }')",
 									"type": "Expression"
 								}
 							}
