@@ -4977,7 +4977,7 @@
 								"Content-Type": "application/json"
 							},
 							"body": {
-								"value": "@concat('{\"Pipeline\" : \"',pipeline().Pipeline,'\" , \"RunId\" : \"',pipeline().RunId,'\" , \"Error\" : \"',string(activity('ProcessCanvas_RunningPBI').output),'\" , \"Message\" : \"Error running ',pipeline().Pipeline,'\"}')",
+								"value": "@concat('{\"Pipeline\" : \"',pipeline().Pipeline,'\" , \"RunId\" : \"',pipeline().RunId,'\" , \"Error\" : \"General Error\" , \"Message\" : \"Error running ',pipeline().Pipeline,'\"}')",
 								"type": "Expression"
 							}
 						}
