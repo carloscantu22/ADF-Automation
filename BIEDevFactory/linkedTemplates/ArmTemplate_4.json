@@ -13,6 +13,121 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/CanvasPBI_Queue')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "If Condition1",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "ReadQueue",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@equals(activity('ReadQueue').output.firstRow.Idle,0)",
+								"type": "Expression"
+							},
+							"ifTrueActivities": [
+								{
+									"name": "ProcessCanvas_RunningPBI",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"policy": {
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "CanvasPBI_Running",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {}
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "ReadQueue",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT CASE WHEN EXISTS (\n\tSELECT * FROM [Controls].[ADFRefreshQueue]\n\tWHERE [ModelName] = 'Canvas'\n\t  AND [EventType] = 'PBI Refresh'\n\t  AND ([EventStatus] = 'R' OR [EventStatus] IS NULL)\n)\nTHEN 0\nELSE 1 END AS 'Idle'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSQLQueue",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schema": "Lorem",
+									"Table": "Ipsum"
+								}
+							}
+						}
+					},
+					{
+						"name": "SendErrorMail",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "If Condition1",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"Content-Type": "application/json"
+							},
+							"url": "https://prod-05.northcentralus.logic.azure.com:443/workflows/a7ec1a338e8541f092c44178a0d0c201/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=co5WA5F6jucJvp2ui_nfHwjQ6ICRtwQ8NDiUCWi1998",
+							"body": {
+								"value": "@concat('{\"Pipeline\" : \"',pipeline().Pipeline,'\" , \"RunId\" : \"',pipeline().RunId,'\" , \"Error\" : \"General Error\" , \"Message\" : \"Error running ',pipeline().Pipeline,'\"}')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "Canvas"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/OrdersPBI_Queue')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -40,6 +155,9 @@
 									"name": "ProcessOrders_RunningPBI",
 									"type": "ExecutePipeline",
 									"dependsOn": [],
+									"policy": {
+										"secureInput": false
+									},
 									"userProperties": [],
 									"typeProperties": {
 										"pipeline": {
@@ -102,11 +220,11 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://prod-05.northcentralus.logic.azure.com:443/workflows/a7ec1a338e8541f092c44178a0d0c201/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=co5WA5F6jucJvp2ui_nfHwjQ6ICRtwQ8NDiUCWi1998",
 							"method": "POST",
 							"headers": {
 								"Content-Type": "application/json"
 							},
+							"url": "https://prod-05.northcentralus.logic.azure.com:443/workflows/a7ec1a338e8541f092c44178a0d0c201/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=co5WA5F6jucJvp2ui_nfHwjQ6ICRtwQ8NDiUCWi1998",
 							"body": {
 								"value": "@concat('{\"Pipeline\" : \"',pipeline().Pipeline,'\" , \"RunId\" : \"',pipeline().RunId,'\" , \"Error\" : \"General Error\" , \"Message\" : \"Error running ',pipeline().Pipeline,'\"}')",
 								"type": "Expression"
@@ -152,6 +270,9 @@
 									"name": "ProcessOrders_Running",
 									"type": "ExecutePipeline",
 									"dependsOn": [],
+									"policy": {
+										"secureInput": false
+									},
 									"userProperties": [],
 									"typeProperties": {
 										"pipeline": {
@@ -233,6 +354,9 @@
 									"name": "ProcessSupply_Running",
 									"type": "ExecutePipeline",
 									"dependsOn": [],
+									"policy": {
+										"secureInput": false
+									},
 									"userProperties": [],
 									"typeProperties": {
 										"pipeline": {
@@ -314,6 +438,9 @@
 									"name": "ProcessSupply_RunningPBI",
 									"type": "ExecutePipeline",
 									"dependsOn": [],
+									"policy": {
+										"secureInput": false
+									},
 									"userProperties": [],
 									"typeProperties": {
 										"pipeline": {
@@ -376,11 +503,11 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://prod-05.northcentralus.logic.azure.com:443/workflows/a7ec1a338e8541f092c44178a0d0c201/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=co5WA5F6jucJvp2ui_nfHwjQ6ICRtwQ8NDiUCWi1998",
 							"method": "POST",
 							"headers": {
 								"Content-Type": "application/json"
 							},
+							"url": "https://prod-05.northcentralus.logic.azure.com:443/workflows/a7ec1a338e8541f092c44178a0d0c201/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=co5WA5F6jucJvp2ui_nfHwjQ6ICRtwQ8NDiUCWi1998",
 							"body": {
 								"value": "@concat('{\"Pipeline\" : \"',pipeline().Pipeline,'\" , \"RunId\" : \"',pipeline().RunId,'\" , \"Error\" : \"General Error\" , \"Message\" : \"Error running ',pipeline().Pipeline,'\"}')",
 								"type": "Expression"
@@ -455,6 +582,9 @@
 									"name": "Warehouse_RefreshPBI",
 									"type": "ExecutePipeline",
 									"dependsOn": [],
+									"policy": {
+										"secureInput": false
+									},
 									"userProperties": [],
 									"typeProperties": {
 										"pipeline": {
@@ -471,6 +601,9 @@
 									"name": "Warehouse_UpdateQueuePBI",
 									"type": "ExecutePipeline",
 									"dependsOn": [],
+									"policy": {
+										"secureInput": false
+									},
 									"userProperties": [],
 									"typeProperties": {
 										"pipeline": {
@@ -668,58 +801,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/RunTasks1200')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "RunningNodePNET",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2021-08-01T13:30:00",
-						"timeZone": "Eastern Standard Time",
-						"schedule": {
-							"minutes": [
-								0,
-								20,
-								40
-							],
-							"hours": [
-								5,
-								6,
-								7,
-								8,
-								9,
-								10,
-								11,
-								12,
-								13,
-								14,
-								15,
-								16,
-								17,
-								18,
-								19
-							]
-						}
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/Warehouse_Queue')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -747,6 +828,9 @@
 									"name": "Warehouse_RunningPBI",
 									"type": "ExecutePipeline",
 									"dependsOn": [],
+									"policy": {
+										"secureInput": false
+									},
 									"userProperties": [],
 									"typeProperties": {
 										"pipeline": {
@@ -809,11 +893,11 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://prod-05.northcentralus.logic.azure.com:443/workflows/a7ec1a338e8541f092c44178a0d0c201/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=co5WA5F6jucJvp2ui_nfHwjQ6ICRtwQ8NDiUCWi1998",
 							"method": "POST",
 							"headers": {
 								"Content-Type": "application/json"
 							},
+							"url": "https://prod-05.northcentralus.logic.azure.com:443/workflows/a7ec1a338e8541f092c44178a0d0c201/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=co5WA5F6jucJvp2ui_nfHwjQ6ICRtwQ8NDiUCWi1998",
 							"body": {
 								"value": "@concat('{\"Pipeline\" : \"',pipeline().Pipeline,'\" , \"RunId\" : \"',pipeline().RunId,'\" , \"Error\" : \"General Error\" , \"Message\" : \"Error running ',pipeline().Pipeline,'\"}')",
 								"type": "Expression"
@@ -881,6 +965,7 @@
 				}
 			},
 			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/CanvasPBI_Queue')]",
 				"[concat(variables('factoryId'), '/pipelines/SupplyPBI_Queue')]",
 				"[concat(variables('factoryId'), '/pipelines/Warehouse_Queue')]",
 				"[concat(variables('factoryId'), '/pipelines/OrdersPBI_Queue')]"

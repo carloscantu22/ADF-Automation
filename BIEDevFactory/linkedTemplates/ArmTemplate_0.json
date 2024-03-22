@@ -31,9 +31,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://eastus.asazure.windows.net/servers/carharttbiasp02/models/WMI_Plants/refreshes",
 							"method": "POST",
 							"headers": {},
+							"url": "https://eastus.asazure.windows.net/servers/carharttbiasp02/models/WMI_Plants/refreshes",
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"WMI Case Inventory\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -74,9 +74,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
 							"method": "POST",
 							"headers": {},
+							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Attainment\"\n        },\n        {\n            \"table\": \"Production Plans Variance\"\n        },\n        {\n            \"table\": \"Raw Material Availability\"\n        },\n        {\n            \"table\": \"Manufacturing Lead Times\"\n        },\n        {\n            \"table\": \"Contracts\"\n        },\n        {\n            \"table\": \"Purchase Orders\"\n        },\n        {\n            \"table\": \"Current Inventory\"\n        },\n        {\n            \"table\": \"Item Plans UPC\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -117,9 +117,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
 							"method": "POST",
 							"headers": {},
+							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Contracts\"\n        },\n       {\n            \"table\": \"Current Inventory\"\n        },\n       {\n            \"table\": \"Available to Promise\"\n        },\n       {\n            \"table\": \"Purchase Orders\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -160,9 +160,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://api.powerbi.com/v1.0/myorg/datasets/effad75f-c7e7-45d5-9be7-018725791ec9/refreshes",
 							"method": "POST",
 							"headers": {},
+							"url": "https://api.powerbi.com/v1.0/myorg/datasets/effad75f-c7e7-45d5-9be7-018725791ec9/refreshes",
 							"body": {
 								"value": "@concat('{','}')",
 								"type": "Expression"
@@ -203,9 +203,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://api.powerbi.com/v1.0/myorg/groups/d2584f83-3b80-414f-a5c5-2f3035983c85/datasets/5f7a2fe6-b9bd-4c35-91e2-ce420255bc6c/refreshes/d8253e64-07bf-44d1-af05-7b765c20d25a",
 							"method": "GET",
 							"headers": {},
+							"url": "https://api.powerbi.com/v1.0/myorg/groups/d2584f83-3b80-414f-a5c5-2f3035983c85/datasets/5f7a2fe6-b9bd-4c35-91e2-ce420255bc6c/refreshes/d8253e64-07bf-44d1-af05-7b765c20d25a",
 							"authentication": {
 								"type": "MSI",
 								"resource": "https://analysis.windows.net/powerbi/api"
@@ -269,12 +269,12 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
+							"method": "POST",
+							"headers": {},
 							"url": {
 								"value": "@pipeline().parameters.teamsWebhookUrl",
 								"type": "Expression"
 							},
-							"method": "POST",
-							"headers": {},
 							"body": {
 								"value": "@json(variables('messageCardString'))",
 								"type": "Expression"
@@ -341,9 +341,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/38f83f8b-9eb7-4591-8bfc-9bf8612e0460/refreshes/85b1173d-2a82-4004-a220-c852fe476f11",
 							"method": "GET",
 							"headers": {},
+							"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/38f83f8b-9eb7-4591-8bfc-9bf8612e0460/refreshes/85b1173d-2a82-4004-a220-c852fe476f11",
 							"body": {
 								"value": "@concat('{','}')",
 								"type": "Expression"
@@ -384,9 +384,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/ab4a9a2a-8b91-42ae-95aa-4d027c90c86f/refreshes/5b23dbcc-3558-4ddb-ae97-64e82780ae68",
 							"method": "GET",
 							"headers": {},
+							"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/ab4a9a2a-8b91-42ae-95aa-4d027c90c86f/refreshes/5b23dbcc-3558-4ddb-ae97-64e82780ae68",
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"Nightly Partition ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'dddd'),'\"\n        },\n        {\n            \"table\": \"Inventory Plans\",\n            \"partition\": \"Nightly Partition ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'dddd'),'\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -427,9 +427,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://api.powerbi.com/v1.0/myorg/groups/516449d1-03ba-45f4-9500-c94aee0d3912/datasets/52aaffc7-8f20-4b88-8354-a9f3e40a6789/refreshes",
 							"method": "POST",
 							"headers": {},
+							"url": "https://api.powerbi.com/v1.0/myorg/groups/516449d1-03ba-45f4-9500-c94aee0d3912/datasets/52aaffc7-8f20-4b88-8354-a9f3e40a6789/refreshes",
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"Nightly Partition ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'dddd'),'\"\n        },\n        {\n            \"table\": \"Inventory Plans\",\n            \"partition\": \"Nightly Partition ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'dddd'),'\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -470,9 +470,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://api.powerbi.com/v1.0/myorg/groups/516449d1-03ba-45f4-9500-c94aee0d3912/datasets/52aaffc7-8f20-4b88-8354-a9f3e40a6789/refreshes",
 							"method": "POST",
 							"headers": {},
+							"url": "https://api.powerbi.com/v1.0/myorg/groups/516449d1-03ba-45f4-9500-c94aee0d3912/datasets/52aaffc7-8f20-4b88-8354-a9f3e40a6789/refreshes",
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 10,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Country Codes\"\n        },\n       {\n            \"table\": \"Customers\"\n        },\n       {\n            \"table\": \"Item Plans Customers\"\n        },\n       {\n            \"table\": \"Date Periods\"\n        },\n       {\n            \"table\": \"Factory\"\n        },\n       {\n            \"table\": \"Dates\"\n        },\n       {\n            \"table\": \"Materials\"\n        },\n       {\n            \"table\": \"Production Plans Plan Source\"\n        },\n       {\n            \"table\": \"Products\"\n        },\n       {\n            \"table\": \"Raw Products\"\n        },\n       {\n            \"table\": \"Refresh Date Time\"\n        },\n       {\n            \"table\": \"Inventory Plans End Month\"\n        },\n       {\n            \"table\": \"Inventory Plans Start Month\"\n        },\n       {\n            \"table\": \"Reporting Notification Messages\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -513,9 +513,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://api.powerbi.com/v1.0/myorg/groups/516449d1-03ba-45f4-9500-c94aee0d3912/datasets/52aaffc7-8f20-4b88-8354-a9f3e40a6789/refreshes",
 							"method": "POST",
 							"headers": {},
+							"url": "https://api.powerbi.com/v1.0/myorg/groups/516449d1-03ba-45f4-9500-c94aee0d3912/datasets/52aaffc7-8f20-4b88-8354-a9f3e40a6789/refreshes",
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 10,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Production Attainment\"\n        },\n        {\n            \"table\": \"Available To Promise\"\n        },\n       {\n            \"table\": \"Production Plans Variance\"\n        },\n       {\n            \"table\": \"Raw Material Availability\"\n        },\n       {\n            \"table\": \"Manufacturing Lead Times\"\n        },\n       {\n            \"table\": \"Contracts\"\n        },\n       {\n            \"table\": \"Purchase Orders\"\n        },\n       {\n            \"table\": \"Current Inventory\"\n        },\n       {\n            \"table\": \"Item Plans UPC\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -556,9 +556,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
 							"method": "GET",
 							"headers": {},
+							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -624,12 +624,12 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
+										"method": "DELETE",
+										"headers": {},
 										"url": {
 											"value": "@concat('https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes/',string(variables('Response')[0].refreshId))",
 											"type": "Expression"
 										},
-										"method": "DELETE",
-										"headers": {},
 										"body": {
 											"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
 											"type": "Expression"
@@ -685,16 +685,16 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": {
-								"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/',pipeline().parameters.PBIAppWorkspaceId,'/datasets/',pipeline().parameters.PBIDatasetId,'/refreshes')",
-								"type": "Expression"
-							},
 							"method": "POST",
 							"headers": {
 								"Authorization": {
 									"value": "@concat(string(activity('Get AAD Token').output.token_type),' ',string(activity('Get AAD Token').output.access_token))",
 									"type": "Expression"
 								}
+							},
+							"url": {
+								"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/',pipeline().parameters.PBIAppWorkspaceId,'/datasets/',pipeline().parameters.PBIDatasetId,'/refreshes')",
+								"type": "Expression"
 							},
 							"body": {
 								"helloww": "worldddd"
@@ -733,13 +733,13 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": {
-								"value": "@concat('https://login.microsoftonline.com/',activity('Get TenantId from AKV').output.value,'/oauth2/token')",
-								"type": "Expression"
-							},
 							"method": "POST",
 							"headers": {
 								"Content-Type": "application/x-www-form-urlencoded"
+							},
+							"url": {
+								"value": "@concat('https://login.microsoftonline.com/',activity('Get TenantId from AKV').output.value,'/oauth2/token')",
+								"type": "Expression"
 							},
 							"body": {
 								"value": "@concat('grant_type=client_credentials&resource=https://analysis.windows.net/powerbi/api&client_id=',activity('Get ClientId from AKV').output.value,'&client_secret=',encodeUriComponent(activity('Get Secret from AKV').output.value))",
@@ -760,12 +760,12 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
+							"method": "GET",
+							"headers": {},
 							"url": {
 								"value": "@concat(pipeline().parameters.KeyVaultDNSName,'secrets/',pipeline().parameters.SecretName_TenantId,'/',pipeline().parameters.SecretVersion_TenantId,'?api-version=7.0')",
 								"type": "Expression"
 							},
-							"method": "GET",
-							"headers": {},
 							"body": {
 								"simple": "body"
 							},
@@ -788,12 +788,12 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
+							"method": "GET",
+							"headers": {},
 							"url": {
 								"value": "@concat(pipeline().parameters.KeyVaultDNSName,'secrets/',pipeline().parameters.SecretName_SPClientId,'/',pipeline().parameters.SecretVersion_SPClientId,'?api-version=7.0')",
 								"type": "Expression"
 							},
-							"method": "GET",
-							"headers": {},
 							"body": {
 								"simple": "body"
 							},
@@ -816,12 +816,12 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
+							"method": "GET",
+							"headers": {},
 							"url": {
 								"value": "@concat(pipeline().parameters.KeyVaultDNSName,'secrets/',pipeline().parameters.SecretName_SPSecret,'/',pipeline().parameters.SecretVersion_SPSecret,'?api-version=7.0')",
 								"type": "Expression"
 							},
-							"method": "GET",
-							"headers": {},
 							"body": {
 								"simple": "body"
 							},
@@ -869,16 +869,16 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"url": {
-											"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/',pipeline().parameters.PBIAppWorkspaceId,'/datasets/',pipeline().parameters.PBIDatasetId,'/refreshes?$top=1')",
-											"type": "Expression"
-										},
 										"method": "GET",
 										"headers": {
 											"Authorization": {
 												"value": "@concat(string(activity('Get AAD Token').output.token_type),' ',string(activity('Get AAD Token').output.access_token))",
 												"type": "Expression"
 											}
+										},
+										"url": {
+											"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/',pipeline().parameters.PBIAppWorkspaceId,'/datasets/',pipeline().parameters.PBIDatasetId,'/refreshes?$top=1')",
+											"type": "Expression"
 										},
 										"body": {
 											"helloww": "worldddd"
@@ -953,9 +953,9 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"url": "https://ThrowAnError ",
 										"method": "POST",
 										"headers": {},
+										"url": "https://ThrowAnError ",
 										"body": "Fail"
 									}
 								}
@@ -1030,9 +1030,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes/68921597-5306-4826-9202-339a9e10a48c",
 							"method": "GET",
 							"headers": {},
+							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes/68921597-5306-4826-9202-339a9e10a48c",
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -1073,9 +1073,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Orders/refreshes/9a15de7a-5eb0-4132-8f66-776afbea8bf8",
 							"method": "DELETE",
 							"headers": {},
+							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Orders/refreshes/9a15de7a-5eb0-4132-8f66-776afbea8bf8",
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -1116,9 +1116,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://eastus.asazure.windows.net/servers/carharttbiasp02/models/WMI_Plants/refreshes/5c090ebf-fbcc-473b-93c0-96156a264b2a",
 							"method": "GET",
 							"headers": {},
+							"url": "https://eastus.asazure.windows.net/servers/carharttbiasp02/models/WMI_Plants/refreshes/5c090ebf-fbcc-473b-93c0-96156a264b2a",
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -1159,9 +1159,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
 							"method": "GET",
 							"headers": {},
+							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -1216,12 +1216,12 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
+							"method": "GET",
+							"headers": {},
 							"url": {
 								"value": "@concat('https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes/',string(variables('Response')[0].refreshid))",
 								"type": "Expression"
 							},
-							"method": "GET",
-							"headers": {},
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -1291,12 +1291,12 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
+							"method": "POST",
+							"headers": {},
 							"url": {
 								"value": "https://carhartt.webhook.office.com/webhookb2/821a9519-9995-4e07-8f41-359204fb1c05@b4e848aa-20ef-4814-a34a-93fe53f3970f/IncomingWebhook/53212b4e54754a3097bd0b26030417bc/dfb007ca-9396-4a1c-9d58-b1b1499518b9",
 								"type": "Expression"
 							},
-							"method": "POST",
-							"headers": {},
 							"body": {
 								"value": "@json(pipeline().parameters.messageCard)",
 								"type": "Expression"
@@ -1339,12 +1339,12 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
+							"method": "GET",
+							"headers": {},
 							"url": {
 								"value": "@concat('https://api.telegram.org/bot5375063738:AAEW9zo8N5Ij2DdVrOJWWtpecK70xK83oGw/sendMessage?chat_id=-1001702093962&disable_web_page_preview=1&parse_mode=Markdown&text=',pipeline().parameters.Message)",
 								"type": "Expression"
-							},
-							"method": "GET",
-							"headers": {}
+							}
 						}
 					}
 				],
@@ -1389,12 +1389,12 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
+							"method": "GET",
+							"headers": {},
 							"url": {
 								"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1e04c36c-aa71-43a4-bd7b-843e24169196/refreshes/',variables('RefreshId'))",
 								"type": "Expression"
 							},
-							"method": "GET",
-							"headers": {},
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"Nightly Partition ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'dddd'),'\"\n        },\n        {\n            \"table\": \"Inventory Plans\",\n            \"partition\": \"Nightly Partition ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'dddd'),'\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -1425,12 +1425,12 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
+							"method": "GET",
+							"headers": {},
 							"url": {
 								"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1e04c36c-aa71-43a4-bd7b-843e24169196/refreshes/',variables('RefreshId'))",
 								"type": "Expression"
 							},
-							"method": "GET",
-							"headers": {},
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"Nightly Partition ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'dddd'),'\"\n        },\n        {\n            \"table\": \"Inventory Plans\",\n            \"partition\": \"Nightly Partition ',formatDateTime(convertFromUtc(utcnow(),'Eastern Standard Time'),'dddd'),'\"\n        }\n    ]\n}')",
 								"type": "Expression"

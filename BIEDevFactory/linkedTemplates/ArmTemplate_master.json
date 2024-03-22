@@ -146,9 +146,6 @@
 					"DBNSQLPNET_RO_password": {
 						"value": "[parameters('DBNSQLPNET_RO_password')]"
 					},
-					"Db21_connectionString": {
-						"value": "[parameters('Db21_connectionString')]"
-					},
 					"AzureBIDevelopment_properties_typeProperties_url": {
 						"value": "[parameters('AzureBIDevelopment_properties_typeProperties_url')]"
 					},
@@ -186,6 +183,9 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"Db21_connectionString": {
+						"value": "[parameters('Db21_connectionString')]"
 					}
 				}
 			},

@@ -6,12 +6,33 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "BIEDevFactory"
+		},
+		"Db21_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Db21'"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Db21')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Db2",
+				"typeProperties": {
+					"connectionString": "[parameters('Db21_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "PNETIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/AASSupplyRefresh_ManualRefresh')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -31,9 +52,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
 							"method": "POST",
 							"headers": {},
+							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 4,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Contracts\"\n        },\n       {\n            \"table\": \"Current Inventory\"\n        },\n       {\n            \"table\": \"Available to Promise\"\n        },\n       {\n            \"table\": \"Purchase Orders\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -128,9 +149,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
 							"method": "GET",
 							"headers": {},
+							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -216,12 +237,12 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
+							"method": "GET",
+							"headers": {},
 							"url": {
 								"value": "@concat('https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes/',string(activity('GetRefreshId').output.firstRow.RefreshId))",
 								"type": "Expression"
 							},
-							"method": "GET",
-							"headers": {},
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -1068,9 +1089,9 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/d2b53e35-ee1f-4444-9aa8-fe0b91a98c7f/refreshes",
 										"method": "POST",
 										"headers": {},
+										"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/d2b53e35-ee1f-4444-9aa8-fe0b91a98c7f/refreshes",
 										"body": {
 											"value": "@variables('RefreshParameters')",
 											"type": "Expression"
@@ -1101,9 +1122,9 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/d2b53e35-ee1f-4444-9aa8-fe0b91a98c7f/refreshes?$top=2",
 										"method": "GET",
 										"headers": {},
+										"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/d2b53e35-ee1f-4444-9aa8-fe0b91a98c7f/refreshes?$top=2",
 										"authentication": {
 											"type": "MSI",
 											"resource": "https://analysis.windows.net/powerbi/api"
@@ -1260,12 +1281,12 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
+							"method": "GET",
+							"headers": {},
 							"url": {
 								"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/d2b53e35-ee1f-4444-9aa8-fe0b91a98c7f/refreshes/',string(activity('GetRefreshId').output.firstRow.RequestId))",
 								"type": "Expression"
 							},
-							"method": "GET",
-							"headers": {},
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -1619,11 +1640,11 @@
 											},
 											"userProperties": [],
 											"typeProperties": {
-												"url": "https://prod-41.eastus.logic.azure.com:443/workflows/08b4574d691b4ce08f3dc26df8b562ac/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=YjrzHlvX08-ifQA7FF0Wqd-vn5Q3z1sHFP2XiOX2aTg",
 												"method": "POST",
 												"headers": {
 													"Content-Type": "application/json"
 												},
+												"url": "https://prod-41.eastus.logic.azure.com:443/workflows/08b4574d691b4ce08f3dc26df8b562ac/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=YjrzHlvX08-ifQA7FF0Wqd-vn5Q3z1sHFP2XiOX2aTg",
 												"body": {
 													"value": "@concat('{\"RefreshId\" : \"',trim(activity('GetRefreshId').output.firstRow.RequestId),'\" , \"EventName\" : \"',activity('GetRefreshId').output.firstRow.EventName,'\"}')",
 													"type": "Expression"
@@ -1641,6 +1662,9 @@
 													]
 												}
 											],
+											"policy": {
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"pipeline": {
@@ -1775,9 +1799,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes/01b78707-59dd-4fae-ac65-98bf99c8b1bf",
 							"method": "GET",
 							"headers": {},
+							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes/01b78707-59dd-4fae-ac65-98bf99c8b1bf",
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -1920,9 +1944,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://api.powerbi.com/v1.0/myorg/groups/516449d1-03ba-45f4-9500-c94aee0d3912/datasets/b25fc398-0fc2-4a21-9633-c6f2cfaa18da/refreshes",
 							"method": "POST",
 							"headers": {},
+							"url": "https://api.powerbi.com/v1.0/myorg/groups/516449d1-03ba-45f4-9500-c94aee0d3912/datasets/b25fc398-0fc2-4a21-9633-c6f2cfaa18da/refreshes",
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 10,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Seasons\"\n        },\n        {\n            \"table\": \"Material Season\"\n        },\n        {\n            \"table\": \"Products\"\n        },\n        {\n            \"table\": \"Factory\"\n        },\n        {\n            \"table\": \"Plant Materials\"\n        },\n        {\n            \"table\": \"Materials\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -2945,9 +2969,9 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/38f83f8b-9eb7-4591-8bfc-9bf8612e0460/refreshes",
 										"method": "POST",
 										"headers": {},
+										"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/38f83f8b-9eb7-4591-8bfc-9bf8612e0460/refreshes",
 										"body": {
 											"value": "@variables('RefreshParameters')",
 											"type": "Expression"
@@ -2978,9 +3002,9 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/38f83f8b-9eb7-4591-8bfc-9bf8612e0460/refreshes?$top=2",
 										"method": "GET",
 										"headers": {},
+										"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/38f83f8b-9eb7-4591-8bfc-9bf8612e0460/refreshes?$top=2",
 										"authentication": {
 											"type": "MSI",
 											"resource": "https://analysis.windows.net/powerbi/api"
@@ -3137,12 +3161,12 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
+							"method": "GET",
+							"headers": {},
 							"url": {
 								"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/38f83f8b-9eb7-4591-8bfc-9bf8612e0460/refreshes/',string(activity('GetRefreshId').output.firstRow.RequestId))",
 								"type": "Expression"
 							},
-							"method": "GET",
-							"headers": {},
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -3496,11 +3520,11 @@
 											},
 											"userProperties": [],
 											"typeProperties": {
-												"url": "https://prod-41.eastus.logic.azure.com:443/workflows/08b4574d691b4ce08f3dc26df8b562ac/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=YjrzHlvX08-ifQA7FF0Wqd-vn5Q3z1sHFP2XiOX2aTg",
 												"method": "POST",
 												"headers": {
 													"Content-Type": "application/json"
 												},
+												"url": "https://prod-41.eastus.logic.azure.com:443/workflows/08b4574d691b4ce08f3dc26df8b562ac/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=YjrzHlvX08-ifQA7FF0Wqd-vn5Q3z1sHFP2XiOX2aTg",
 												"body": {
 													"value": "@concat('{\"RefreshId\" : \"',trim(activity('GetRefreshId').output.firstRow.RequestId),'\" , \"EventName\" : \"',activity('GetRefreshId').output.firstRow.EventName,'\", \"ModelName\" : \"',activity('GetRefreshId').output.firstRow.ModelName,'\"}')",
 													"type": "Expression"
@@ -3518,6 +3542,9 @@
 													]
 												}
 											],
+											"policy": {
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"pipeline": {
@@ -4281,9 +4308,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Orders/refreshes",
 							"method": "POST",
 							"headers": {},
+							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Orders/refreshes",
 							"body": {
 								"value": "@variables('RefreshParameters')",
 								"type": "Expression"
@@ -4314,9 +4341,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Orders/refreshes",
 							"method": "GET",
 							"headers": {},
+							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Orders/refreshes",
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -4467,12 +4494,12 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
+							"method": "GET",
+							"headers": {},
 							"url": {
 								"value": "@concat('https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Orders/refreshes/',string(activity('GetRefreshId').output.firstRow.EventStatusMessage))",
 								"type": "Expression"
 							},
-							"method": "GET",
-							"headers": {},
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -4815,11 +4842,11 @@
 											},
 											"userProperties": [],
 											"typeProperties": {
-												"url": "https://prod-05.northcentralus.logic.azure.com:443/workflows/a7ec1a338e8541f092c44178a0d0c201/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=co5WA5F6jucJvp2ui_nfHwjQ6ICRtwQ8NDiUCWi1998",
 												"method": "POST",
 												"headers": {
 													"Content-Type": "application/json"
 												},
+												"url": "https://prod-05.northcentralus.logic.azure.com:443/workflows/a7ec1a338e8541f092c44178a0d0c201/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=co5WA5F6jucJvp2ui_nfHwjQ6ICRtwQ8NDiUCWi1998",
 												"body": {
 													"value": "@concat('{\"RefreshId\" : \"',trim(activity('GetRefreshId').output.firstRow.RefreshId),'\" , \"EventName\" : \"',activity('GetRefreshId').output.firstRow.EventName,'\"}')",
 													"type": "Expression"
@@ -4837,6 +4864,9 @@
 													]
 												}
 											],
+											"policy": {
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"pipeline": {
@@ -5002,6 +5032,9 @@
 									"name": "ErrorNotification",
 									"type": "ExecutePipeline",
 									"dependsOn": [],
+									"policy": {
+										"secureInput": false
+									},
 									"userProperties": [],
 									"typeProperties": {
 										"pipeline": {
@@ -5166,11 +5199,11 @@
 											},
 											"userProperties": [],
 											"typeProperties": {
-												"url": "https://prod-13.northcentralus.logic.azure.com:443/workflows/edec3768a21d4a618a89c7ccf8c4ad0b/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Om-PN4tQZfPmI_KeEBQTkW7qGjSwrgbMrvF8RSqCfQ8",
 												"method": "POST",
 												"headers": {
 													"Content-Type": "application/json"
 												},
+												"url": "https://prod-13.northcentralus.logic.azure.com:443/workflows/edec3768a21d4a618a89c7ccf8c4ad0b/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Om-PN4tQZfPmI_KeEBQTkW7qGjSwrgbMrvF8RSqCfQ8",
 												"body": {
 													"value": "@concat('{\"ModelName\" : \"','Supply','\" , \"StartDateTime\" : \"',utcnow(),'\"}')",
 													"type": "Expression"
@@ -5307,9 +5340,9 @@
 											},
 											"userProperties": [],
 											"typeProperties": {
-												"url": "https://prod-16.northcentralus.logic.azure.com:443/workflows/2fe1f2ecb460441ab439d52dc4376fa9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=jImsHlpPczPE6nGyWS0zsMwolhW7x3qwnHdBaoIJYY0",
 												"method": "POST",
 												"headers": {},
+												"url": "https://prod-16.northcentralus.logic.azure.com:443/workflows/2fe1f2ecb460441ab439d52dc4376fa9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=jImsHlpPczPE6nGyWS0zsMwolhW7x3qwnHdBaoIJYY0",
 												"body": {
 													"value": "@concat('{','}')",
 													"type": "Expression"
@@ -5358,9 +5391,9 @@
 											},
 											"userProperties": [],
 											"typeProperties": {
-												"url": "https://prod-29.northcentralus.logic.azure.com:443/workflows/7c6e0b550366480181ceebc02c0ce319/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=QOEpbIKJ72zB2U9vZYdc0T-yasXVGGECgEpCp-ebKSg",
 												"method": "POST",
 												"headers": {},
+												"url": "https://prod-29.northcentralus.logic.azure.com:443/workflows/7c6e0b550366480181ceebc02c0ce319/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=QOEpbIKJ72zB2U9vZYdc0T-yasXVGGECgEpCp-ebKSg",
 												"body": {
 													"value": "@concat('{','}')",
 													"type": "Expression"
@@ -5533,9 +5566,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
 							"method": "POST",
 							"headers": {},
+							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
 							"body": {
 								"value": "@variables('RefreshParameters')",
 								"type": "Expression"
@@ -5566,9 +5599,9 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
 							"method": "GET",
 							"headers": {},
+							"url": "https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes",
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -5716,12 +5749,12 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
+							"method": "GET",
+							"headers": {},
 							"url": {
 								"value": "@concat('https://northcentralus.asazure.windows.net/servers/carharttbiasp01/models/Supply/refreshes/',string(activity('GetRefreshId').output.firstRow.RefreshId))",
 								"type": "Expression"
 							},
-							"method": "GET",
-							"headers": {},
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -6064,11 +6097,11 @@
 											},
 											"userProperties": [],
 											"typeProperties": {
-												"url": "https://prod-05.northcentralus.logic.azure.com:443/workflows/a7ec1a338e8541f092c44178a0d0c201/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=co5WA5F6jucJvp2ui_nfHwjQ6ICRtwQ8NDiUCWi1998",
 												"method": "POST",
 												"headers": {
 													"Content-Type": "application/json"
 												},
+												"url": "https://prod-05.northcentralus.logic.azure.com:443/workflows/a7ec1a338e8541f092c44178a0d0c201/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=co5WA5F6jucJvp2ui_nfHwjQ6ICRtwQ8NDiUCWi1998",
 												"body": {
 													"value": "@concat('{\"RefreshId\" : \"',trim(activity('GetRefreshId').output.firstRow.RefreshId),'\" , \"EventName\" : \"',activity('GetRefreshId').output.firstRow.EventName,'\"}')",
 													"type": "Expression"
@@ -6086,6 +6119,9 @@
 													]
 												}
 											],
+											"policy": {
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"pipeline": {
@@ -6749,9 +6785,9 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/ab4a9a2a-8b91-42ae-95aa-4d027c90c86f/refreshes",
 										"method": "POST",
 										"headers": {},
+										"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/ab4a9a2a-8b91-42ae-95aa-4d027c90c86f/refreshes",
 										"body": {
 											"value": "@variables('RefreshParameters')",
 											"type": "Expression"
@@ -6782,9 +6818,9 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/ab4a9a2a-8b91-42ae-95aa-4d027c90c86f/refreshes?$top=2",
 										"method": "GET",
 										"headers": {},
+										"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/ab4a9a2a-8b91-42ae-95aa-4d027c90c86f/refreshes?$top=2",
 										"authentication": {
 											"type": "MSI",
 											"resource": "https://analysis.windows.net/powerbi/api"
@@ -7130,12 +7166,12 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
+							"method": "GET",
+							"headers": {},
 							"url": {
 								"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/ab4a9a2a-8b91-42ae-95aa-4d027c90c86f/refreshes/',string(activity('GetRefreshId').output.firstRow.RequestId))",
 								"type": "Expression"
 							},
-							"method": "GET",
-							"headers": {},
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -7489,11 +7525,11 @@
 											},
 											"userProperties": [],
 											"typeProperties": {
-												"url": "https://prod-41.eastus.logic.azure.com:443/workflows/08b4574d691b4ce08f3dc26df8b562ac/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=YjrzHlvX08-ifQA7FF0Wqd-vn5Q3z1sHFP2XiOX2aTg",
 												"method": "POST",
 												"headers": {
 													"Content-Type": "application/json"
 												},
+												"url": "https://prod-41.eastus.logic.azure.com:443/workflows/08b4574d691b4ce08f3dc26df8b562ac/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=YjrzHlvX08-ifQA7FF0Wqd-vn5Q3z1sHFP2XiOX2aTg",
 												"body": {
 													"value": "@concat('{\"RefreshId\" : \"',trim(activity('GetRefreshId').output.firstRow.RequestId),'\" , \"EventName\" : \"',activity('GetRefreshId').output.firstRow.EventName,'\", \"ModelName\" : \"',activity('GetRefreshId').output.firstRow.ModelName,'\"}')",
 													"type": "Expression"
@@ -7511,6 +7547,9 @@
 													]
 												}
 											],
+											"policy": {
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"pipeline": {
@@ -7786,12 +7825,12 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
+							"method": "GET",
+							"headers": {},
 							"url": {
 								"value": "@concat('https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1e04c36c-aa71-43a4-bd7b-843e24169196/refreshes/',string(activity('GetRefreshId').output.firstRow.RequestId))",
 								"type": "Expression"
 							},
-							"method": "GET",
-							"headers": {},
 							"body": {
 								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 2,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"DimCustomer\"\n        },\n        {\n            \"table\": \"Dates\"\n        }\n    ]\n}')",
 								"type": "Expression"
@@ -8145,11 +8184,11 @@
 											},
 											"userProperties": [],
 											"typeProperties": {
-												"url": "https://prod-41.eastus.logic.azure.com:443/workflows/08b4574d691b4ce08f3dc26df8b562ac/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=YjrzHlvX08-ifQA7FF0Wqd-vn5Q3z1sHFP2XiOX2aTg",
 												"method": "POST",
 												"headers": {
 													"Content-Type": "application/json"
 												},
+												"url": "https://prod-41.eastus.logic.azure.com:443/workflows/08b4574d691b4ce08f3dc26df8b562ac/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=YjrzHlvX08-ifQA7FF0Wqd-vn5Q3z1sHFP2XiOX2aTg",
 												"body": {
 													"value": "@concat('{\"RefreshId\" : \"',trim(activity('GetRefreshId').output.firstRow.RequestId),'\" , \"EventName\" : \"',activity('GetRefreshId').output.firstRow.EventName,'\", \"ModelName\" : \"',activity('GetRefreshId').output.firstRow.ModelName,'\"}')",
 													"type": "Expression"
@@ -8167,6 +8206,9 @@
 													]
 												}
 											],
+											"policy": {
+												"secureInput": false
+											},
 											"userProperties": [],
 											"typeProperties": {
 												"pipeline": {
@@ -8297,41 +8339,6 @@
 					},
 					"Table": {
 						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": {
-						"value": "@dataset().Schema",
-						"type": "Expression"
-					},
-					"table": {
-						"value": "@dataset().Table",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/PNET_ReadOnly')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "DBNSQLPNET_RO",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Schema": {
-						"type": "string",
-						"defaultValue": "Dapibus"
-					},
-					"Table": {
-						"type": "string",
-						"defaultValue": "Faucibus"
 					}
 				},
 				"annotations": [],
