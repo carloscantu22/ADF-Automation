@@ -10075,7 +10075,7 @@
 											"typeProperties": {
 												"variableName": "RefreshParameters",
 												"value": {
-													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 1,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"Draft Partition\"\n        }\n    ]\n}')",
+													"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 2,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Production Plans\",\n            \"partition\": \"Draft Partition\"\n        },\n        {\n            \"table\": \"Plan Versions\"\n        }\n    ]\n}')",
 													"type": "Expression"
 												}
 											}
@@ -10697,6 +10697,41 @@
 											"typeProperties": {
 												"variableName": "ProcessingConditional",
 												"value": "0"
+											}
+										},
+										{
+											"name": "Web1",
+											"type": "WebActivity",
+											"dependsOn": [
+												{
+													"activity": "SetNoRefresh_11_copy1",
+													"dependencyConditions": [
+														"Succeeded"
+													]
+												}
+											],
+											"policy": {
+												"timeout": "0.12:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"method": "POST",
+												"headers": {
+													"Content-Type": "application/json"
+												},
+												"url": "https://prod-16.eastus.logic.azure.com:443/workflows/27d45ec2cde945b0ab8c1b03535f0289/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=qXml38rsEe1KlZu9DUXsOk8uD6rRIlVmywq-SmVX9dM",
+												"body": {
+													"Model": "Supply",
+													"Process": "Draf Approval",
+													"Status": "Process Complete",
+													"Notes": "",
+													"PipelineId": "",
+													"DateTime": ""
+												}
 											}
 										}
 									]
