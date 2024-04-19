@@ -7,22 +7,9 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "BIEDevFactory"
 		},
-		"AzureBIDevelopment_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'AzureBIDevelopment'"
-		},
 		"BIP01_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'BIP01'"
-		},
-		"DBNSQLP01_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'DBNSQLP01'",
-			"defaultValue": "Integrated Security=True;Data Source=DBNSQLP01;Initial Catalog=CarharttDW"
-		},
-		"DBNSQLP01_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'DBNSQLP01'"
 		},
 		"DBNSQLPNET_connectionString": {
 			"type": "secureString",
@@ -45,26 +32,6 @@
 		"Db21_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Db21'"
-		},
-		"biedev storage_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'biedev storage'"
-		},
-		"AzureBIDevelopment_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://management.azure.com/"
-		},
-		"AzureBIDevelopment_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "bobjservice@carhartt.com"
-		},
-		"BIEKeyChain_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "https://BIEDevKeyChain.vault.azure.net/"
-		},
-		"DBNSQLP01_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "carhartt-nt\\bobjservice"
 		},
 		"DBNSQLPNET_properties_typeProperties_userName": {
 			"type": "string",
@@ -16414,39 +16381,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureBIDevelopment')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "RestService",
-				"typeProperties": {
-					"url": "[parameters('AzureBIDevelopment_properties_typeProperties_url')]",
-					"enableServerCertificateValidation": true,
-					"authenticationType": "Basic",
-					"userName": "[parameters('AzureBIDevelopment_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('AzureBIDevelopment_password')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/BIEKeyChain')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureKeyVault",
-				"typeProperties": {
-					"baseUrl": "[parameters('BIEKeyChain_properties_typeProperties_baseUrl')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/BIP01')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -16458,30 +16392,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DBNSQLP01')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"connectionString": "[parameters('DBNSQLP01_connectionString')]",
-					"userName": "[parameters('DBNSQLP01_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('DBNSQLP01_password')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "GWP02IntegrationRuntime",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/GWP02IntegrationRuntime')]"
-			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/DBNSQLPNET')]",
@@ -16549,19 +16459,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/integrationRuntimes/PNETIntegrationRuntime')]"
 			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/biedev storage')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('biedev storage_connectionString')]"
-				}
-			},
-			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/15MinAlert Block')]",
@@ -16886,7 +16783,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Started",
+				"runtimeState": "Stopped",
 				"pipelines": [
 					{
 						"pipelineReference": {
@@ -17080,17 +16977,6 @@
 						}
 					}
 				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/GWP02IntegrationRuntime')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "SelfHosted",
-				"description": "OnPrem Integration Service running on DBNPBIEGWP05 and DBNPBIEGWP06",
-				"typeProperties": {}
 			},
 			"dependsOn": []
 		},

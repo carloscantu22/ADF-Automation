@@ -5,16 +5,7 @@
 		"factoryName": {
 			"value": "BIEDevFactory"
 		},
-		"AzureBIDevelopment_password": {
-			"value": ""
-		},
 		"BIP01_connectionString": {
-			"value": ""
-		},
-		"DBNSQLP01_connectionString": {
-			"value": "Integrated Security=True;Data Source=DBNSQLP01;Initial Catalog=CarharttDW"
-		},
-		"DBNSQLP01_password": {
 			"value": ""
 		},
 		"DBNSQLPNET_connectionString": {
@@ -31,21 +22,6 @@
 		},
 		"Db21_connectionString": {
 			"value": ""
-		},
-		"biedev storage_connectionString": {
-			"value": ""
-		},
-		"AzureBIDevelopment_properties_typeProperties_url": {
-			"value": "https://management.azure.com/"
-		},
-		"AzureBIDevelopment_properties_typeProperties_userName": {
-			"value": "bobjservice@carhartt.com"
-		},
-		"BIEKeyChain_properties_typeProperties_baseUrl": {
-			"value": "https://BIEDevKeyChain.vault.azure.net/"
-		},
-		"DBNSQLP01_properties_typeProperties_userName": {
-			"value": "carhartt-nt\\bobjservice"
 		},
 		"DBNSQLPNET_properties_typeProperties_userName": {
 			"value": "BIServiceAdmin@carharttdev.com"
