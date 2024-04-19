@@ -1,7 +1,0 @@
-{
-	"name": "PNETIntegrationRuntime",
-	"properties": {
-		"type": "SelfHosted",
-		"description": "This IR works as Gateway for internal resources in Carhartt Production"
-	}
-}
