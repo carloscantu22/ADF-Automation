@@ -14699,7 +14699,7 @@
 											"userProperties": [],
 											"typeProperties": {
 												"source": {
-													"type": "AzureSqlSource",
+													"type": "SqlServerSource",
 													"sqlReaderQuery": {
 														"value": "@concat('SELECT CAST(\n(\n\tSELECT [table]\n\t\t  ,[partition]\n\tFROM [Controls].[WarehousePartitionsNightly]\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
 														"type": "Expression"
@@ -14708,11 +14708,11 @@
 													"partitionOption": "None"
 												},
 												"dataset": {
-													"referenceName": "AzureSQLQueue",
+													"referenceName": "PNET_ReadOnly",
 													"type": "DatasetReference",
 													"parameters": {
-														"Schema": "Lorem",
-														"Table": "Ipsum"
+														"Schema": "Dapibus",
+														"Table": "Faucibus"
 													}
 												}
 											}
@@ -15983,49 +15983,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "NightlyDimensions",
-						"type": "WebActivity",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "00:15:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"method": "POST",
-							"headers": {},
-							"url": "https://api.powerbi.com/v1.0/myorg/groups/516449d1-03ba-45f4-9500-c94aee0d3912/datasets/6181c309-ac65-4198-b329-3892202ae9fe/refreshes",
-							"body": {
-								"value": "@concat('{\n    \"Type\": \"Full\",\n    \"CommitMode\": \"transactional\",\n    \"MaxParallelism\": 10,\n    \"RetryCount\": 0,\n    \"Objects\": [\n        {\n            \"table\": \"Style\"\n        }\n    ]\n}')",
-								"type": "Expression"
-							},
-							"authentication": {
-								"type": "MSI",
-								"resource": "https://analysis.windows.net/powerbi/api"
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"folder": {
-					"name": "Plants"
-				},
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/pipeline2')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -16409,12 +16366,12 @@
 					}
 				},
 				"connectVia": {
-					"referenceName": "PNETIntegrationRuntime",
+					"referenceName": "DBNIntegrationRuntime",
 					"type": "IntegrationRuntimeReference"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/PNETIntegrationRuntime')]"
+				"[concat(variables('factoryId'), '/integrationRuntimes/DBNIntegrationRuntime')]"
 			]
 		},
 		{
@@ -16433,12 +16390,12 @@
 					}
 				},
 				"connectVia": {
-					"referenceName": "PNETIntegrationRuntime",
+					"referenceName": "DBNIntegrationRuntime",
 					"type": "IntegrationRuntimeReference"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/PNETIntegrationRuntime')]"
+				"[concat(variables('factoryId'), '/integrationRuntimes/DBNIntegrationRuntime')]"
 			]
 		},
 		{
@@ -16452,12 +16409,12 @@
 					"connectionString": "[parameters('Db21_connectionString')]"
 				},
 				"connectVia": {
-					"referenceName": "PNETIntegrationRuntime",
+					"referenceName": "DBNIntegrationRuntime",
 					"type": "IntegrationRuntimeReference"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/PNETIntegrationRuntime')]"
+				"[concat(variables('factoryId'), '/integrationRuntimes/DBNIntegrationRuntime')]"
 			]
 		},
 		{
@@ -16784,15 +16741,7 @@
 			"properties": {
 				"annotations": [],
 				"runtimeState": "Stopped",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "OrderExclusionPNET",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
+				"pipelines": [],
 				"type": "ScheduleTrigger",
 				"typeProperties": {
 					"recurrence": {
@@ -16818,9 +16767,7 @@
 					}
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/OrderExclusionPNET')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/MidnightRun')]",
@@ -16981,12 +16928,11 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/PNETIntegrationRuntime')]",
+			"name": "[concat(parameters('factoryName'), '/DBNIntegrationRuntime')]",
 			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"type": "SelfHosted",
-				"description": "This IR works as Gateway for internal resources in Carhartt Production",
 				"typeProperties": {}
 			},
 			"dependsOn": []
