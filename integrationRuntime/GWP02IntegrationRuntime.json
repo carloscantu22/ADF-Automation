@@ -1,7 +1,0 @@
-{
-	"name": "GWP02IntegrationRuntime",
-	"properties": {
-		"type": "SelfHosted",
-		"description": "OnPrem Integration Service running on DBNPBIEGWP05 and DBNPBIEGWP06"
-	}
-}
