@@ -284,7 +284,7 @@
 									"userProperties": [],
 									"typeProperties": {
 										"source": {
-											"type": "AzureSqlSource",
+											"type": "SqlServerSource",
 											"sqlReaderQuery": {
 												"value": "@concat('SELECT CAST(\n(\n\tSELECT [table]\n\t\t  ,[partition]\n\tFROM [Controls].[WarehousePartitionsNightly]\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
 												"type": "Expression"
@@ -293,11 +293,11 @@
 											"partitionOption": "None"
 										},
 										"dataset": {
-											"referenceName": "AzureSQLQueue",
+											"referenceName": "PNET_ReadOnly",
 											"type": "DatasetReference",
 											"parameters": {
-												"Schema": "Lorem",
-												"Table": "Ipsum"
+												"Schema": "Dapibus",
+												"Table": "Faucibus"
 											}
 										}
 									}
