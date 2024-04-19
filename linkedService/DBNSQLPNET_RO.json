@@ -7,10 +7,10 @@
 		"typeProperties": {
 			"connectionString": "integrated security=True;data source=dbnsqlpnet.carhartt-nt.carhartt.com;initial catalog=CarharttDW;multisubnetfailover=True;applicationintent=ReadOnly",
 			"userName": "BIServiceAdmin@carharttdev.com",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiIxYzVhMGQzYS0wZjQxLTQxMmUtYjU4My00NzhkMTVmZDk0NmQiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJhZmIwYzYzNi0zMjgwLTRjNjYtYTIzYS00NmQxOTA0N2U0MzgiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
-			"referenceName": "PNETIntegrationRuntime",
+			"referenceName": "DBNIntegrationRuntime",
 			"type": "IntegrationRuntimeReference"
 		}
 	}
