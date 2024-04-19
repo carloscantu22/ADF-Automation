@@ -3259,15 +3259,15 @@
 														"value": "@concat('SELECT CAST(\n(\n\tSELECT [table]\n\t\t  ,[partition]\n\tFROM [CarharttDw].[Controls].[WarehousePartitionsNightly]\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
 														"type": "Expression"
 													},
-													"queryTimeout": "02:00:00",
+													"queryTimeout": "00:10:00",
 													"partitionOption": "None"
 												},
 												"dataset": {
-													"referenceName": "PNET_ReadOnly",
+													"referenceName": "PNETSQL",
 													"type": "DatasetReference",
 													"parameters": {
-														"Schema": "Dapibus",
-														"Table": "Faucibus"
+														"Schema": "nein",
+														"Table": "nein"
 													}
 												}
 											}
