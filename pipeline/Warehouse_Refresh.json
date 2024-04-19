@@ -289,15 +289,15 @@
 												"value": "@concat('SELECT CAST(\n(\n\tSELECT [table]\n\t\t  ,[partition]\n\tFROM [CarharttDw].[Controls].[WarehousePartitionsNightly]\n\tFOR JSON AUTO\n) AS varchar(MAX)) AS ''Refresh''')",
 												"type": "Expression"
 											},
-											"queryTimeout": "02:00:00",
+											"queryTimeout": "00:10:00",
 											"partitionOption": "None"
 										},
 										"dataset": {
-											"referenceName": "PNET_ReadOnly",
+											"referenceName": "PNETSQL",
 											"type": "DatasetReference",
 											"parameters": {
-												"Schema": "Dapibus",
-												"Table": "Faucibus"
+												"Schema": "nein",
+												"Table": "nein"
 											}
 										}
 									}
@@ -653,8 +653,8 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1e04c36c-aa71-43a4-bd7b-843e24169196/refreshes",
 								"method": "POST",
+								"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1e04c36c-aa71-43a4-bd7b-843e24169196/refreshes",
 								"body": {
 									"value": "@variables('RefreshParameters')",
 									"type": "Expression"
@@ -685,8 +685,8 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1e04c36c-aa71-43a4-bd7b-843e24169196/refreshes?$top=2",
 								"method": "GET",
+								"url": "https://api.powerbi.com/v1.0/myorg/groups/7f9759c8-270b-4e68-a251-7fb844a51e9b/datasets/1e04c36c-aa71-43a4-bd7b-843e24169196/refreshes?$top=2",
 								"authentication": {
 									"type": "MSI",
 									"resource": "https://analysis.windows.net/powerbi/api"
