@@ -1,0 +1,6 @@
+{
+	"name": "DBNIntegrationRuntime",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}
