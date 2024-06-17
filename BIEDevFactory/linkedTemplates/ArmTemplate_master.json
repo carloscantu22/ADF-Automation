@@ -67,6 +67,9 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"BIP01_connectionString": {
+						"value": "[parameters('BIP01_connectionString')]"
 					}
 				}
 			},
@@ -85,9 +88,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"BIP01_connectionString": {
-						"value": "[parameters('BIP01_connectionString')]"
 					},
 					"DBNSQLPNET_connectionString": {
 						"value": "[parameters('DBNSQLPNET_connectionString')]"
