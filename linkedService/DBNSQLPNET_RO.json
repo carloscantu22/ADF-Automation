@@ -6,8 +6,8 @@
 		"type": "SqlServer",
 		"typeProperties": {
 			"connectionString": "integrated security=True;data source=dbnsqlpnet.carhartt-nt.carhartt.com;initial catalog=CarharttDW;multisubnetfailover=True;applicationintent=ReadOnly",
-			"userName": "BIServiceAdmin@carharttdev.com",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJhZmIwYzYzNi0zMjgwLTRjNjYtYTIzYS00NmQxOTA0N2U0MzgiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"userName": "BIServiceAdmin@carhartt.com",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJiMjk0MjdjZi04ZGNmLTRmN2ItOTFkMC1hNzFlZThiODk1ZmIiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "DBNIntegrationRuntime",
