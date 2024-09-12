@@ -10,7 +10,7 @@
 		"DBNSQLPNET_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'DBNSQLPNET'",
-			"defaultValue": "Integrated Security=True;Data Source=dbnsqlpnet.carhartt-nt.carhartt.com;Initial Catalog=CarharttDW;multisubnetfailover=True"
+			"defaultValue": "integrated security=True;Data Source=dbnsqlpnet.carhartt-nt.carhartt.com;Initial Catalog=CarharttDW;multisubnetfailover=True"
 		},
 		"DBNSQLPNET_password": {
 			"type": "secureString",
@@ -19,7 +19,7 @@
 		"DBNSQLPNET_RO_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'DBNSQLPNET_RO'",
-			"defaultValue": "Integrated Security=True;Data Source=dbnsqlpnet.carhartt-nt.carhartt.com;Initial Catalog=CarharttDW;multisubnetfailover=True;applicationintent=ReadOnly"
+			"defaultValue": "integrated security=True;Data Source=dbnsqlpnet.carhartt-nt.carhartt.com;Initial Catalog=CarharttDW;multisubnetfailover=True;applicationintent=ReadOnly"
 		},
 		"DBNSQLPNET_RO_password": {
 			"type": "secureString",
@@ -31,11 +31,11 @@
 		},
 		"DBNSQLPNET_properties_typeProperties_userName": {
 			"type": "string",
-			"defaultValue": "BIServiceAdmin@carharttdev.com"
+			"defaultValue": "BIServiceAdmin@carhartt.com"
 		},
 		"DBNSQLPNET_RO_properties_typeProperties_userName": {
 			"type": "string",
-			"defaultValue": "BIServiceAdmin@carharttdev.com"
+			"defaultValue": "BIServiceAdmin@carhartt.com"
 		}
 	},
 	"variables": {
