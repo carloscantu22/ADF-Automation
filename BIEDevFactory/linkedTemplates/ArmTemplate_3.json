@@ -3826,10 +3826,12 @@
 						"timeZone": "Eastern Standard Time",
 						"schedule": {
 							"minutes": [
-								0
+								0,
+								40
 							],
 							"hours": [
-								23
+								23,
+								0
 							],
 							"weekDays": [
 								"Sunday",
