@@ -20,17 +20,20 @@
 				"timeZone": "Eastern Standard Time",
 				"schedule": {
 					"minutes": [
-						0
+						0,
+						50
 					],
 					"hours": [
-						23
+						23,
+						11
 					],
 					"weekDays": [
 						"Sunday",
 						"Monday",
 						"Tuesday",
 						"Wednesday",
-						"Thursday"
+						"Thursday",
+						"Friday"
 					]
 				}
 			}
