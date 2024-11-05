@@ -227,13 +227,6 @@
 					},
 					{
 						"pipelineReference": {
-							"referenceName": "SupplyPBI_Queue",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					},
-					{
-						"pipelineReference": {
 							"referenceName": "Warehouse_Queue",
 							"type": "PipelineReference"
 						},
