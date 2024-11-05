@@ -16690,6 +16690,13 @@
 							"type": "PipelineReference"
 						},
 						"parameters": {}
+					},
+					{
+						"pipelineReference": {
+							"referenceName": "SupplyPBI_Queue",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
 					}
 				],
 				"type": "ScheduleTrigger",
@@ -16705,7 +16712,8 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/CanvasPBI_Queue')]",
 				"[concat(variables('factoryId'), '/pipelines/Warehouse_Queue')]",
-				"[concat(variables('factoryId'), '/pipelines/OrdersPBI_Queue')]"
+				"[concat(variables('factoryId'), '/pipelines/OrdersPBI_Queue')]",
+				"[concat(variables('factoryId'), '/pipelines/SupplyPBI_Queue')]"
 			]
 		},
 		{
