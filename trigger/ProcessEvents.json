@@ -21,6 +21,12 @@
 					"referenceName": "SupplyPBI_Queue",
 					"type": "PipelineReference"
 				}
+			},
+			{
+				"pipelineReference": {
+					"referenceName": "CanvasPBI_Queue",
+					"type": "PipelineReference"
+				}
 			}
 		],
 		"type": "ScheduleTrigger",
