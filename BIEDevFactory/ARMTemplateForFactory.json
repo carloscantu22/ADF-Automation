@@ -16686,13 +16686,6 @@
 					},
 					{
 						"pipelineReference": {
-							"referenceName": "SupplyPBI_Queue",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					},
-					{
-						"pipelineReference": {
 							"referenceName": "CanvasPBI_Queue",
 							"type": "PipelineReference"
 						},
@@ -16712,7 +16705,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/Warehouse_Queue')]",
 				"[concat(variables('factoryId'), '/pipelines/OrdersPBI_Queue')]",
-				"[concat(variables('factoryId'), '/pipelines/SupplyPBI_Queue')]",
 				"[concat(variables('factoryId'), '/pipelines/CanvasPBI_Queue')]"
 			]
 		},
