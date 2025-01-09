@@ -15,12 +15,6 @@
 					"referenceName": "OrdersPBI_Queue",
 					"type": "PipelineReference"
 				}
-			},
-			{
-				"pipelineReference": {
-					"referenceName": "CanvasPBI_Queue",
-					"type": "PipelineReference"
-				}
 			}
 		],
 		"type": "ScheduleTrigger",
