@@ -220,13 +220,6 @@
 				"pipelines": [
 					{
 						"pipelineReference": {
-							"referenceName": "Warehouse_Queue",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					},
-					{
-						"pipelineReference": {
 							"referenceName": "OrdersPBI_Queue",
 							"type": "PipelineReference"
 						},
@@ -243,9 +236,7 @@
 					}
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/Warehouse_Queue')]"
-			]
+			"dependsOn": []
 		}
 	]
 }
